@@ -1,0 +1,86 @@
+
+<div>
+    <h2><span>Member</span> {{member.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span>Name</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.name}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Address</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.address}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>City</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.city}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>State</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.state}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Zip</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.zip}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Occupation</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.occupation}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Phone</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.phone}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>ViewOnline</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.viewOnline}}</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            onclick="window.history.back()"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+</div>
