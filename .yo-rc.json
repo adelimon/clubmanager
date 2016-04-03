@@ -1,0 +1,24 @@
+{
+  "generator-jhipster": {
+    "baseName": "clubmanager",
+    "packageName": "com.ajdconsulting.pra.clubmanager",
+    "packageFolder": "com/ajdconsulting/pra/clubmanager",
+    "authenticationType": "session",
+    "hibernateCache": "no",
+    "clusteredHttpSession": "no",
+    "websocket": "no",
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": "no",
+    "useSass": false,
+    "buildTool": "maven",
+    "frontendBuilder": "gulp",
+    "enableTranslation": false,
+    "enableSocialSignIn": true,
+    "rememberMeKey": "25aebff34e9471fbe75de0d4ced2101f9934d0e7",
+    "testFrameworks": [
+      "cucumber"
+    ]
+  }
+}
