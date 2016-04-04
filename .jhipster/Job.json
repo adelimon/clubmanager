@@ -4,7 +4,7 @@
             "relationshipId": 1,
             "relationshipName": "eventType",
             "otherEntityName": "eventType",
-            "relationshipType": "many-to-many",
+            "relationshipType": "many-to-one",
             "otherEntityField": "type",
             "ownerSide": true
         }

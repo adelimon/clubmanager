@@ -42,11 +42,9 @@ public class Job implements Serializable {
     @Column(name = "reserved")
     private Boolean reserved;
     
-    @ManyToMany
-    @JoinTable(name = "job_event_type",
-               joinColumns = @JoinColumn(name="jobs_id", referencedColumnName="ID"),
-               inverseJoinColumns = @JoinColumn(name="event_types_id", referencedColumnName="ID"))
-    private Set<EventType> eventTypes = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "event_type_id")
+    private EventType eventType;
 
     public Long getId() {
         return id;
@@ -104,12 +102,12 @@ public class Job implements Serializable {
         this.reserved = reserved;
     }
 
-    public Set<EventType> getEventTypes() {
-        return eventTypes;
+    public EventType getEventType() {
+        return eventType;
     }
 
-    public void setEventTypes(Set<EventType> eventTypes) {
-        this.eventTypes = eventTypes;
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
 
     @Override

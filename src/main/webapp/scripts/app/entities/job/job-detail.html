@@ -63,9 +63,7 @@
                     <span>eventType</span>
                 </td>
                 <td>
-                    <span ng-repeat="eventType in job.eventTypes">
-                        <a class="form-control-static" ui-sref="eventType.detail({id: {{eventType.id}}})">{{eventType.type}}</a>{{$last ? '' : ', '}}
-                    </span>
+                    <a class="form-control-static" ui-sref="eventType.detail({id:job.eventType.id})">{{job.eventType.type}}</a>
                 </td>
             </tr>
             </tbody>

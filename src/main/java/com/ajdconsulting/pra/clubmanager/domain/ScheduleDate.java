@@ -24,11 +24,9 @@ public class ScheduleDate implements Serializable {
     @Column(name = "date", nullable = false)
     private LocalDate date;
     
-    @ManyToMany
-    @JoinTable(name = "schedule_date_event_type",
-               joinColumns = @JoinColumn(name="schedule_dates_id", referencedColumnName="ID"),
-               inverseJoinColumns = @JoinColumn(name="event_types_id", referencedColumnName="ID"))
-    private Set<EventType> eventTypes = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "event_type_id")
+    private EventType eventType;
 
     public Long getId() {
         return id;
@@ -46,12 +44,12 @@ public class ScheduleDate implements Serializable {
         this.date = date;
     }
 
-    public Set<EventType> getEventTypes() {
-        return eventTypes;
+    public EventType getEventType() {
+        return eventType;
     }
 
-    public void setEventTypes(Set<EventType> eventTypes) {
-        this.eventTypes = eventTypes;
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
 
     @Override

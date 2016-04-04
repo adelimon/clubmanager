@@ -39,31 +39,15 @@
             
             <column name="reserved" type="bit"/>
             
+            <column name="event_type_id" type="bigint"/>
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         
-        <createTable tableName="job_event_type">
-            <column name="event_types_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="jobs_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="jobs_id, event_types_id" tableName="job_event_type"/>
-
-        <addForeignKeyConstraint baseColumnNames="jobs_id"
-                                 baseTableName="job_event_type"
-                                 constraintName="fk_job_event_type_eventtype_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="job"/>
-
-        <addForeignKeyConstraint baseColumnNames="event_types_id"
-                                 baseTableName="job_event_type"
-                                 constraintName="fk_job_event_type_job_id"
+        <addForeignKeyConstraint baseColumnNames="event_type_id"
+                                 baseTableName="job"
+                                 constraintName="fk_job_eventtype_id"
                                  referencedColumnNames="id"
                                  referencedTableName="event_type"/>
-        
+
     </changeSet>
 </databaseChangeLog>

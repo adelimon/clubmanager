@@ -25,31 +25,15 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="event_type_id" type="bigint"/>
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         
-        <createTable tableName="schedule_date_event_type">
-            <column name="event_types_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="schedule_dates_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="schedule_dates_id, event_types_id" tableName="schedule_date_event_type"/>
-
-        <addForeignKeyConstraint baseColumnNames="schedule_dates_id"
-                                 baseTableName="schedule_date_event_type"
-                                 constraintName="fk_schedule_date_event_type_eventtype_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="schedule_date"/>
-
-        <addForeignKeyConstraint baseColumnNames="event_types_id"
-                                 baseTableName="schedule_date_event_type"
-                                 constraintName="fk_schedule_date_event_type_scheduledate_id"
+        <addForeignKeyConstraint baseColumnNames="event_type_id"
+                                 baseTableName="schedule_date"
+                                 constraintName="fk_scheduledate_eventtype_id"
                                  referencedColumnNames="id"
                                  referencedTableName="event_type"/>
-        
+
     </changeSet>
 </databaseChangeLog>

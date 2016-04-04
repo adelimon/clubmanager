@@ -23,9 +23,7 @@
                     <span>eventType</span>
                 </td>
                 <td>
-                    <span ng-repeat="eventType in scheduleDate.eventTypes">
-                        <a class="form-control-static" ui-sref="eventType.detail({id: {{eventType.id}}})">{{eventType.type}}</a>{{$last ? '' : ', '}}
-                    </span>
+                    <a class="form-control-static" ui-sref="eventType.detail({id:scheduleDate.eventType.id})">{{scheduleDate.eventType.type}}</a>
                 </td>
             </tr>
             </tbody>

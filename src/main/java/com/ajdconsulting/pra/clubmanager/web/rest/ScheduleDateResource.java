@@ -94,7 +94,7 @@ public class ScheduleDateResource {
     @Timed
     public ResponseEntity<ScheduleDate> getScheduleDate(@PathVariable Long id) {
         log.debug("REST request to get ScheduleDate : {}", id);
-        ScheduleDate scheduleDate = scheduleDateRepository.findOneWithEagerRelationships(id);
+        ScheduleDate scheduleDate = scheduleDateRepository.findOne(id);
         return Optional.ofNullable(scheduleDate)
             .map(result -> new ResponseEntity<>(
                 result,

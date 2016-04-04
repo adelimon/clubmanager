@@ -94,7 +94,7 @@ public class JobResource {
     @Timed
     public ResponseEntity<Job> getJob(@PathVariable Long id) {
         log.debug("REST request to get Job : {}", id);
-        Job job = jobRepository.findOneWithEagerRelationships(id);
+        Job job = jobRepository.findOne(id);
         return Optional.ofNullable(job)
             .map(result -> new ResponseEntity<>(
                 result,

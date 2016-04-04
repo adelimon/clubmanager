@@ -86,7 +86,9 @@
 
         <div class="form-group">
             <label for="field_eventType">eventType</label>
-            <select class="form-control" id="field_eventType" multiple name="eventType" ng-model="job.eventTypes" ng-options="eventType as eventType.type for eventType in eventtypes track by eventType.id"></select>
+            <select class="form-control" id="field_eventType" name="eventType" ng-model="job.eventType" ng-options="eventType as eventType.type for eventType in eventtypes track by eventType.id">
+                <option value=""></option>
+            </select>
         </div>
     </div>
     <div class="modal-footer">
