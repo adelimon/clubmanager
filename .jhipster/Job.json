@@ -1,0 +1,61 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "eventType",
+            "otherEntityName": "eventType",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "type",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "title",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "pointValue",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
+        },
+        {
+            "fieldId": 3,
+            "fieldName": "cashValue",
+            "fieldType": "Float"
+        },
+        {
+            "fieldId": 4,
+            "fieldName": "jobDay",
+            "fieldType": "String"
+        },
+        {
+            "fieldId": 5,
+            "fieldName": "sortOrder",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
+        },
+        {
+            "fieldId": 6,
+            "fieldName": "reserved",
+            "fieldType": "Boolean"
+        }
+    ],
+    "changelogDate": "20160404010346",
+    "dto": "no",
+    "service": "no",
+    "pagination": "infinite-scroll"
+}
