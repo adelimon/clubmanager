@@ -1,0 +1,26 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "eventType",
+            "otherEntityName": "eventType",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "type",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "date",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160404010950",
+    "dto": "no",
+    "service": "no",
+    "pagination": "infinite-scroll"
+}
