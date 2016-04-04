@@ -1,0 +1,66 @@
+<div>
+    <h2>Signups</h2>
+    <jh-alert></jh-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 no-padding-left">
+                <button class="btn btn-primary" ui-sref="signup.new" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span 
+                       >Create new Signup
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+                <tr jh-sort="predicate" ascending="reverse" callback="reset()">
+                    <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="worker.name"><span>worker</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="scheduleDate.date"><span>scheduleDate</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="job.title"><span>job</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
+                <tr ng-repeat="signup in signups track by signup.id">
+                    <td><a ui-sref="signup.detail({id:signup.id})">{{signup.id}}</a></td>
+                    <td>
+                        <a ui-sref="member.detail({id:signup.worker.id})">{{signup.worker.name}}</a>
+                    </td>
+                    <td>
+                        <a ui-sref="scheduleDate.detail({id:signup.scheduleDate.id})">{{signup.scheduleDate.date}}</a>
+                    </td>
+                    <td>
+                        <a ui-sref="job.detail({id:signup.job.id})">{{signup.job.title}}</a>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    ui-sref="signup.detail({id:signup.id})"
+                                    class="btn btn-info btn-sm"> 
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="signup.edit({id:signup.id})"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="signup.delete({id:signup.id})"
+                                    class="btn btn-danger btn-sm">                                    
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
