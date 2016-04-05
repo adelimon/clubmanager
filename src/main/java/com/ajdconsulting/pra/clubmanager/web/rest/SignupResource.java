@@ -1,5 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
+import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
@@ -29,10 +31,13 @@ import java.util.Optional;
 public class SignupResource {
 
     private final Logger log = LoggerFactory.getLogger(SignupResource.class);
-        
+
     @Inject
     private SignupRepository signupRepository;
-    
+
+    @Inject
+    private EarnedPointsRepository earnedPointsRepository;
+
     /**
      * POST  /signups -> Create a new signup.
      */
@@ -46,6 +51,15 @@ public class SignupResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("signup", "idexists", "A new signup cannot already have an ID")).body(null);
         }
         Signup result = signupRepository.save(signup);
+        // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
+        EarnedPoints signupEarnedPoints = new EarnedPoints();
+        signupEarnedPoints.setDate(signup.getScheduleDate().getDate());
+        signupEarnedPoints.setPointValue(signup.getJob().getPointValue());
+        signupEarnedPoints.setMember(signup.getWorker());
+        signupEarnedPoints.setEventType(signup.getScheduleDate().getEventType());
+        signupEarnedPoints.setDescription(signup.getJob().getTitle());
+        earnedPointsRepository.save(signupEarnedPoints);
+        log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
         return ResponseEntity.created(new URI("/api/signups/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("signup", result.getId().toString()))
             .body(result);
@@ -79,7 +93,7 @@ public class SignupResource {
     public ResponseEntity<List<Signup>> getAllSignups(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Signups");
-        Page<Signup> page = signupRepository.findAll(pageable); 
+        Page<Signup> page = signupRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/signups");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
