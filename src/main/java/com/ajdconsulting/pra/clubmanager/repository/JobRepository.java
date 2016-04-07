@@ -2,6 +2,8 @@ package com.ajdconsulting.pra.clubmanager.repository;
 
 import com.ajdconsulting.pra.clubmanager.domain.Job;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
@@ -11,4 +13,6 @@ import java.util.List;
  */
 public interface JobRepository extends JpaRepository<Job,Long> {
 
+    @Query("select j from Job j where reserved is null")
+    public Page<Job> findAvailableJobs(Pageable pageable);
 }
