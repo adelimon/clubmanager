@@ -2,6 +2,7 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
+import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
@@ -38,6 +39,9 @@ public class SignupResource {
     @Inject
     private EarnedPointsRepository earnedPointsRepository;
 
+    @Inject
+    private MailService mailService;
+
     /**
      * POST  /signups -> Create a new signup.
      */
@@ -60,6 +64,9 @@ public class SignupResource {
         signupEarnedPoints.setDescription(signup.getJob().getTitle());
         earnedPointsRepository.save(signupEarnedPoints);
         log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
+
+        mailService.sendSignupEmail(signup);
+
         return ResponseEntity.created(new URI("/api/signups/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("signup", result.getId().toString()))
             .body(result);

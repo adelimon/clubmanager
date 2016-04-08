@@ -49,6 +49,10 @@ public class Member implements Serializable {
     @Column(name = "view_online")
     private Boolean viewOnline;
     
+    @NotNull
+    @Column(name = "email", nullable = false)
+    private String email;
+    
     public Long getId() {
         return id;
     }
@@ -121,6 +125,14 @@ public class Member implements Serializable {
         this.viewOnline = viewOnline;
     }
 
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -153,6 +165,7 @@ public class Member implements Serializable {
             ", occupation='" + occupation + "'" +
             ", phone='" + phone + "'" +
             ", viewOnline='" + viewOnline + "'" +
+            ", email='" + email + "'" +
             '}';
     }
 }

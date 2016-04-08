@@ -42,6 +42,7 @@ angular.module('clubmanagerApp')
                 occupation: null,
                 phone: null,
                 viewOnline: null,
+                email: null,
                 id: null
             };
         };

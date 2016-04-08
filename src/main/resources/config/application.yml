@@ -63,7 +63,7 @@ jhipster:
         #allow-credentials: true
         #max-age: 1800
     mail:
-        from: clubmanager@localhost
+        from: signup@palmyramx.com
     security:
         rememberme:
             # security key (this key should be unique for your application, and kept secret)

@@ -33,7 +33,14 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
     mail:
-        host: localhost
+        host: smtp.mailgun.org
+        port: 587
+        username: postmaster@sandboxd12b57cf73ce4b56ad3a175e89c5c8e1.mailgun.org
+        password: d71a90c71384e9f7e4c08471552c5fb5
+        protocol: smtp
+        tls: true
+        properties.mail.smtp:
+            auth: true
     messages:
         cache-seconds: 1
     thymeleaf:
@@ -56,7 +63,7 @@ jhipster:
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: clubmanager@localhost
+        from: signup@palmyramx.com
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
         spark:

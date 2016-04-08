@@ -58,6 +58,8 @@ public class MemberResourceIntTest {
 
     private static final Boolean DEFAULT_VIEW_ONLINE = false;
     private static final Boolean UPDATED_VIEW_ONLINE = true;
+    private static final String DEFAULT_EMAIL = "AAAAA";
+    private static final String UPDATED_EMAIL = "BBBBB";
 
     @Inject
     private MemberRepository memberRepository;
@@ -93,6 +95,7 @@ public class MemberResourceIntTest {
         member.setOccupation(DEFAULT_OCCUPATION);
         member.setPhone(DEFAULT_PHONE);
         member.setViewOnline(DEFAULT_VIEW_ONLINE);
+        member.setEmail(DEFAULT_EMAIL);
     }
 
     @Test
@@ -119,6 +122,7 @@ public class MemberResourceIntTest {
         assertThat(testMember.getOccupation()).isEqualTo(DEFAULT_OCCUPATION);
         assertThat(testMember.getPhone()).isEqualTo(DEFAULT_PHONE);
         assertThat(testMember.getViewOnline()).isEqualTo(DEFAULT_VIEW_ONLINE);
+        assertThat(testMember.getEmail()).isEqualTo(DEFAULT_EMAIL);
     }
 
     @Test
@@ -231,6 +235,24 @@ public class MemberResourceIntTest {
 
     @Test
     @Transactional
+    public void checkEmailIsRequired() throws Exception {
+        int databaseSizeBeforeTest = memberRepository.findAll().size();
+        // set the field null
+        member.setEmail(null);
+
+        // Create the Member, which fails.
+
+        restMemberMockMvc.perform(post("/api/members")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(member)))
+                .andExpect(status().isBadRequest());
+
+        List<Member> members = memberRepository.findAll();
+        assertThat(members).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllMembers() throws Exception {
         // Initialize the database
         memberRepository.saveAndFlush(member);
@@ -247,7 +269,8 @@ public class MemberResourceIntTest {
                 .andExpect(jsonPath("$.[*].zip").value(hasItem(DEFAULT_ZIP.toString())))
                 .andExpect(jsonPath("$.[*].occupation").value(hasItem(DEFAULT_OCCUPATION.toString())))
                 .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE.toString())))
-                .andExpect(jsonPath("$.[*].viewOnline").value(hasItem(DEFAULT_VIEW_ONLINE.booleanValue())));
+                .andExpect(jsonPath("$.[*].viewOnline").value(hasItem(DEFAULT_VIEW_ONLINE.booleanValue())))
+                .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
     }
 
     @Test
@@ -268,7 +291,8 @@ public class MemberResourceIntTest {
             .andExpect(jsonPath("$.zip").value(DEFAULT_ZIP.toString()))
             .andExpect(jsonPath("$.occupation").value(DEFAULT_OCCUPATION.toString()))
             .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE.toString()))
-            .andExpect(jsonPath("$.viewOnline").value(DEFAULT_VIEW_ONLINE.booleanValue()));
+            .andExpect(jsonPath("$.viewOnline").value(DEFAULT_VIEW_ONLINE.booleanValue()))
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()));
     }
 
     @Test
@@ -296,6 +320,7 @@ public class MemberResourceIntTest {
         member.setOccupation(UPDATED_OCCUPATION);
         member.setPhone(UPDATED_PHONE);
         member.setViewOnline(UPDATED_VIEW_ONLINE);
+        member.setEmail(UPDATED_EMAIL);
 
         restMemberMockMvc.perform(put("/api/members")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -314,6 +339,7 @@ public class MemberResourceIntTest {
         assertThat(testMember.getOccupation()).isEqualTo(UPDATED_OCCUPATION);
         assertThat(testMember.getPhone()).isEqualTo(UPDATED_PHONE);
         assertThat(testMember.getViewOnline()).isEqualTo(UPDATED_VIEW_ONLINE);
+        assertThat(testMember.getEmail()).isEqualTo(UPDATED_EMAIL);
     }
 
     @Test

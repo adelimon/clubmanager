@@ -66,6 +66,14 @@
             "fieldId": 8,
             "fieldName": "viewOnline",
             "fieldType": "Boolean"
+        },
+        {
+            "fieldId": 9,
+            "fieldName": "email",
+            "fieldType" : "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "changelogDate": "20160403032734",

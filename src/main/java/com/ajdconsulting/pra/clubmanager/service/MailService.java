@@ -1,6 +1,8 @@
 package com.ajdconsulting.pra.clubmanager.service;
 
 import com.ajdconsulting.pra.clubmanager.config.JHipsterProperties;
+import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.domain.User;
 
 import org.apache.commons.lang.CharEncoding;
@@ -104,7 +106,7 @@ public class MailService {
         String subject = messageSource.getMessage("email.reset.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
-    
+
     @Async
     public void sendSocialRegistrationValidationEmail(User user, String provider) {
         log.debug("Sending social registration validation e-mail to '{}'", user.getEmail());
@@ -115,5 +117,18 @@ public class MailService {
         String content = templateEngine.process("socialRegistrationValidationEmail", context);
         String subject = messageSource.getMessage("email.social.registration.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
+    }
+
+    @Async
+    public void sendSignupEmail(Signup signup) {
+        String jobPlusDate = signup.getJob().getTitle() + " on " + signup.getScheduleDate().getDate();
+        String subject = "Signup for Job " + jobPlusDate;
+        Member worker = signup.getWorker();
+
+        String content = worker.getName() + " has signed up for job " + jobPlusDate + ".  " +
+            worker.getName() + "'s phone number is " + worker.getPhone() + ".  Their email is " +
+            worker.getEmail();
+
+        sendEmail("adelimon@yahoo.com", subject, content, false, false);
     }
 }
