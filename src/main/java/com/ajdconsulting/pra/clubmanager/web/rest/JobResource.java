@@ -1,5 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
+import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.Job;
 import com.ajdconsulting.pra.clubmanager.repository.JobRepository;
@@ -30,10 +32,10 @@ import java.util.Optional;
 public class JobResource {
 
     private final Logger log = LoggerFactory.getLogger(JobResource.class);
-        
+
     @Inject
     private JobRepository jobRepository;
-    
+
     /**
      * POST  /jobs -> Create a new job.
      */
@@ -80,7 +82,16 @@ public class JobResource {
     public ResponseEntity<List<Job>> getAllJobs(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Jobs");
-        Page<Job> page = jobRepository.findAll(pageable); 
+        boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
+        // admins can see all the jobs, but users should only see available ones because
+        // that's all they can sign up for.
+        Page<Job> page = null;
+        if (isAdmin) {
+            page = jobRepository.findAll(pageable);
+        } else {
+            page = jobRepository.findAvailableJobs(pageable);
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobs");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
