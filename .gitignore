@@ -116,6 +116,7 @@ Desktop.ini
 *.*~
 *~
 .merge_file*
+nohup.out
 
 ######################
 # Gradle Wrapper
