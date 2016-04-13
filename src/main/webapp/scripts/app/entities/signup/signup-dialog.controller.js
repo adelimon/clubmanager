@@ -36,4 +36,10 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
         $scope.clear = function() {
             $uibModalInstance.dismiss('cancel');
         };
+
+        $scope.dateHandler = function (scheduleDate) {
+            console.log("changed da date to " + JSON.stringify(scheduleDate) );
+            var dateSelected = scheduleDate.date;
+            $scope.jobs = Job.query();
+        }
 }]);

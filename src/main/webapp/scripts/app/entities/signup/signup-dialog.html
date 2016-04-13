@@ -22,7 +22,9 @@
         </div>
         <div class="form-group">
             <label for="field_scheduleDate">scheduleDate</label>
-            <select class="form-control" id="field_scheduleDate" name="scheduleDate" ng-model="signup.scheduleDate" ng-options="scheduleDate as scheduleDate.date for scheduleDate in scheduledates track by scheduleDate.id">
+            <select class="form-control" id="field_scheduleDate" name="scheduleDate" ng-model="signup.scheduleDate"
+                    ng-options="scheduleDate as scheduleDate.date for scheduleDate in scheduledates track by scheduleDate.id"
+                    ng-change="dateHandler(signup.scheduleDate)">
                 <option value=""></option>
             </select>
         </div>
