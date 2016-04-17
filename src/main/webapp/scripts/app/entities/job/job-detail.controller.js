@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clubmanagerApp')
-    .controller('JobDetailController', function ($scope, $rootScope, $stateParams, entity, Job, EventType) {
+    .controller('JobDetailController', function ($scope, $rootScope, $stateParams, entity, Job, EventType, Member) {
         $scope.job = entity;
         $scope.load = function (id) {
             Job.get({id: id}, function(result) {

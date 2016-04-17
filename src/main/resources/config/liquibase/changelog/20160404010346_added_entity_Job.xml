@@ -40,6 +40,7 @@
             <column name="reserved" type="bit"/>
             
             <column name="event_type_id" type="bigint"/>
+            <column name="work_leader_id" type="bigint"/>
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         
@@ -48,6 +49,12 @@
                                  constraintName="fk_job_eventtype_id"
                                  referencedColumnNames="id"
                                  referencedTableName="event_type"/>
+
+        <addForeignKeyConstraint baseColumnNames="work_leader_id"
+                                 baseTableName="job"
+                                 constraintName="fk_job_workleader_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="member"/>
 
     </changeSet>
 </databaseChangeLog>

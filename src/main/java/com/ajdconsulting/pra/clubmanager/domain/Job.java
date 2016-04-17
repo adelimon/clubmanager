@@ -46,6 +46,10 @@ public class Job implements Serializable {
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
 
+    @ManyToOne
+    @JoinColumn(name = "work_leader_id")
+    private Member workLeader;
+
     public Long getId() {
         return id;
     }
@@ -108,6 +112,14 @@ public class Job implements Serializable {
 
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
+    }
+
+    public Member getWorkLeader() {
+        return workLeader;
+    }
+
+    public void setWorkLeader(Member member) {
+        this.workLeader = member;
     }
 
     @Override

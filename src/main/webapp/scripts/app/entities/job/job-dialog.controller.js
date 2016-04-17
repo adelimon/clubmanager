@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('clubmanagerApp').controller('JobDialogController',
-    ['$scope', '$stateParams', '$uibModalInstance', 'entity', 'Job', 'EventType',
-        function($scope, $stateParams, $uibModalInstance, entity, Job, EventType) {
+    ['$scope', '$stateParams', '$uibModalInstance', 'entity', 'Job', 'EventType', 'Member',
+        function($scope, $stateParams, $uibModalInstance, entity, Job, EventType, Member) {
 
         $scope.job = entity;
         $scope.eventtypes = EventType.query();
+        $scope.members = Member.query();
         $scope.load = function(id) {
             Job.get({id : id}, function(result) {
                 $scope.job = result;

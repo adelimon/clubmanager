@@ -7,6 +7,14 @@
             "relationshipType": "many-to-one",
             "otherEntityField": "type",
             "ownerSide": true
+        },
+        {
+            "relationshipId": 2,
+            "relationshipName": "workLeader",
+            "otherEntityName": "member",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "name",
+            "ownerSide": true
         }
     ],
     "fields": [

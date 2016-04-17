@@ -66,6 +66,14 @@
                     <a class="form-control-static" ui-sref="eventType.detail({id:job.eventType.id})">{{job.eventType.type}}</a>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <span>workLeader</span>
+                </td>
+                <td>
+                    <a class="form-control-static" ui-sref="member.detail({id:job.workLeader.id})">{{job.workLeader.name}}</a>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>

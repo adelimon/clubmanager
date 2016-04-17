@@ -90,6 +90,12 @@
                 <option value=""></option>
             </select>
         </div>
+        <div class="form-group">
+            <label for="field_workLeader">workLeader</label>
+            <select class="form-control" id="field_workLeader" name="workLeader" ng-model="job.workLeader" ng-options="member as member.name for member in members track by member.id">
+                <option value=""></option>
+            </select>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
