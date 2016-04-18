@@ -128,7 +128,7 @@ public class MailService {
         String content = worker.getName() + " has signed up for job " + jobPlusDate + ".  " +
             worker.getName() + "'s phone number is " + worker.getPhone() + ".  Their email is " +
             worker.getEmail();
-
-        sendEmail("adelimon@yahoo.com", subject, content, false, false);
+        String workLeaderEmail = signup.getJob().getWorkLeader().getEmail();
+        sendEmail(workLeaderEmail, subject, content, false, false);
     }
 }
