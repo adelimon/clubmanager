@@ -33,6 +33,10 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="verified" type="bit">
+                <constraints nullable="false" />
+            </column>
+            
             <column name="member_id" type="bigint"/>
             <column name="event_type_id" type="bigint"/>
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->

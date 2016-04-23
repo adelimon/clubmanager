@@ -62,6 +62,7 @@ public class SignupResource {
         signupEarnedPoints.setMember(signup.getWorker());
         signupEarnedPoints.setEventType(signup.getScheduleDate().getEventType());
         signupEarnedPoints.setDescription(signup.getJob().getTitle());
+        signupEarnedPoints.setVerified(false);
         earnedPointsRepository.save(signupEarnedPoints);
         log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
 

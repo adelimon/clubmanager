@@ -33,6 +33,10 @@ public class EarnedPoints implements Serializable {
     @Column(name = "point_value", nullable = false)
     private Float pointValue;
     
+    @NotNull
+    @Column(name = "verified", nullable = false)
+    private Boolean verified;
+    
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -71,6 +75,14 @@ public class EarnedPoints implements Serializable {
     
     public void setPointValue(Float pointValue) {
         this.pointValue = pointValue;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+    
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 
     public Member getMember() {
@@ -116,6 +128,7 @@ public class EarnedPoints implements Serializable {
             ", date='" + date + "'" +
             ", description='" + description + "'" +
             ", pointValue='" + pointValue + "'" +
+            ", verified='" + verified + "'" +
             '}';
     }
 }

@@ -41,6 +41,14 @@
                 "min"
             ],
             "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldId": 4,
+            "fieldName": "verified",
+            "fieldType" : "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "changelogDate": "20160403033659",

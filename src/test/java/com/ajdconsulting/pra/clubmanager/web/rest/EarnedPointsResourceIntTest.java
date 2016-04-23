@@ -52,6 +52,9 @@ public class EarnedPointsResourceIntTest {
     private static final Float DEFAULT_POINT_VALUE = 0F;
     private static final Float UPDATED_POINT_VALUE = 1F;
 
+    private static final Boolean DEFAULT_VERIFIED = false;
+    private static final Boolean UPDATED_VERIFIED = true;
+
     @Inject
     private EarnedPointsRepository earnedPointsRepository;
 
@@ -81,6 +84,7 @@ public class EarnedPointsResourceIntTest {
         earnedPoints.setDate(DEFAULT_DATE);
         earnedPoints.setDescription(DEFAULT_DESCRIPTION);
         earnedPoints.setPointValue(DEFAULT_POINT_VALUE);
+        earnedPoints.setVerified(DEFAULT_VERIFIED);
     }
 
     @Test
@@ -102,6 +106,7 @@ public class EarnedPointsResourceIntTest {
         assertThat(testEarnedPoints.getDate()).isEqualTo(DEFAULT_DATE);
         assertThat(testEarnedPoints.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testEarnedPoints.getPointValue()).isEqualTo(DEFAULT_POINT_VALUE);
+        assertThat(testEarnedPoints.getVerified()).isEqualTo(DEFAULT_VERIFIED);
     }
 
     @Test
@@ -160,6 +165,24 @@ public class EarnedPointsResourceIntTest {
 
     @Test
     @Transactional
+    public void checkVerifiedIsRequired() throws Exception {
+        int databaseSizeBeforeTest = earnedPointsRepository.findAll().size();
+        // set the field null
+        earnedPoints.setVerified(null);
+
+        // Create the EarnedPoints, which fails.
+
+        restEarnedPointsMockMvc.perform(post("/api/earnedPointss")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(earnedPoints)))
+                .andExpect(status().isBadRequest());
+
+        List<EarnedPoints> earnedPointss = earnedPointsRepository.findAll();
+        assertThat(earnedPointss).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllEarnedPointss() throws Exception {
         // Initialize the database
         earnedPointsRepository.saveAndFlush(earnedPoints);
@@ -171,7 +194,8 @@ public class EarnedPointsResourceIntTest {
                 .andExpect(jsonPath("$.[*].id").value(hasItem(earnedPoints.getId().intValue())))
                 .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
                 .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-                .andExpect(jsonPath("$.[*].pointValue").value(hasItem(DEFAULT_POINT_VALUE.doubleValue())));
+                .andExpect(jsonPath("$.[*].pointValue").value(hasItem(DEFAULT_POINT_VALUE.doubleValue())))
+                .andExpect(jsonPath("$.[*].verified").value(hasItem(DEFAULT_VERIFIED.booleanValue())));
     }
 
     @Test
@@ -187,7 +211,8 @@ public class EarnedPointsResourceIntTest {
             .andExpect(jsonPath("$.id").value(earnedPoints.getId().intValue()))
             .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.pointValue").value(DEFAULT_POINT_VALUE.doubleValue()));
+            .andExpect(jsonPath("$.pointValue").value(DEFAULT_POINT_VALUE.doubleValue()))
+            .andExpect(jsonPath("$.verified").value(DEFAULT_VERIFIED.booleanValue()));
     }
 
     @Test
@@ -210,6 +235,7 @@ public class EarnedPointsResourceIntTest {
         earnedPoints.setDate(UPDATED_DATE);
         earnedPoints.setDescription(UPDATED_DESCRIPTION);
         earnedPoints.setPointValue(UPDATED_POINT_VALUE);
+        earnedPoints.setVerified(UPDATED_VERIFIED);
 
         restEarnedPointsMockMvc.perform(put("/api/earnedPointss")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -223,6 +249,7 @@ public class EarnedPointsResourceIntTest {
         assertThat(testEarnedPoints.getDate()).isEqualTo(UPDATED_DATE);
         assertThat(testEarnedPoints.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testEarnedPoints.getPointValue()).isEqualTo(UPDATED_POINT_VALUE);
+        assertThat(testEarnedPoints.getVerified()).isEqualTo(UPDATED_VERIFIED);
     }
 
     @Test

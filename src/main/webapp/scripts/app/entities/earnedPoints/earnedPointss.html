@@ -1,13 +1,13 @@
 <div>
-    <h2>Earned Points</h2>
+    <h2>EarnedPointss</h2>
     <jh-alert></jh-alert>
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
                 <button class="btn btn-primary" ui-sref="earnedPoints.new" >
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span
-                       >Add points earned
+                    <span 
+                       >Create new EarnedPoints
                     </span>
                 </button>
             </div>
@@ -22,6 +22,7 @@
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="verified"><span>Verified</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="member.name"><span>member</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
@@ -33,6 +34,7 @@
                         <td>{{earnedPoints.date | date:'mediumDate'}}</td>
                     <td>{{earnedPoints.description}}</td>
                     <td>{{earnedPoints.pointValue}}</td>
+                    <td>{{earnedPoints.verified}}</td>
                     <td>
                         <a ui-sref="member.detail({id:earnedPoints.member.id})">{{earnedPoints.member.name}}</a>
                     </td>
@@ -43,7 +45,7 @@
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
                                     ui-sref="earnedPoints.detail({id:earnedPoints.id})"
-                                    class="btn btn-info btn-sm">
+                                    class="btn btn-info btn-sm"> 
                                 <span class="glyphicon glyphicon-eye-open"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
@@ -55,7 +57,7 @@
                             </button>
                             <button type="submit"
                                     ui-sref="earnedPoints.delete({id:earnedPoints.id})"
-                                    class="btn btn-danger btn-sm">
+                                    class="btn btn-danger btn-sm">                                    
                                 <span class="glyphicon glyphicon-remove-circle"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>

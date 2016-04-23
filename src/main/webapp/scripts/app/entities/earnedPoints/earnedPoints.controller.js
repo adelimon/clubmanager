@@ -37,6 +37,7 @@ angular.module('clubmanagerApp')
                 date: null,
                 description: null,
                 pointValue: null,
+                verified: false,
                 id: null
             };
         };

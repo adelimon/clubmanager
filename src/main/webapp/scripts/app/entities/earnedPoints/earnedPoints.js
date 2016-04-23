@@ -42,7 +42,7 @@ angular.module('clubmanagerApp')
                 parent: 'earnedPoints',
                 url: '/new',
                 data: {
-                    authorities: ['ROLE_ADMIN'],
+                    authorities: ['ROLE_USER'],
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                     $uibModal.open({
@@ -55,6 +55,7 @@ angular.module('clubmanagerApp')
                                     date: null,
                                     description: null,
                                     pointValue: null,
+                                    verified: true,
                                     id: null
                                 };
                             }
@@ -70,7 +71,7 @@ angular.module('clubmanagerApp')
                 parent: 'earnedPoints',
                 url: '/{id}/edit',
                 data: {
-                    authorities: ['ROLE_ADMIN'],
+                    authorities: ['ROLE_USER'],
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                     $uibModal.open({
@@ -93,7 +94,7 @@ angular.module('clubmanagerApp')
                 parent: 'earnedPoints',
                 url: '/{id}/delete',
                 data: {
-                    authorities: ['ROLE_ADMIN'],
+                    authorities: ['ROLE_USER'],
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                     $uibModal.open({
