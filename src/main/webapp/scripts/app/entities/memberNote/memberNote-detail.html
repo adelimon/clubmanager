@@ -1,0 +1,46 @@
+
+<div>
+    <h2><span>MemberNote</span> {{memberNote.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span>member</span>
+                </td>
+                <td>
+                    <a class="form-control-static" ui-sref="member.detail({id:memberNote.member.id})">{{memberNote.member.name}}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Notes</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{memberNote.notes}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Date</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{memberNote.date | date:'mediumDate'}}</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            onclick="window.history.back()"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+</div>

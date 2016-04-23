@@ -1,0 +1,30 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "member",
+            "otherEntityName": "member",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "name"
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "notes",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "date",
+            "fieldType": "LocalDate"
+        }
+    ],
+    "changelogDate": "20160423160621",
+    "dto": "no",
+    "service": "no",
+    "pagination": "infinite-scroll"
+}
