@@ -43,6 +43,8 @@ angular.module('clubmanagerApp')
                 phone: null,
                 viewOnline: null,
                 email: null,
+                birthday: null,
+                dateJoined: null,
                 id: null
             };
         };

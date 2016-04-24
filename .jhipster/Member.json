@@ -74,6 +74,16 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldId": 10,
+            "fieldName": "birthday",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldId": 11,
+            "fieldName" : "dateJoined",
+            "fieldType": "LocalDate"
         }
     ],
     "changelogDate": "20160403032734",

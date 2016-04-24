@@ -33,4 +33,22 @@ angular.module('clubmanagerApp').controller('MemberDialogController',
         $scope.clear = function() {
             $uibModalInstance.dismiss('cancel');
         };
+        $scope.datePickerForBirthday = {};
+
+        $scope.datePickerForBirthday.status = {
+            opened: false
+        };
+
+        $scope.datePickerForBirthdayOpen = function($event) {
+            $scope.datePickerForBirthday.status.opened = true;
+        };
+        $scope.datePickerForDateJoined = {};
+
+        $scope.datePickerForDateJoined.status = {
+            opened: false
+        };
+
+        $scope.datePickerForDateJoinedOpen = function($event) {
+            $scope.datePickerForDateJoined.status.opened = true;
+        };
 }]);

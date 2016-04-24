@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,6 +63,12 @@ public class MemberResourceIntTest {
     private static final String DEFAULT_EMAIL = "AAAAA";
     private static final String UPDATED_EMAIL = "BBBBB";
 
+    private static final LocalDate DEFAULT_BIRTHDAY = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_BIRTHDAY = LocalDate.now(ZoneId.systemDefault());
+
+    private static final LocalDate DEFAULT_DATE_JOINED = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_DATE_JOINED = LocalDate.now(ZoneId.systemDefault());
+
     @Inject
     private MemberRepository memberRepository;
 
@@ -96,6 +104,8 @@ public class MemberResourceIntTest {
         member.setPhone(DEFAULT_PHONE);
         member.setViewOnline(DEFAULT_VIEW_ONLINE);
         member.setEmail(DEFAULT_EMAIL);
+        member.setBirthday(DEFAULT_BIRTHDAY);
+        member.setDateJoined(DEFAULT_DATE_JOINED);
     }
 
     @Test
@@ -123,6 +133,8 @@ public class MemberResourceIntTest {
         assertThat(testMember.getPhone()).isEqualTo(DEFAULT_PHONE);
         assertThat(testMember.getViewOnline()).isEqualTo(DEFAULT_VIEW_ONLINE);
         assertThat(testMember.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testMember.getBirthday()).isEqualTo(DEFAULT_BIRTHDAY);
+        assertThat(testMember.getDateJoined()).isEqualTo(DEFAULT_DATE_JOINED);
     }
 
     @Test
@@ -270,7 +282,9 @@ public class MemberResourceIntTest {
                 .andExpect(jsonPath("$.[*].occupation").value(hasItem(DEFAULT_OCCUPATION.toString())))
                 .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE.toString())))
                 .andExpect(jsonPath("$.[*].viewOnline").value(hasItem(DEFAULT_VIEW_ONLINE.booleanValue())))
-                .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
+                .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+                .andExpect(jsonPath("$.[*].birthday").value(hasItem(DEFAULT_BIRTHDAY.toString())))
+                .andExpect(jsonPath("$.[*].dateJoined").value(hasItem(DEFAULT_DATE_JOINED.toString())));
     }
 
     @Test
@@ -292,7 +306,9 @@ public class MemberResourceIntTest {
             .andExpect(jsonPath("$.occupation").value(DEFAULT_OCCUPATION.toString()))
             .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE.toString()))
             .andExpect(jsonPath("$.viewOnline").value(DEFAULT_VIEW_ONLINE.booleanValue()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()));
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
+            .andExpect(jsonPath("$.birthday").value(DEFAULT_BIRTHDAY.toString()))
+            .andExpect(jsonPath("$.dateJoined").value(DEFAULT_DATE_JOINED.toString()));
     }
 
     @Test
@@ -321,6 +337,8 @@ public class MemberResourceIntTest {
         member.setPhone(UPDATED_PHONE);
         member.setViewOnline(UPDATED_VIEW_ONLINE);
         member.setEmail(UPDATED_EMAIL);
+        member.setBirthday(UPDATED_BIRTHDAY);
+        member.setDateJoined(UPDATED_DATE_JOINED);
 
         restMemberMockMvc.perform(put("/api/members")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -340,6 +358,8 @@ public class MemberResourceIntTest {
         assertThat(testMember.getPhone()).isEqualTo(UPDATED_PHONE);
         assertThat(testMember.getViewOnline()).isEqualTo(UPDATED_VIEW_ONLINE);
         assertThat(testMember.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testMember.getBirthday()).isEqualTo(UPDATED_BIRTHDAY);
+        assertThat(testMember.getDateJoined()).isEqualTo(UPDATED_DATE_JOINED);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.domain;
 
+import java.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -52,6 +53,12 @@ public class Member implements Serializable {
     @NotNull
     @Column(name = "email", nullable = false)
     private String email;
+    
+    @Column(name = "birthday")
+    private LocalDate birthday;
+    
+    @Column(name = "date_joined")
+    private LocalDate dateJoined;
     
     public Long getId() {
         return id;
@@ -133,6 +140,22 @@ public class Member implements Serializable {
         this.email = email;
     }
 
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+    
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public LocalDate getDateJoined() {
+        return dateJoined;
+    }
+    
+    public void setDateJoined(LocalDate dateJoined) {
+        this.dateJoined = dateJoined;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -166,6 +189,8 @@ public class Member implements Serializable {
             ", phone='" + phone + "'" +
             ", viewOnline='" + viewOnline + "'" +
             ", email='" + email + "'" +
+            ", birthday='" + birthday + "'" +
+            ", dateJoined='" + dateJoined + "'" +
             '}';
     }
 }

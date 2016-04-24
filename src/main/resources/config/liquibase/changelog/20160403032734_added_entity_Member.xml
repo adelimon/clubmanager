@@ -53,6 +53,10 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="birthday" type="date"/>
+            
+            <column name="date_joined" type="date"/>
+            
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         

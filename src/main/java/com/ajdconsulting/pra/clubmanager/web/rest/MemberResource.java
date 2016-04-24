@@ -1,7 +1,5 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
-import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
-import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
@@ -32,10 +30,10 @@ import java.util.Optional;
 public class MemberResource {
 
     private final Logger log = LoggerFactory.getLogger(MemberResource.class);
-
+        
     @Inject
     private MemberRepository memberRepository;
-
+    
     /**
      * POST  /members -> Create a new member.
      */
@@ -82,15 +80,7 @@ public class MemberResource {
     public ResponseEntity<List<Member>> getAllMembers(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Members");
-        Page<Member> page = null;
-        // Admins can see all members.  Users can only see members that want to be viewed online because
-        // we have some members that are either paranoid, or don't want their information online because
-        // of their job and/or standing in the community.
-        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            page = memberRepository.findAll(pageable);
-        } else {
-            page = memberRepository.findByViewOnline(pageable, true);
-        }
+        Page<Member> page = memberRepository.findAll(pageable); 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

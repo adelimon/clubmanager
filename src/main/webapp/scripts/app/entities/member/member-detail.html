@@ -82,6 +82,22 @@
                     <span class="form-control-static">{{member.email}}</span>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <span>Birthday</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.birthday | date:'mediumDate'}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>DateJoined</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{member.dateJoined | date:'mediumDate'}}</span>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
