@@ -52,7 +52,8 @@ angular.module('clubmanagerApp')
                         resolve: {
                             entity: function () {
                                 return {
-                                    name: null,
+                                    firstName: null,
+                                    lastName: null,
                                     address: null,
                                     city: null,
                                     state: null,

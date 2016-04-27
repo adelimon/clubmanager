@@ -43,8 +43,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 public class MemberResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAA";
-    private static final String UPDATED_NAME = "BBBBB";
+    private static final String DEFAULT_FIRST_NAME = "AAAAA";
+    private static final String UPDATED_FIRST_NAME = "BBBBB";
+    private static final String DEFAULT_LAST_NAME = "AAAAA";
+    private static final String UPDATED_LAST_NAME = "BBBBB";
     private static final String DEFAULT_ADDRESS = "AAAAA";
     private static final String UPDATED_ADDRESS = "BBBBB";
     private static final String DEFAULT_CITY = "AAAAA";
@@ -55,8 +57,8 @@ public class MemberResourceIntTest {
     private static final String UPDATED_ZIP = "BBBBB";
     private static final String DEFAULT_OCCUPATION = "AAAAA";
     private static final String UPDATED_OCCUPATION = "BBBBB";
-    private static final String DEFAULT_PHONE = "AAAAAAAAAA";
-    private static final String UPDATED_PHONE = "BBBBBBBBBB";
+    private static final String DEFAULT_PHONE = "AAAAAAAAAAAA";
+    private static final String UPDATED_PHONE = "BBBBBBBBBBBB";
 
     private static final Boolean DEFAULT_VIEW_ONLINE = false;
     private static final Boolean UPDATED_VIEW_ONLINE = true;
@@ -95,7 +97,8 @@ public class MemberResourceIntTest {
     @Before
     public void initTest() {
         member = new Member();
-        member.setName(DEFAULT_NAME);
+        member.setFirstName(DEFAULT_FIRST_NAME);
+        member.setLastName(DEFAULT_LAST_NAME);
         member.setAddress(DEFAULT_ADDRESS);
         member.setCity(DEFAULT_CITY);
         member.setState(DEFAULT_STATE);
@@ -124,7 +127,8 @@ public class MemberResourceIntTest {
         List<Member> members = memberRepository.findAll();
         assertThat(members).hasSize(databaseSizeBeforeCreate + 1);
         Member testMember = members.get(members.size() - 1);
-        assertThat(testMember.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testMember.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
+        assertThat(testMember.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
         assertThat(testMember.getAddress()).isEqualTo(DEFAULT_ADDRESS);
         assertThat(testMember.getCity()).isEqualTo(DEFAULT_CITY);
         assertThat(testMember.getState()).isEqualTo(DEFAULT_STATE);
@@ -139,10 +143,28 @@ public class MemberResourceIntTest {
 
     @Test
     @Transactional
-    public void checkNameIsRequired() throws Exception {
+    public void checkFirstNameIsRequired() throws Exception {
         int databaseSizeBeforeTest = memberRepository.findAll().size();
         // set the field null
-        member.setName(null);
+        member.setFirstName(null);
+
+        // Create the Member, which fails.
+
+        restMemberMockMvc.perform(post("/api/members")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(member)))
+                .andExpect(status().isBadRequest());
+
+        List<Member> members = memberRepository.findAll();
+        assertThat(members).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkLastNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = memberRepository.findAll().size();
+        // set the field null
+        member.setLastName(null);
 
         // Create the Member, which fails.
 
@@ -274,7 +296,8 @@ public class MemberResourceIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(member.getId().intValue())))
-                .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+                .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
+                .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
                 .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS.toString())))
                 .andExpect(jsonPath("$.[*].city").value(hasItem(DEFAULT_CITY.toString())))
                 .andExpect(jsonPath("$.[*].state").value(hasItem(DEFAULT_STATE.toString())))
@@ -298,7 +321,8 @@ public class MemberResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(member.getId().intValue()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()))
+            .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
             .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
             .andExpect(jsonPath("$.city").value(DEFAULT_CITY.toString()))
             .andExpect(jsonPath("$.state").value(DEFAULT_STATE.toString()))
@@ -328,7 +352,8 @@ public class MemberResourceIntTest {
 		int databaseSizeBeforeUpdate = memberRepository.findAll().size();
 
         // Update the member
-        member.setName(UPDATED_NAME);
+        member.setFirstName(UPDATED_FIRST_NAME);
+        member.setLastName(UPDATED_LAST_NAME);
         member.setAddress(UPDATED_ADDRESS);
         member.setCity(UPDATED_CITY);
         member.setState(UPDATED_STATE);
@@ -349,7 +374,8 @@ public class MemberResourceIntTest {
         List<Member> members = memberRepository.findAll();
         assertThat(members).hasSize(databaseSizeBeforeUpdate);
         Member testMember = members.get(members.size() - 1);
-        assertThat(testMember.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testMember.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
+        assertThat(testMember.getLastName()).isEqualTo(UPDATED_LAST_NAME);
         assertThat(testMember.getAddress()).isEqualTo(UPDATED_ADDRESS);
         assertThat(testMember.getCity()).isEqualTo(UPDATED_CITY);
         assertThat(testMember.getState()).isEqualTo(UPDATED_STATE);

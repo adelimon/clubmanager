@@ -19,47 +19,51 @@ public class Member implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "name", nullable = false)
-    private String name;
-    
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @NotNull
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
     @NotNull
     @Column(name = "address", nullable = false)
     private String address;
-    
+
     @NotNull
     @Column(name = "city", nullable = false)
     private String city;
-    
+
     @NotNull
     @Column(name = "state", nullable = false)
     private String state;
-    
+
     @NotNull
     @Size(min = 5, max = 5)
     @Column(name = "zip", length = 5, nullable = false)
     private String zip;
-    
+
     @Column(name = "occupation")
     private String occupation;
-    
+
     @NotNull
-    @Size(min = 10, max = 10)
-    @Column(name = "phone", length = 10, nullable = false)
+    @Size(min = 12, max = 12)
+    @Column(name = "phone", length = 12, nullable = false)
     private String phone;
-    
+
     @Column(name = "view_online")
     private Boolean viewOnline;
-    
+
     @NotNull
     @Column(name = "email", nullable = false)
     private String email;
-    
+
     @Column(name = "birthday")
     private LocalDate birthday;
-    
+
     @Column(name = "date_joined")
     private LocalDate dateJoined;
-    
+
     public Long getId() {
         return id;
     }
@@ -68,18 +72,30 @@ public class Member implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getName() {
+        return firstName + " " + lastName;
     }
 
     public String getAddress() {
         return address;
     }
-    
+
     public void setAddress(String address) {
         this.address = address;
     }
@@ -87,7 +103,7 @@ public class Member implements Serializable {
     public String getCity() {
         return city;
     }
-    
+
     public void setCity(String city) {
         this.city = city;
     }
@@ -95,7 +111,7 @@ public class Member implements Serializable {
     public String getState() {
         return state;
     }
-    
+
     public void setState(String state) {
         this.state = state;
     }
@@ -103,7 +119,7 @@ public class Member implements Serializable {
     public String getZip() {
         return zip;
     }
-    
+
     public void setZip(String zip) {
         this.zip = zip;
     }
@@ -111,7 +127,7 @@ public class Member implements Serializable {
     public String getOccupation() {
         return occupation;
     }
-    
+
     public void setOccupation(String occupation) {
         this.occupation = occupation;
     }
@@ -119,7 +135,7 @@ public class Member implements Serializable {
     public String getPhone() {
         return phone;
     }
-    
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -127,7 +143,7 @@ public class Member implements Serializable {
     public Boolean getViewOnline() {
         return viewOnline;
     }
-    
+
     public void setViewOnline(Boolean viewOnline) {
         this.viewOnline = viewOnline;
     }
@@ -135,7 +151,7 @@ public class Member implements Serializable {
     public String getEmail() {
         return email;
     }
-    
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -143,7 +159,7 @@ public class Member implements Serializable {
     public LocalDate getBirthday() {
         return birthday;
     }
-    
+
     public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
@@ -151,7 +167,7 @@ public class Member implements Serializable {
     public LocalDate getDateJoined() {
         return dateJoined;
     }
-    
+
     public void setDateJoined(LocalDate dateJoined) {
         this.dateJoined = dateJoined;
     }
@@ -180,7 +196,8 @@ public class Member implements Serializable {
     public String toString() {
         return "Member{" +
             "id=" + id +
-            ", name='" + name + "'" +
+            ", firstName='" + firstName + "'" +
+            ", lastName='" + lastName + "'" +
             ", address='" + address + "'" +
             ", city='" + city + "'" +
             ", state='" + state + "'" +

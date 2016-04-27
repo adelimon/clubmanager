@@ -34,7 +34,8 @@ angular.module('clubmanagerApp')
 
         $scope.clear = function () {
             $scope.member = {
-                name: null,
+                firstName: null,
+                lastName: null,
                 address: null,
                 city: null,
                 state: null,

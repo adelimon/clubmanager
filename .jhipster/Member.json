@@ -3,7 +3,7 @@
     "fields": [
         {
             "fieldId": 1,
-            "fieldName": "name",
+            "fieldName": "firstName",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"
@@ -11,7 +11,7 @@
         },
         {
             "fieldId": 2,
-            "fieldName": "address",
+            "fieldName": "lastName",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"
@@ -19,7 +19,7 @@
         },
         {
             "fieldId": 3,
-            "fieldName": "city",
+            "fieldName": "address",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"
@@ -27,7 +27,7 @@
         },
         {
             "fieldId": 4,
-            "fieldName": "state",
+            "fieldName": "city",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"
@@ -35,6 +35,14 @@
         },
         {
             "fieldId": 5,
+            "fieldName": "state",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 6,
             "fieldName": "zip",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -46,12 +54,12 @@
             "fieldValidateRulesMaxlength": "5"
         },
         {
-            "fieldId": 6,
+            "fieldId": 7,
             "fieldName": "occupation",
             "fieldType": "String"
         },
         {
-            "fieldId": 7,
+            "fieldId": 8,
             "fieldName": "phone",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -59,16 +67,16 @@
                 "minlength",
                 "maxlength"
             ],
-            "fieldValidateRulesMinlength": "10",
-            "fieldValidateRulesMaxlength": "10"
+            "fieldValidateRulesMinlength": "12",
+            "fieldValidateRulesMaxlength": "12"
         },
         {
-            "fieldId": 8,
+            "fieldId": 9,
             "fieldName": "viewOnline",
             "fieldType": "Boolean"
         },
         {
-            "fieldId": 9,
+            "fieldId": 10,
             "fieldName": "email",
             "fieldType" : "String",
             "fieldValidateRules": [
@@ -76,12 +84,12 @@
             ]
         },
         {
-            "fieldId": 10,
+            "fieldId": 11,
             "fieldName": "birthday",
             "fieldType": "LocalDate"
         },
         {
-            "fieldId": 11,
+            "fieldId": 12,
             "fieldName" : "dateJoined",
             "fieldType": "LocalDate"
         }
