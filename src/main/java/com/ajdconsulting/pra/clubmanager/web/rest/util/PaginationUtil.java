@@ -22,21 +22,27 @@ public class PaginationUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", "" + page.getTotalElements());
         String link = "";
+        int pageSize = page.getSize();
+        // for members get everyone always. This is a dirty hack but I'm going replace it with auto complete anyway
+        if (baseUrl.contains("members")) {
+            pageSize = 200;
+        }
         if ((page.getNumber() + 1) < page.getTotalPages()) {
-            link = "<" + (new URI(baseUrl +"?page=" + (page.getNumber() + 1) + "&size=" + page.getSize())).toString() + ">; rel=\"next\",";
+            link = "<" + (new URI(baseUrl +"?page=" + (page.getNumber() + 1) + "&size=" + pageSize)).toString() + ">; rel=\"next\",";
         }
         // prev link
         if ((page.getNumber()) > 0) {
-            link += "<" + (new URI(baseUrl +"?page=" + (page.getNumber() - 1) + "&size=" + page.getSize())).toString() + ">; rel=\"prev\",";
+            link += "<" + (new URI(baseUrl +"?page=" + (page.getNumber() - 1) + "&size=" + pageSize)).toString() + ">; rel=\"prev\",";
         }
         // last and first link
         int lastPage = 0;
         if (page.getTotalPages() > 0) {
             lastPage = page.getTotalPages() - 1;
         }
-        link += "<" + (new URI(baseUrl +"?page=" + lastPage + "&size=" + page.getSize())).toString() + ">; rel=\"last\",";
-        link += "<" + (new URI(baseUrl +"?page=" + 0 + "&size=" + page.getSize())).toString() + ">; rel=\"first\"";
+        link += "<" + (new URI(baseUrl +"?page=" + lastPage + "&size=" + pageSize)).toString() + ">; rel=\"last\",";
+        link += "<" + (new URI(baseUrl +"?page=" + 0 + "&size=" + pageSize)).toString() + ">; rel=\"first\"";
         headers.add(HttpHeaders.LINK, link);
         return headers;
     }
+
 }

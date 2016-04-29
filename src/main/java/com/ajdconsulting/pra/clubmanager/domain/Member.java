@@ -89,7 +89,7 @@ public class Member implements Serializable {
     }
 
     public String getName() {
-        return firstName + " " + lastName;
+        return lastName + ", " + firstName;
     }
 
     public String getAddress() {
