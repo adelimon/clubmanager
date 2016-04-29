@@ -45,6 +45,7 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
             // get all jobs
             var allJobs = $scope.allJobs;
             var allSignups = $scope.allSignups;
+            $scope.jobs = [];
 
             // first load job types for the user selected date.  We do this by getting the event type and matching
             // it against the job type.
@@ -67,7 +68,7 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
 
             var jobIdsForDate = dateSignups.join("#");
             for (var index = 0; index < allJobs.length; index++) {
-                console.log("a job is " + JSON.stringify(allJobs[index]));
+                //console.log("a job is " + JSON.stringify(allJobs[index]));
                 var job = allJobs[index];
                 var isEventTypeJob = (eventTypeId === job.eventType.id);
                 var isTaken = (jobIdsForDate.indexOf(job.id) >= 0);

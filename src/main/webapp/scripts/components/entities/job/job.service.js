@@ -2,7 +2,7 @@
 
 angular.module('clubmanagerApp')
     .factory('Job', function ($resource, DateUtils) {
-        return $resource('api/jobs/:id', {}, {
+        return $resource('api/jobs/:id', {size: 125}, {
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',
