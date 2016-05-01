@@ -88,10 +88,26 @@ public class MemberResource {
             page = memberRepository.findAll(pageable);
         } else {
             page = memberRepository.findMembersOnline(pageable);
+            // clear the securable fields for users, since we don't want them to see
+            // birth dates, occupation, and date joined.
+            for (Member member : page.getContent()) {
+                clearPersonalInfoFields(member);
+            }
         }
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * Clear the personal info fields for a member.
+     * @param member The member to clear fields on.
+     */
+    private void clearPersonalInfoFields(Member member) {
+        member.setAddress("");
+        member.setBirthday(null);
+        member.setDateJoined(null);
+        member.setOccupation("");
     }
 
     /**
@@ -104,6 +120,9 @@ public class MemberResource {
     public ResponseEntity<Member> getMember(@PathVariable Long id) {
         log.debug("REST request to get Member : {}", id);
         Member member = memberRepository.findOne(id);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            clearPersonalInfoFields(member);
+        }
         return Optional.ofNullable(member)
             .map(result -> new ResponseEntity<>(
                 result,

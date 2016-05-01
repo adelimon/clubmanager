@@ -14,6 +14,7 @@
         </div>
     </div>
     <br/>
+    Note, some fields are only visible to administrators.  Values that are blank are not errors.
     <div class="table-responsive">
         <table class="jh-table table table-striped">
             <thead>
@@ -29,7 +30,7 @@
                     <th jh-sort-by="phone"><span>Phone</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="email"><span>Email</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <!--<th jh-sort-by="birthday"><span>Birthday</span> <span class="glyphicon glyphicon-sort"></span></th>-->
-                    <th jh-sort-by="dateJoined"><span>DateJoined</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <!--<th jh-sort-by="dateJoined"><span>DateJoined</span> <span class="glyphicon glyphicon-sort"></span></th>-->
                     <th></th>
                 </tr>
             </thead>
@@ -46,7 +47,7 @@
                     <td>{{member.phone}}</td>
                     <td>{{member.email}}</td>
                         <!--<td>{{member.birthday | date:'mediumDate'}}</td>-->
-                        <td>{{member.dateJoined | date:'mediumDate'}}</td>
+                        <!--<td>{{member.dateJoined | date:'mediumDate'}}</td>-->
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
