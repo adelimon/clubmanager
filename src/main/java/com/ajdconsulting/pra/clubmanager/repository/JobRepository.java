@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface JobRepository extends JpaRepository<Job,Long> {
 
-    @Query("select j from Job j where reserved is null")
+    @Query("select j from Job j where reserved = false")
     public Page<Job> findAvailableJobs(Pageable pageable);
 }

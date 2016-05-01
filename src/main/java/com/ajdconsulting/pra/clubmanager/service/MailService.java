@@ -132,5 +132,11 @@ public class MailService {
         sendEmail(workLeaderEmail, subject, content, false, false);
         sendEmail("hogbacksecretary@gmail.com", subject, content, false, false);
         sendEmail("adelimon@gmail.com", subject, content, false, false);
+
+        String workLeaderName = signup.getJob().getWorkLeader().getName();
+        String memberContext = "Thanks " + signup.getWorker().getFirstName() + "!  You've signed up for " + jobPlusDate +
+            ".  The work leader for this job is " + workLeaderName + ".  Please contact " + workLeaderName + " at " +
+            signup.getJob().getWorkLeader().getPhone() + " or " + workLeaderEmail + " for questions or further instructions.";
+        sendEmail(worker.getEmail(), subject, memberContext, false, false);
     }
 }
