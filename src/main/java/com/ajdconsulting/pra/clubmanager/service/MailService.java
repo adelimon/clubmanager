@@ -130,5 +130,7 @@ public class MailService {
             worker.getEmail();
         String workLeaderEmail = signup.getJob().getWorkLeader().getEmail();
         sendEmail(workLeaderEmail, subject, content, false, false);
+        sendEmail("hogbacksecretary@gmail.com", subject, content, false, false);
+        sendEmail("adelimon@gmail.com", subject, content, false, false);
     }
 }
