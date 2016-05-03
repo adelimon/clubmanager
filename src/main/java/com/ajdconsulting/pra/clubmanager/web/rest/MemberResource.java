@@ -85,7 +85,7 @@ public class MemberResource {
         Page<Member> page = null;
         boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
         if (isAdmin) {
-            page = memberRepository.findAll(pageable);
+            page = memberRepository.findAllMembersOrderByLastName(pageable);
         } else {
             page = memberRepository.findMembersOnline(pageable);
             // clear the securable fields for users, since we don't want them to see

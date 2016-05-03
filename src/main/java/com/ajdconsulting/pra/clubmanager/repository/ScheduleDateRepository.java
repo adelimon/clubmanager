@@ -2,6 +2,8 @@ package com.ajdconsulting.pra.clubmanager.repository;
 
 import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
@@ -11,4 +13,6 @@ import java.util.List;
  */
 public interface ScheduleDateRepository extends JpaRepository<ScheduleDate,Long> {
 
+    @Query("select s from ScheduleDate s order by date")
+    public Page<ScheduleDate> findAllOrdered(Pageable pageable);
 }

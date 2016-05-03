@@ -12,6 +12,9 @@ import java.util.List;
  * Spring Data JPA repository for the Member entity.
  */
 public interface MemberRepository extends JpaRepository<Member,Long> {
-    @Query("select m from Member m where viewOnline = true")
+    @Query("select m from Member m where viewOnline = true order by lastName")
     public Page<Member> findMembersOnline(Pageable pageable);
+
+    @Query("select m from Member m order by lastName")
+    public Page<Member> findAllMembersOrderByLastName(Pageable pageable);
 }

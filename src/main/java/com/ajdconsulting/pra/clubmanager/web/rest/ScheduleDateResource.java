@@ -80,7 +80,7 @@ public class ScheduleDateResource {
     public ResponseEntity<List<ScheduleDate>> getAllScheduleDates(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of ScheduleDates");
-        Page<ScheduleDate> page = scheduleDateRepository.findAll(pageable); 
+        Page<ScheduleDate> page = scheduleDateRepository.findAllOrdered(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/scheduleDates");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
