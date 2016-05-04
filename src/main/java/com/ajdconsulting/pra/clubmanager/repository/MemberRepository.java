@@ -17,4 +17,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     @Query("select m from Member m order by lastName")
     public Page<Member> findAllMembersOrderByLastName(Pageable pageable);
+
+    public Page<Member> findByEmail(String email, Pageable pageable);
 }

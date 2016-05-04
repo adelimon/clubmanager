@@ -113,6 +113,26 @@ public class MemberResource {
     /**
      * GET  /members/:id -> get the "id" member.
      */
+    @RequestMapping(value = "/members/visible",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Member>> getVisibleMembers(Pageable pageable) throws URISyntaxException {
+        Page<Member> page = null;
+        if (SecurityUtils.isCurrentUserAdmin()) {
+            page = memberRepository.findAllMembersOrderByLastName(pageable);
+        } else {
+            // get the current user's member based on their email address
+            String userEmail = SecurityUtils.getCurrentUser().getUsername();
+            page = memberRepository.findByEmail(userEmail, pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /members/:id -> get the "id" member.
+     */
     @RequestMapping(value = "/members/{id}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)

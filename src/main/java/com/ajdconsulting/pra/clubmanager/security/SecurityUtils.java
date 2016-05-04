@@ -87,4 +87,8 @@ public final class SecurityUtils {
         }
         return false;
     }
+
+    public static boolean isCurrentUserAdmin() {
+        return SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
+    }
 }
