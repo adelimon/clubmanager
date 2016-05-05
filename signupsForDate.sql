@@ -1,11 +1,10 @@
 select
-"" worker, j.title, j.point_value, j.cash_value, j.job_day, sd.date, concat(wl.first_name, ' ', wl.last_name) leader
+j.id, j.title, j.point_value, j.cash_value, j.job_day, j.sort_order, j.reserved, j.work_leader_id, sd.date, et.type
 from
 job j, 
-schedule_date sd,
-member wl
+schedule_date sd, 
+event_type et 
 where 
-sd.date = '2016-05-22' and
-j.event_type_id = sd.event_type_id and 
-wl.id = j.work_leader_id
-order by sd.date, j.title
+j.event_type_id = sd.event_type_id and
+et.id = j.event_type_id
+order by date, type, j.title
