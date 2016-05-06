@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.data.export.excel.GenericExcelSheet;
 import com.mysql.jdbc.Driver;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,44 +51,16 @@ public class ExcelExportController {
             "order by sd.date, j.title"
         );
         Workbook workbook = new XSSFWorkbook();
-        Sheet signupSheet = workbook.createSheet("Signups");
-        signupSheet.setDefaultRowHeightInPoints((short) 40);
-        signupSheet.setMargin(Sheet.LeftMargin, 0.25);
-        signupSheet.setMargin(Sheet.RightMargin, 0.25);
-        signupSheet.setMargin(Sheet.TopMargin, 0.25);
-        signupSheet.setMargin(Sheet.BottomMargin, 0.25);
-        int record = 0;
+        GenericExcelSheet signupSheet = new GenericExcelSheet(workbook, "Signups");
         for (Map<String, Object> row : maps) {
-            Row excelRow = signupSheet.createRow(record++);
-            int columnIndex = 0;
+            Row excelRow = signupSheet.createRow();
             for (String key : row.keySet()) {
                 boolean reserved = Boolean.parseBoolean(row.getOrDefault("reserved", "false").toString());
                 String value = "";
                 if (row.get(key) != null) {
                     value = row.get(key).toString();
                 }
-                Cell cell = excelRow.createCell(columnIndex);
-                cell.setCellValue(value);
-
-                CellStyle style = workbook.createCellStyle();
-                if (reserved) {
-                    Font font = workbook.createFont();
-                    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-                    style.setFont(font);
-                }
-                IndexedColors fillColor = IndexedColors.WHITE;
-                if ((record % 2) == 0) {
-                    fillColor = IndexedColors.GREY_25_PERCENT;
-                }
-                style.setFillForegroundColor(fillColor.getIndex());
-           	    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-                style.setBorderTop(CellStyle.BORDER_THIN);
-                style.setBorderBottom(CellStyle.BORDER_THIN);
-                style.setBorderLeft(CellStyle.BORDER_THIN);
-                style.setBorderRight(CellStyle.BORDER_THIN);
-                cell.setCellStyle(style);
-                signupSheet.autoSizeColumn(columnIndex);
-                columnIndex++;
+                signupSheet.createCell(excelRow, value, reserved);
             }
         }
         writeExcelToResponse(response, workbook);
