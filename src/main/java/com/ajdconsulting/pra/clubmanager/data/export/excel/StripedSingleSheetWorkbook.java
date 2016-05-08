@@ -7,16 +7,33 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class GenericExcelSheet {
+import java.io.IOException;
+import java.io.OutputStream;
+
+/**
+ * Wrapper for the POI interactions with excel.  This allows us an easier usage of that lib since we abstract all
+ * the builder pattern and complexity in this class.
+ *
+ * @author adelimon
+ *
+ */
+public class StripedSingleSheetWorkbook {
 
     private Workbook workbook;
     private Sheet signupSheet;
     private int rowIndex;
     private int columnIndex;
+    private String name;
 
-    public GenericExcelSheet(Workbook workbook, String name) {
-        this.workbook = workbook;
+    /**
+     *
+     * @param name
+     */
+    public StripedSingleSheetWorkbook(String name) {
+        this.workbook = new XSSFWorkbook();
+        this.name = name;
         this.signupSheet = workbook.createSheet(name);
         signupSheet.setDefaultRowHeightInPoints((short) 40);
         signupSheet.setMargin(Sheet.LeftMargin, 0.25);
@@ -48,6 +65,10 @@ public class GenericExcelSheet {
         applyCellStyles(useBoldFont, cell);
     }
 
+    public void write(OutputStream out) throws IOException {
+        this.workbook.write(out);
+    }
+
     private void applyCellStyles(boolean useBoldFont, Cell cell) {
         IndexedColors fillColor = IndexedColors.WHITE;
         if ((rowIndex % 2) == 0) {
@@ -66,5 +87,20 @@ public class GenericExcelSheet {
             style.setFont(font);
         }
         cell.setCellStyle(style);
+    }
+
+    /**
+     * Add a row of columns at the top of the sheet.
+     * @param headerColumns names for the headers.
+     */
+    public void addHeader(String[] headerColumns) {
+        Row row = this.createRow();
+        for (int index = 0; index < headerColumns.length; index++) {
+            // TODO: this probably needs to be more flexible and allow you to pass in the cell style too.
+            // I just don't feel like doing it at 10:30 on a Saturday night,
+            // wehn I will probably have to get up with kids in like 7 hours.
+            this.createCell(row, headerColumns[index], true);
+        }
+
     }
 }

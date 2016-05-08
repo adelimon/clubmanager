@@ -1,17 +1,17 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
-import com.ajdconsulting.pra.clubmanager.data.export.excel.GenericExcelSheet;
+import com.ajdconsulting.pra.clubmanager.config.JHipsterProperties;
+import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.mysql.jdbc.Driver;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.poi.ss.usermodel.Font;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -23,7 +23,7 @@ public class ExcelExportController {
     private static final String DEFAULT_FILE_NAME = "signups.xlsx";
 
     @RequestMapping("/exportSignups")
-    public void getExcel(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+    public void exportSignups(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 
         // 1. Fetch your data
         // 2. Create your excel
@@ -31,7 +31,9 @@ public class ExcelExportController {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new Driver());
         dataSource.setUrl("jdbc:mysql://localhost/clubmanager");
+        // HEY CHECK OUT THE RED HERRING EVERYONE!
         dataSource.setUsername("root");
+        // dataSource.setPassword("LOL NOT IN A GITHUB CHECK IN WHAT AM I A DAMN FOOL???");
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         // hacky way of escaping this input against potential mucking around and attempts at Sea Quill
@@ -50,23 +52,30 @@ public class ExcelExportController {
             "where sd.date <= " + raceWeek +
             "order by sd.date, j.title"
         );
-        Workbook workbook = new XSSFWorkbook();
-        GenericExcelSheet signupSheet = new GenericExcelSheet(workbook, "Signups");
+        StripedSingleSheetWorkbook signupSheet = new StripedSingleSheetWorkbook("Signups");
+        String[] headerColumns = {"Name", "Job", "Point Value", "Cash Value", "Job Day", "Work Leader", "Job Date"};
+        signupSheet.addHeader(headerColumns);
+
         for (Map<String, Object> row : maps) {
             Row excelRow = signupSheet.createRow();
+            // check if the job is reserved, this is used later to bold the row if that is in fact true
+            boolean reserved = Boolean.parseBoolean(row.getOrDefault("reserved", "false").toString());
             for (String key : row.keySet()) {
-                boolean reserved = Boolean.parseBoolean(row.getOrDefault("reserved", "false").toString());
-                String value = "";
-                if (row.get(key) != null) {
-                    value = row.get(key).toString();
+                // since we are using reserved to bold the row we can ignore it when it comes up as an
+                // attribute
+                if (!"reserved".equals(key)) {
+                    String value = "";
+                    if (row.get(key) != null) {
+                        value = row.get(key).toString();
+                    }
+                    signupSheet.createCell(excelRow, value, reserved);
                 }
-                signupSheet.createCell(excelRow, value, reserved);
             }
         }
-        writeExcelToResponse(response, workbook);
+        writeExcelToResponse(response, signupSheet);
     }
 
-    private void writeExcelToResponse(HttpServletResponse response, Workbook workbook) throws IOException {
+    private void writeExcelToResponse(HttpServletResponse response, StripedSingleSheetWorkbook workbook) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.addHeader("content-disposition", "filename=" + DEFAULT_FILE_NAME);
         workbook.write(response.getOutputStream());

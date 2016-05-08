@@ -6,7 +6,7 @@
             <div class="col-xs-4 no-padding-left">
                 <button class="btn btn-primary" ui-sref="scheduleDate.new" >
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span 
+                    <span
                        >Create new ScheduleDate
                     </span>
                 </button>
@@ -21,6 +21,7 @@
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th><span>View Signups</span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -31,11 +32,14 @@
                     <td>
                         <a ui-sref="eventType.detail({id:scheduleDate.eventType.id})">{{scheduleDate.eventType.type}}</a>
                     </td>
+                    <td>
+                        <a href="/exportSignups?raceWeek=2016-05-22">download signups</a>
+                    </td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
                                     ui-sref="scheduleDate.detail({id:scheduleDate.id})"
-                                    class="btn btn-info btn-sm"> 
+                                    class="btn btn-info btn-sm">
                                 <span class="glyphicon glyphicon-eye-open"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
@@ -47,7 +51,7 @@
                             </button>
                             <button type="submit"
                                     ui-sref="scheduleDate.delete({id:scheduleDate.id})"
-                                    class="btn btn-danger btn-sm">                                    
+                                    class="btn btn-danger btn-sm">
                                 <span class="glyphicon glyphicon-remove-circle"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
