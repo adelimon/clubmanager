@@ -58,26 +58,6 @@
                      />
         </div>
         <div class="form-group">
-            <label class="control-label" for="field_sortOrder">SortOrder</label>
-            <input type="number" class="form-control" name="sortOrder" id="field_sortOrder"
-                    ng-model="job.sortOrder"
-                    required min="0" />
-            <div ng-show="editForm.sortOrder.$invalid">
-                <p class="help-block"
-                    ng-show="editForm.sortOrder.$error.required">
-                    This field is required.
-                </p>
-                <p class="help-block"
-                    ng-show="editForm.sortOrder.$error.min" translate-value-min="0">
-                    This field should be more than 0.
-                </p>
-                <p class="help-block"
-                    ng-show="editForm.sortOrder.$error.number">
-                    This field should be a number.
-                </p>
-            </div>
-        </div>
-        <div class="form-group">
             <label class="control-label" for="field_reserved">Reserved</label>
             <input type="checkbox" class="form-control" name="reserved" id="field_reserved"
                     ng-model="job.reserved"

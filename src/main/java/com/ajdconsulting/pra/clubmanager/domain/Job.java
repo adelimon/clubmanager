@@ -33,12 +33,7 @@ public class Job implements Serializable {
     
     @Column(name = "job_day")
     private String jobDay;
-    
-    @NotNull
-    @Min(value = 0)
-    @Column(name = "sort_order", nullable = false)
-    private Integer sortOrder;
-    
+
     @Column(name = "reserved")
     private Boolean reserved;
     
@@ -88,14 +83,6 @@ public class Job implements Serializable {
     
     public void setJobDay(String jobDay) {
         this.jobDay = jobDay;
-    }
-
-    public Integer getSortOrder() {
-        return sortOrder;
-    }
-    
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
     }
 
     public Boolean getReserved() {
@@ -150,7 +137,6 @@ public class Job implements Serializable {
             ", pointValue='" + pointValue + "'" +
             ", cashValue='" + cashValue + "'" +
             ", jobDay='" + jobDay + "'" +
-            ", sortOrder='" + sortOrder + "'" +
             ", reserved='" + reserved + "'" +
             '}';
     }

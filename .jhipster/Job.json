@@ -47,16 +47,6 @@
             "fieldType": "String"
         },
         {
-            "fieldId": 5,
-            "fieldName": "sortOrder",
-            "fieldType": "Integer",
-            "fieldValidateRules": [
-                "required",
-                "min"
-            ],
-            "fieldValidateRulesMin": 0
-        },
-        {
             "fieldId": 6,
             "fieldName": "reserved",
             "fieldType": "Boolean"
