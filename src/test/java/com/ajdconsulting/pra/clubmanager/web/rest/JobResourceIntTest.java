@@ -88,7 +88,6 @@ public class JobResourceIntTest {
         job.setPointValue(DEFAULT_POINT_VALUE);
         job.setCashValue(DEFAULT_CASH_VALUE);
         job.setJobDay(DEFAULT_JOB_DAY);
-        job.setSortOrder(DEFAULT_SORT_ORDER);
         job.setReserved(DEFAULT_RESERVED);
     }
 
@@ -112,7 +111,6 @@ public class JobResourceIntTest {
         assertThat(testJob.getPointValue()).isEqualTo(DEFAULT_POINT_VALUE);
         assertThat(testJob.getCashValue()).isEqualTo(DEFAULT_CASH_VALUE);
         assertThat(testJob.getJobDay()).isEqualTo(DEFAULT_JOB_DAY);
-        assertThat(testJob.getSortOrder()).isEqualTo(DEFAULT_SORT_ORDER);
         assertThat(testJob.getReserved()).isEqualTo(DEFAULT_RESERVED);
     }
 
@@ -157,7 +155,6 @@ public class JobResourceIntTest {
     public void checkSortOrderIsRequired() throws Exception {
         int databaseSizeBeforeTest = jobRepository.findAll().size();
         // set the field null
-        job.setSortOrder(null);
 
         // Create the Job, which fails.
 
@@ -229,7 +226,6 @@ public class JobResourceIntTest {
         job.setPointValue(UPDATED_POINT_VALUE);
         job.setCashValue(UPDATED_CASH_VALUE);
         job.setJobDay(UPDATED_JOB_DAY);
-        job.setSortOrder(UPDATED_SORT_ORDER);
         job.setReserved(UPDATED_RESERVED);
 
         restJobMockMvc.perform(put("/api/jobs")
@@ -245,7 +241,6 @@ public class JobResourceIntTest {
         assertThat(testJob.getPointValue()).isEqualTo(UPDATED_POINT_VALUE);
         assertThat(testJob.getCashValue()).isEqualTo(UPDATED_CASH_VALUE);
         assertThat(testJob.getJobDay()).isEqualTo(UPDATED_JOB_DAY);
-        assertThat(testJob.getSortOrder()).isEqualTo(UPDATED_SORT_ORDER);
         assertThat(testJob.getReserved()).isEqualTo(UPDATED_RESERVED);
     }
 
