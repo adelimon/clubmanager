@@ -1,0 +1,46 @@
+
+<div>
+    <h2><span>MemberStatus</span> {{memberStatus.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span>Year</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{memberStatus.year}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>member</span>
+                </td>
+                <td>
+                    <a class="form-control-static" ui-sref="member.detail({id:memberStatus.member.id})">{{memberStatus.member.name}}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>memberTypes</span>
+                </td>
+                <td>
+                    <a class="form-control-static" ui-sref="memberTypes.detail({id:memberStatus.memberTypes.id})">{{memberStatus.memberTypes.type}}</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            onclick="window.history.back()"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+</div>

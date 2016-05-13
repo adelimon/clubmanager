@@ -1,0 +1,34 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "member",
+            "otherEntityName": "member",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipId": 2,
+            "relationshipName": "memberTypes",
+            "otherEntityName": "memberTypes",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "type"
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "year",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": "1961"
+        }
+    ],
+    "changelogDate": "20160513020936",
+    "dto": "no",
+    "service": "no",
+    "pagination": "infinite-scroll"
+}
