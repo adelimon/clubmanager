@@ -55,7 +55,10 @@ public class ExcelExportController {
         for (Map<String, Object> row : maps) {
             Row excelRow = signupSheet.createRow();
             // check if the job is reserved, this is used later to bold the row if that is in fact true
-            boolean reserved = Boolean.parseBoolean(row.getOrDefault("reserved", "false").toString());
+            boolean reserved = false;
+            if (row.get("reserved") != null) {
+                reserved = Boolean.parseBoolean(row.get("reserved").toString());
+            }
             for (String key : row.keySet()) {
                 // since we are using reserved to bold the row we can ignore it when it comes up as an
                 // attribute
