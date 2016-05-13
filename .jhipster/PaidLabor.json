@@ -11,7 +11,15 @@
     "fields": [
         {
             "fieldId": 1,
-            "fieldName": "name",
+            "fieldName": "lastName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "firstName",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"

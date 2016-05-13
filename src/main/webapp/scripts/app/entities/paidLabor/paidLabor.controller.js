@@ -34,7 +34,8 @@ angular.module('clubmanagerApp')
 
         $scope.clear = function () {
             $scope.paidLabor = {
-                name: null,
+                lastName: null,
+                firstName: null,
                 id: null
             };
         };

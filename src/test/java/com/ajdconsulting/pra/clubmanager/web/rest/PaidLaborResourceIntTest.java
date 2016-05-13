@@ -41,8 +41,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 public class PaidLaborResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAA";
-    private static final String UPDATED_NAME = "BBBBB";
+    private static final String DEFAULT_LAST_NAME = "AAAAA";
+    private static final String UPDATED_LAST_NAME = "BBBBB";
+    private static final String DEFAULT_FIRST_NAME = "AAAAA";
+    private static final String UPDATED_FIRST_NAME = "BBBBB";
 
     @Inject
     private PaidLaborRepository paidLaborRepository;
@@ -70,7 +72,8 @@ public class PaidLaborResourceIntTest {
     @Before
     public void initTest() {
         paidLabor = new PaidLabor();
-        paidLabor.setName(DEFAULT_NAME);
+        paidLabor.setLastName(DEFAULT_LAST_NAME);
+        paidLabor.setFirstName(DEFAULT_FIRST_NAME);
     }
 
     @Test
@@ -89,15 +92,34 @@ public class PaidLaborResourceIntTest {
         List<PaidLabor> paidLabors = paidLaborRepository.findAll();
         assertThat(paidLabors).hasSize(databaseSizeBeforeCreate + 1);
         PaidLabor testPaidLabor = paidLabors.get(paidLabors.size() - 1);
-        assertThat(testPaidLabor.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testPaidLabor.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
+        assertThat(testPaidLabor.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
     }
 
     @Test
     @Transactional
-    public void checkNameIsRequired() throws Exception {
+    public void checkLastNameIsRequired() throws Exception {
         int databaseSizeBeforeTest = paidLaborRepository.findAll().size();
         // set the field null
-        paidLabor.setName(null);
+        paidLabor.setLastName(null);
+
+        // Create the PaidLabor, which fails.
+
+        restPaidLaborMockMvc.perform(post("/api/paidLabors")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(paidLabor)))
+                .andExpect(status().isBadRequest());
+
+        List<PaidLabor> paidLabors = paidLaborRepository.findAll();
+        assertThat(paidLabors).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkFirstNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = paidLaborRepository.findAll().size();
+        // set the field null
+        paidLabor.setFirstName(null);
 
         // Create the PaidLabor, which fails.
 
@@ -121,7 +143,8 @@ public class PaidLaborResourceIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(paidLabor.getId().intValue())))
-                .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+                .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
+                .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())));
     }
 
     @Test
@@ -135,7 +158,8 @@ public class PaidLaborResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(paidLabor.getId().intValue()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
+            .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
+            .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()));
     }
 
     @Test
@@ -155,7 +179,8 @@ public class PaidLaborResourceIntTest {
 		int databaseSizeBeforeUpdate = paidLaborRepository.findAll().size();
 
         // Update the paidLabor
-        paidLabor.setName(UPDATED_NAME);
+        paidLabor.setLastName(UPDATED_LAST_NAME);
+        paidLabor.setFirstName(UPDATED_FIRST_NAME);
 
         restPaidLaborMockMvc.perform(put("/api/paidLabors")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -166,7 +191,8 @@ public class PaidLaborResourceIntTest {
         List<PaidLabor> paidLabors = paidLaborRepository.findAll();
         assertThat(paidLabors).hasSize(databaseSizeBeforeUpdate);
         PaidLabor testPaidLabor = paidLabors.get(paidLabors.size() - 1);
-        assertThat(testPaidLabor.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testPaidLabor.getLastName()).isEqualTo(UPDATED_LAST_NAME);
+        assertThat(testPaidLabor.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
     }
 
     @Test

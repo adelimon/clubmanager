@@ -14,13 +14,25 @@
                     ng-model="paidLabor.id" readonly />
         </div>
         <div class="form-group">
-            <label class="control-label" for="field_name">Name</label>
-            <input type="text" class="form-control" name="name" id="field_name"
-                    ng-model="paidLabor.name"
+            <label class="control-label" for="field_lastName">LastName</label>
+            <input type="text" class="form-control" name="lastName" id="field_lastName"
+                    ng-model="paidLabor.lastName"
                     required />
-            <div ng-show="editForm.name.$invalid">
+            <div ng-show="editForm.lastName.$invalid">
                 <p class="help-block"
-                    ng-show="editForm.name.$error.required">
+                    ng-show="editForm.lastName.$error.required">
+                    This field is required.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_firstName">FirstName</label>
+            <input type="text" class="form-control" name="firstName" id="field_firstName"
+                    ng-model="paidLabor.firstName"
+                    required />
+            <div ng-show="editForm.firstName.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.firstName.$error.required">
                     This field is required.
                 </p>
             </div>

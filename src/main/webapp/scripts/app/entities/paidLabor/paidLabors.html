@@ -19,7 +19,8 @@
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="name"><span>Name</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="lastName"><span>LastName</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="firstName"><span>FirstName</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="memberLinkedTo.name"><span>memberLinkedTo</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
                 </tr>
@@ -27,7 +28,8 @@
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
                 <tr ng-repeat="paidLabor in paidLabors track by paidLabor.id">
                     <td><a ui-sref="paidLabor.detail({id:paidLabor.id})">{{paidLabor.id}}</a></td>
-                    <td>{{paidLabor.name}}</td>
+                    <td>{{paidLabor.lastName}}</td>
+                    <td>{{paidLabor.firstName}}</td>
                     <td>
                         <a ui-sref="member.detail({id:paidLabor.memberLinkedTo.id})">{{paidLabor.memberLinkedTo.name}}</a>
                     </td>

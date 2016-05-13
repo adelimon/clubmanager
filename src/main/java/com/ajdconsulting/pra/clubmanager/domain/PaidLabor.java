@@ -20,8 +20,12 @@ public class PaidLabor implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+    
+    @NotNull
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
     
     @ManyToOne
     @JoinColumn(name = "member_linked_to_id")
@@ -35,12 +39,20 @@ public class PaidLabor implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getLastName() {
+        return lastName;
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public Member getMemberLinkedTo() {
@@ -75,7 +87,8 @@ public class PaidLabor implements Serializable {
     public String toString() {
         return "PaidLabor{" +
             "id=" + id +
-            ", name='" + name + "'" +
+            ", lastName='" + lastName + "'" +
+            ", firstName='" + firstName + "'" +
             '}';
     }
 }
