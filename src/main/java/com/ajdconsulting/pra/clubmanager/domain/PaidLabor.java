@@ -22,11 +22,11 @@ public class PaidLabor implements Serializable {
     @NotNull
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    
+
     @NotNull
     @Column(name = "first_name", nullable = false)
     private String firstName;
-    
+
     @ManyToOne
     @JoinColumn(name = "member_linked_to_id")
     private Member memberLinkedTo;
@@ -42,7 +42,7 @@ public class PaidLabor implements Serializable {
     public String getLastName() {
         return lastName;
     }
-    
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -50,11 +50,14 @@ public class PaidLabor implements Serializable {
     public String getFirstName() {
         return firstName;
     }
-    
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    public String getName() {
+        return lastName + ", " + firstName;
+    }
     public Member getMemberLinkedTo() {
         return memberLinkedTo;
     }
