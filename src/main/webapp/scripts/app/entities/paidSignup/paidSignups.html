@@ -1,0 +1,66 @@
+<div>
+    <h2>PaidSignups</h2>
+    <jh-alert></jh-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 no-padding-left">
+                <button class="btn btn-primary" ui-sref="paidSignup.new" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span 
+                       >Create new PaidSignup
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+                <tr jh-sort="predicate" ascending="reverse" callback="reset()">
+                    <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="paidLabor.name"><span>paidLabor</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="scheduleDate.date"><span>scheduleDate</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="job.title"><span>job</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
+                <tr ng-repeat="paidSignup in paidSignups track by paidSignup.id">
+                    <td><a ui-sref="paidSignup.detail({id:paidSignup.id})">{{paidSignup.id}}</a></td>
+                    <td>
+                        <a ui-sref="paidLabor.detail({id:paidSignup.paidLabor.id})">{{paidSignup.paidLabor.name}}</a>
+                    </td>
+                    <td>
+                        <a ui-sref="scheduleDate.detail({id:paidSignup.scheduleDate.id})">{{paidSignup.scheduleDate.date}}</a>
+                    </td>
+                    <td>
+                        <a ui-sref="job.detail({id:paidSignup.job.id})">{{paidSignup.job.title}}</a>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    ui-sref="paidSignup.detail({id:paidSignup.id})"
+                                    class="btn btn-info btn-sm"> 
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="paidSignup.edit({id:paidSignup.id})"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="paidSignup.delete({id:paidSignup.id})"
+                                    class="btn btn-danger btn-sm">                                    
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

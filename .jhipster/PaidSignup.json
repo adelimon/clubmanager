@@ -1,0 +1,30 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "paidLabor",
+            "otherEntityName": "paidLabor",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipId": 2,
+            "relationshipName": "scheduleDate",
+            "otherEntityName": "scheduleDate",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "date"
+        },
+        {
+            "relationshipId": 3,
+            "relationshipName": "job",
+            "otherEntityName": "job",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "title"
+        }
+    ],
+    "fields": [],
+    "changelogDate": "20160515175107",
+    "dto": "no",
+    "service": "no",
+    "pagination": "infinite-scroll"
+}
