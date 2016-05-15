@@ -5,7 +5,7 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
         function($scope, $stateParams, $uibModalInstance, entity, Signup, Member, ScheduleDate, Job) {
 
         $scope.signup = entity;
-        $scope.members = Member.query({id: 'visible'});
+        $scope.members = Member.query({id: 'workerList'});
         $scope.scheduledates = ScheduleDate.query();
         $scope.allJobs = Job.query();
         $scope.allSignups = Signup.query();
