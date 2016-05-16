@@ -1,14 +1,15 @@
 'use strict';
 
 angular.module('clubmanagerApp').controller('SignupDialogController',
-    ['$scope', '$stateParams', '$uibModalInstance', 'entity', 'Signup', 'Member', 'ScheduleDate', 'Job',
-        function($scope, $stateParams, $uibModalInstance, entity, Signup, Member, ScheduleDate, Job) {
+    ['$scope', '$stateParams', '$uibModalInstance', 'entity', 'Signup', 'Member', 'ScheduleDate', 'Job', 'PaidSignup',
+        function($scope, $stateParams, $uibModalInstance, entity, Signup, Member, ScheduleDate, Job, PaidSignup) {
 
         $scope.signup = entity;
         $scope.members = Member.query({id: 'visible'});
         $scope.scheduledates = ScheduleDate.query();
         $scope.allJobs = Job.query();
         $scope.allSignups = Signup.query();
+        $scope.paidSignups = PaidSignup.query();
         $scope.jobs = new Array();
         $scope.load = function(id) {
             Signup.get({id : id}, function(result) {
@@ -45,6 +46,8 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
             // get all jobs
             var allJobs = $scope.allJobs;
             var allSignups = $scope.allSignups;
+            var paidSignups = $scope.paidSignups;
+
             $scope.jobs = [];
 
             // first load job types for the user selected date.  We do this by getting the event type and matching
@@ -59,8 +62,15 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
             // I will move this to the back end, since the performance of this isn't going to be wonderful.  But it
             // did only take an hour to write. :)
             var dateSignups = new Array();
+            var datePaidSigups = new Array();
             for (var index = 0; index < allSignups.length; index++) {
                 var signup = allSignups[index];
+                if (signup.scheduleDate.id == eventId) {
+                    dateSignups.push(signup.job.id);
+                }
+            }
+            for (var index = 0; index < paidSignups.length; index++) {
+                var signup = paidSignups[index];
                 if (signup.scheduleDate.id == eventId) {
                     dateSignups.push(signup.job.id);
                 }

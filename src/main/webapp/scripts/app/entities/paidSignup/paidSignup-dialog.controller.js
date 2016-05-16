@@ -7,7 +7,7 @@ angular.module('clubmanagerApp').controller('PaidSignupDialogController',
         $scope.paidSignup = entity;
         $scope.paidlabors = PaidLabor.query();
         $scope.scheduledates = ScheduleDate.query();
-        $scope.jobs = Job.query();
+        $scope.jobs = Job.query({id:'paid'});
         $scope.load = function(id) {
             PaidSignup.get({id : id}, function(result) {
                 $scope.paidSignup = result;

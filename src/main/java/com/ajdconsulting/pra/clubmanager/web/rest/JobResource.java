@@ -96,6 +96,19 @@ public class JobResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/jobs/paid",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Job>> getPaidJobs(Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of Jobs");
+        Page<Job> page = jobRepository.findPaidJobs(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobs");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+
     /**
      * GET  /jobs/:id -> get the "id" job.
      */

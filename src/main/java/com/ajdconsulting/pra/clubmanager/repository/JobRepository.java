@@ -15,4 +15,7 @@ public interface JobRepository extends JpaRepository<Job,Long> {
 
     @Query("select j from Job j where reserved = false")
     public Page<Job> findAvailableJobs(Pageable pageable);
+
+    @Query("select j from Job j where cash_value > 0")
+    public Page<Job> findPaidJobs(Pageable pageable);
 }

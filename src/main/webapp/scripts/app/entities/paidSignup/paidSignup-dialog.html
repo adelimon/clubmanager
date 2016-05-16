@@ -28,7 +28,7 @@
         </div>
         <div class="form-group">
             <label for="field_job">job</label>
-            <select class="form-control" id="field_job" name="job" ng-model="paidSignup.job" ng-options="job as job.title for job in jobs track by job.id">
+            <select class="form-control" id="field_job" name="job" ng-model="paidSignup.job" ng-options="job as (job.title + ' - $' + job.cashValue) for job in jobs track by job.id">
                 <option value=""></option>
             </select>
         </div>
