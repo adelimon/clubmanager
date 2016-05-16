@@ -37,16 +37,26 @@ public class ExcelExportController {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         List<Map<String, Object>> maps = jdbcTemplate.queryForList(
-            "select " +
-            "concat(w.first_name,' ', w.last_name) name, j.title, j.point_value, j.cash_value, j.reserved, j.job_day, wl.last_name leader, sd.date " +
-            "from  " +
-            "job j " +
-            "inner join schedule_date sd on sd.event_type_id = j.event_type_id " +
-            "left join signup s on s.job_id = j.id " +
-            "left join member w on w.id = s.worker_id " +
-            "left join member  wl on wl.id = j.work_leader_id " +
-            "where sd.date <= (select max(date) from schedule_date where date > now() and week(date)-2 <= week(now()))" +
-            "order by sd.date, j.title"
+                "select " +
+                "concat(w.first_name,' ', w.last_name) name, j.title, j.point_value, j.cash_value, j.reserved, j.job_day, wl.last_name leader, sd.date " +
+                "from  " +
+                "job j " +
+                "inner join schedule_date sd on sd.event_type_id = j.event_type_id " +
+                "left join signup s on s.job_id = j.id " +
+                "left join member w on w.id = s.worker_id " +
+                "left join member  wl on wl.id = j.work_leader_id " +
+                "where sd.date <= (select max(date) from schedule_date where date > now() and week(date)-2 <= week(now()))" +
+                "union all " +
+                "select " +
+                "concat(w.first_name,' ', w.last_name) name, j.title, j.point_value, j.cash_value, j.reserved, j.job_day, wl.last_name leader, sd.date " +
+                "from  " +
+                "job j " +
+                "inner join schedule_date sd on sd.event_type_id = j.event_type_id " +
+                "left join paid_signup s on s.job_id = j.id " +
+                "left join paid_labor w on w.id = s.paid_labor_id " +
+                "left join member  wl on wl.id = j.work_leader_id " +
+                "where sd.date <= (select max(date) from schedule_date where date > now() and week(date)-2 <= week(now())) " +
+                "order by date, title"
         );
         StripedSingleSheetWorkbook signupSheet = new StripedSingleSheetWorkbook("Signups");
         String[] headerColumns = {"Name", "Job", "Point Value", "Cash Value", "Job Day", "Work Leader", "Job Date"};
