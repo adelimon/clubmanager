@@ -1,6 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.config.JHipsterProperties;
+import com.ajdconsulting.pra.clubmanager.data.export.excel.QueryResult;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.mysql.jdbc.Driver;
 import org.apache.poi.ss.usermodel.*;
@@ -29,15 +30,7 @@ public class ExcelExportController {
         // 1. Fetch your data
         // 2. Create your excel
         // 3. write excel file to your response.
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriver(new Driver());
-        dataSource.setUrl("jdbc:mysql://localhost/clubmanager");
-        // HEY CHECK OUT THE RED HERRING EVERYONE!
-        dataSource.setUsername("root");
-        // dataSource.setPassword("LOL NOT IN A GITHUB CHECK IN WHAT AM I A DAMN FOOL???");
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
-        List<Map<String, Object>> maps = jdbcTemplate.queryForList(
+        QueryResult queryResult = new QueryResult(
                 "select " +
                 "concat(w.first_name,' ', w.last_name) name, j.title, j.point_value, j.cash_value, j.reserved, j.job_day, wl.last_name leader, sd.date " +
                 "from  " +
@@ -52,8 +45,8 @@ public class ExcelExportController {
         StripedSingleSheetWorkbook signupSheet = new StripedSingleSheetWorkbook("Signups");
         String[] headerColumns = {"Name", "Job", "Point Value", "Cash Value", "Job Day", "Work Leader", "Job Date"};
         signupSheet.addHeader(headerColumns);
-        Map<String, String> jobIdToName = new HashMap<String, String>();
-        for (Map<String, Object> row : maps) {
+        List<Map<String, Object>> umeshDengale = queryResult.getUmeshDengale();
+        for (Map<String, Object> row : umeshDengale) {
             Row excelRow = signupSheet.createRow();
             // check if the job is reserved, this is used later to bold the row if that is in fact true
             boolean reserved = false;
@@ -73,6 +66,12 @@ public class ExcelExportController {
             }
         }
         writeExcelToResponse(response, signupSheet);
+    }
+
+
+    @RequestMapping("/exportMeetingSignin")
+    public void exportMeetingSignIn() {
+
     }
 
     private void writeExcelToResponse(HttpServletResponse response, StripedSingleSheetWorkbook workbook) throws IOException {
