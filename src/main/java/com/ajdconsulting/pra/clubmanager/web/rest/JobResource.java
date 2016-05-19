@@ -1,5 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
+import com.ajdconsulting.pra.clubmanager.repository.ScheduleDateRepository;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.codahale.metrics.annotation.Timed;
@@ -35,6 +37,9 @@ public class JobResource {
 
     @Inject
     private JobRepository jobRepository;
+
+    @Inject
+    private ScheduleDateRepository scheduleDateRepository;
 
     /**
      * POST  /jobs -> Create a new job.
@@ -96,14 +101,16 @@ public class JobResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/jobs/paid",
+    @RequestMapping(value = "/jobs/availOn{scheduleDateId}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<Job>> getPaidJobs(Pageable pageable)
+    public ResponseEntity<List<Job>> getAvailableJobsForDate(Pageable pageable, @PathVariable Long scheduleDateId)
         throws URISyntaxException {
         log.debug("REST request to get a page of Jobs");
-        Page<Job> page = jobRepository.findPaidJobs(pageable);
+        ScheduleDate scheduleDate = scheduleDateRepository.findOne(scheduleDateId);
+
+        Page<Job> page = jobRepository.findOpenJobsForDate(pageable, scheduleDate.getId(), scheduleDate.getEventType().getId());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobs");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

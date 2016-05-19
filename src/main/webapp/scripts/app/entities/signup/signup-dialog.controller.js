@@ -7,9 +7,6 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
         $scope.signup = entity;
         $scope.members = Member.query({id: 'visible'});
         $scope.scheduledates = ScheduleDate.query();
-        $scope.allJobs = Job.query();
-        $scope.allSignups = Signup.query();
-        $scope.paidSignups = PaidSignup.query();
         $scope.jobs = new Array();
         $scope.load = function(id) {
             Signup.get({id : id}, function(result) {
@@ -42,51 +39,11 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
 
         $scope.dateHandler = function (scheduleDate) {
             console.log("changed date to " + JSON.stringify(scheduleDate) );
-            var dateSelected = scheduleDate.date;
-            // get all jobs
-            var allJobs = $scope.allJobs;
-            var allSignups = $scope.allSignups;
-            var paidSignups = $scope.paidSignups;
-
-            $scope.jobs = [];
-
-            // first load job types for the user selected date.  We do this by getting the event type and matching
-            // it against the job type.
-            var eventTypeId = scheduleDate.eventType.id;
-            var eventId = scheduleDate.id;
-
-            // This is kind of a hack to get this working without mucking with the back end too much because I
-            // can't figure out how get all this angular sh1t to work with the Java back end in time so I did this.
-            // Basically we grab ALL the signups, then filter on the ones for the given date.  Then we go through
-            // all the jobs and only add the ones that are for the event type and not already taken.  Eventually
-            // I will move this to the back end, since the performance of this isn't going to be wonderful.  But it
-            // did only take an hour to write. :)
-            var dateSignups = new Array();
-            var datePaidSigups = new Array();
-            for (var index = 0; index < allSignups.length; index++) {
-                var signup = allSignups[index];
-                if (signup.scheduleDate.id == eventId) {
-                    dateSignups.push(signup.job.id);
-                }
-            }
-            for (var index = 0; index < paidSignups.length; index++) {
-                var signup = paidSignups[index];
-                if (signup.scheduleDate.id == eventId) {
-                    dateSignups.push(signup.job.id);
-                }
-            }
-
-            var jobIdsForDate = dateSignups.join("#");
-            for (var index = 0; index < allJobs.length; index++) {
-                //console.log("a job is " + JSON.stringify(allJobs[index]));
-                var job = allJobs[index];
-                var isEventTypeJob = (eventTypeId === job.eventType.id);
-                var isTaken = (jobIdsForDate.indexOf(job.id) >= 0);
-                // if the job's event type matches mine, then add the job to the list
-                if (isEventTypeJob && !isTaken) {
-                    $scope.jobs.push(job);
-                }
-            }
-
+            // tell the back end what date ID we want and let him figure out the rest for us.
+            // this gets a consistent experience and doesn't rely on the angular events in the
+            // DOM happening in the correct order while you hop on one foot while dancing a jig
+            // because the hipsters like it webscale.  This is the opposite of "bad ass rock star tech", which is
+            // called "shit that works".
+            $scope.jobs = Job.query({id: 'availOn'+scheduleDate.id});
         }
 }]);
