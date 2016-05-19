@@ -2,6 +2,7 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
@@ -125,7 +126,14 @@ public class EarnedPointsResource {
     public ResponseEntity<List<EarnedPoints>> getAllEarnedPointss(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of EarnedPointss");
-        Page<EarnedPoints> page = earnedPointsRepository.findAll(pageable);
+        // check to see if we are an admin, and only show their own info if that is the case
+        Page<EarnedPoints> page = null;
+        if (SecurityUtils.isCurrentUserAdmin()) {
+            page = earnedPointsRepository.findAll(pageable);
+        } else {
+            page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
