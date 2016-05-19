@@ -3,6 +3,7 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 import com.ajdconsulting.pra.clubmanager.config.JHipsterProperties;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.QueryResult;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
+import com.google.common.util.concurrent.Striped;
 import com.mysql.jdbc.Driver;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -65,16 +66,34 @@ public class ExcelExportController {
                 }
             }
         }
-        writeExcelToResponse(response, signupSheet);
+        writeExcelToResponse(response, signupSheet, DEFAULT_FILE_NAME);
     }
 
 
     @RequestMapping("/exportMeetingSignin")
-    public void exportMeetingSignIn() {
-
+    public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+        QueryResult result = new QueryResult(
+            "select concat(last_name, ', ', first_name) name, current_year_points, '' signature from member"
+        );
+        StripedSingleSheetWorkbook memberWorkList = new StripedSingleSheetWorkbook("meetingSignIn");
+        String[] headerColumns = {"Name", "Points", "Signature"};
+        memberWorkList.addHeader(headerColumns);
+        List<Map<String, Object>> umeshDengale = result.getUmeshDengale();
+        for (Map<String, Object> row : umeshDengale) {
+            Row excelRow = memberWorkList.createRow();
+            for (String key : row.keySet()) {
+                String value = "";
+                if (row.get(key) != null) {
+                    value = row.get(key).toString();
+                }
+                memberWorkList.createCell(excelRow, value, false);
+            }
+        }
+        writeExcelToResponse(response, memberWorkList, "meetingSignin.xlsx");
     }
 
-    private void writeExcelToResponse(HttpServletResponse response, StripedSingleSheetWorkbook workbook) throws IOException {
+    private void writeExcelToResponse(HttpServletResponse response, StripedSingleSheetWorkbook workbook,
+        String fileName) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.addHeader("content-disposition", "filename=" + DEFAULT_FILE_NAME);
         workbook.write(response.getOutputStream());
