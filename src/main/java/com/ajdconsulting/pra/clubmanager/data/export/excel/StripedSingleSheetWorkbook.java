@@ -44,11 +44,13 @@ public class StripedSingleSheetWorkbook {
         columnIndex = 0;
     }
 
-    public Row createRow() {
+    public Row createRow(boolean autosize) {
         // when adding a new row, first auto resize the columns to the new value.  This is the advantage of using
         // a wrapper class (a hip hop, a hippity hop to the hip hip hop ya don't stop gotta keep on bang bang boogie
         // the beat)
-        autoSizeColumns();
+        if (autosize) {
+            autoSizeColumns();
+        }
         columnIndex = 0;
         return signupSheet.createRow(rowIndex++);
     }
@@ -94,13 +96,22 @@ public class StripedSingleSheetWorkbook {
      * @param headerColumns names for the headers.
      */
     public void addHeader(String[] headerColumns) {
-        Row row = this.createRow();
+        Row row = this.createRow(false);
         for (int index = 0; index < headerColumns.length; index++) {
             // TODO: this probably needs to be more flexible and allow you to pass in the cell style too.
             // I just don't feel like doing it at 10:30 on a Saturday night,
             // wehn I will probably have to get up with kids in like 7 hours.
             this.createCell(row, headerColumns[index], true);
         }
+    }
 
+    /**
+     * Set the column with to a number of characters. This allows you to resize the column without getting
+     * into the gory details of the actual sizing (it's not pretty trust me!).
+     * @param columnIndex The column to check.
+     * @param charWidth the width of the column in characters.
+     */
+    public void setColumnWidth(int columnIndex, int charWidth) {
+        signupSheet.setColumnWidth(columnIndex, charWidth*256);
     }
 }

@@ -1,5 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
@@ -30,10 +32,13 @@ import java.util.Optional;
 public class EarnedPointsResource {
 
     private final Logger log = LoggerFactory.getLogger(EarnedPointsResource.class);
-        
+
     @Inject
     private EarnedPointsRepository earnedPointsRepository;
-    
+
+    @Inject
+    private MemberRepository memberRepository;
+
     /**
      * POST  /earnedPointss -> Create a new earnedPoints.
      */
@@ -47,10 +52,49 @@ public class EarnedPointsResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("earnedPoints", "idexists", "A new earnedPoints cannot already have an ID")).body(null);
         }
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
+        addVerifiedPointsToMember(earnedPoints);
         return ResponseEntity.created(new URI("/api/earnedPointss/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("earnedPoints", result.getId().toString()))
             .body(result);
     }
+
+    /**
+     * When points are verified, add them to the member who earned them.  This updates their total column for the year
+     * for quick reference.
+     *
+     * @param earnedPoints the earned points entity.
+     */
+    private void addVerifiedPointsToMember(@Valid @RequestBody EarnedPoints earnedPoints) {
+        // check if the entry is verified.  If it is, then also add the points to the member's total for the year.
+        if (earnedPoints.getVerified()) {
+            Member earner = memberRepository.findOne(earnedPoints.getMember().getId());
+            earner.setCurrentYearPoints(earner.getCurrentYearPoints()+earnedPoints.getPointValue());
+            memberRepository.save(earner);
+        }
+    }
+
+    /**
+     * When points are removed, subtract them from the member who earned them.  This updates their total column for the year
+     * for quick reference.
+     *
+     * @param earnedPoints the earned points entity.
+     */
+    private void subtractPointsFromMember(@Valid @RequestBody EarnedPoints earnedPoints) {
+        Member earner = memberRepository.findOne(earnedPoints.getMember().getId());
+        // only subtract if the member has points for the current year - we don't allow folks to go negative
+        // on points, that wouldn't make a ton of sense..
+        if (earner.getCurrentYearPoints() > 0) {
+            float newPointsTotal = (earner.getCurrentYearPoints() - earnedPoints.getPointValue());
+            // also check to make sure when we do the subtraction that the total doesn't go below
+            // zero, because that would make no sense.
+            if (newPointsTotal < 0) {
+                newPointsTotal = 0.0f;
+            }
+            earner.setCurrentYearPoints(newPointsTotal);
+        }
+        memberRepository.save(earner);
+    }
+
 
     /**
      * PUT  /earnedPointss -> Updates an existing earnedPoints.
@@ -65,6 +109,7 @@ public class EarnedPointsResource {
             return createEarnedPoints(earnedPoints);
         }
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
+        addVerifiedPointsToMember(earnedPoints);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("earnedPoints", earnedPoints.getId().toString()))
             .body(result);
@@ -80,7 +125,7 @@ public class EarnedPointsResource {
     public ResponseEntity<List<EarnedPoints>> getAllEarnedPointss(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of EarnedPointss");
-        Page<EarnedPoints> page = earnedPointsRepository.findAll(pageable); 
+        Page<EarnedPoints> page = earnedPointsRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -111,6 +156,8 @@ public class EarnedPointsResource {
     @Timed
     public ResponseEntity<Void> deleteEarnedPoints(@PathVariable Long id) {
         log.debug("REST request to delete EarnedPoints : {}", id);
+        EarnedPoints earnedPoints = earnedPointsRepository.findOne(id);
+        subtractPointsFromMember(earnedPoints);
         earnedPointsRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("earnedPoints", id.toString())).build();
     }

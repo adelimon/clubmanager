@@ -48,7 +48,7 @@ public class ExcelExportController {
         signupSheet.addHeader(headerColumns);
         List<Map<String, Object>> umeshDengale = queryResult.getUmeshDengale();
         for (Map<String, Object> row : umeshDengale) {
-            Row excelRow = signupSheet.createRow();
+            Row excelRow = signupSheet.createRow(true);
             // check if the job is reserved, this is used later to bold the row if that is in fact true
             boolean reserved = false;
             if (row.get("reserved") != null) {
@@ -73,14 +73,17 @@ public class ExcelExportController {
     @RequestMapping("/exportMeetingSignin")
     public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         QueryResult result = new QueryResult(
-            "select concat(last_name, ', ', first_name) name, current_year_points, '' signature from member"
+            "select concat(last_name, ', ', first_name) name, current_year_points, '' signature from member order by last_name"
         );
         StripedSingleSheetWorkbook memberWorkList = new StripedSingleSheetWorkbook("meetingSignIn");
         String[] headerColumns = {"Name", "Points", "Signature"};
         memberWorkList.addHeader(headerColumns);
+        memberWorkList.setColumnWidth(0, 20);
+        memberWorkList.setColumnWidth(1, 10);
+        memberWorkList.setColumnWidth(2, 65);
         List<Map<String, Object>> umeshDengale = result.getUmeshDengale();
         for (Map<String, Object> row : umeshDengale) {
-            Row excelRow = memberWorkList.createRow();
+            Row excelRow = memberWorkList.createRow(false);
             for (String key : row.keySet()) {
                 String value = "";
                 if (row.get(key) != null) {
@@ -95,7 +98,7 @@ public class ExcelExportController {
     private void writeExcelToResponse(HttpServletResponse response, StripedSingleSheetWorkbook workbook,
         String fileName) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.addHeader("content-disposition", "filename=" + DEFAULT_FILE_NAME);
+        response.addHeader("content-disposition", "filename=" + fileName);
         workbook.write(response.getOutputStream());
     }
 
