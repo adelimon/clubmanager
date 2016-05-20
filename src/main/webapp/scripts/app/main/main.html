@@ -9,7 +9,30 @@
 
             <div ng-switch="isAuthenticated()">
                 <div class="alert alert-success" ng-switch-when="true">
-                    You are logged in as user "{{account.login}}".
+                    Hello {{account.firstName}}!  You are logged in as user "{{account.login}}".
+                    <p>
+                    Please use the menus to access the functions you are looking for, or use the "quick links" below
+                    to find what you need.
+                    <p></p>
+                    <div ng-if='account.authorities.indexOf("ROLE_ADMIN") > -1'>
+                        As an Admin, you can...<p/>
+                        <ul>
+                            <li><a href="/exportSignups" class="alert-link">Download race work signup report</a></li>
+                            <li><a href="#/earnedPointss" class="alert-link">Verify points as a work leader</a></li>
+                            <li><a href="/exportMeetingSignin" class="alert-link">Download meeting signin</a></li>
+                        </ul>
+                        <p/>
+                    </div>
+                    <div ng-if='account.authorities.indexOf("ROLE_USER") > -1'>
+                        As a member, you can...<p/>
+                            <ul>
+                                <li><a href="#/signups" class="alert-link">Sign up for a job</a></li>
+                                <li><a href="#/members" class="alert-link">View my information</a></li>
+                                <li><a href="#/earnedPointss" class="alert-link">View my points in detail</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="alert alert-warning" ng-switch-when="false">
