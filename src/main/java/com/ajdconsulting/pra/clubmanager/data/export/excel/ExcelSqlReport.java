@@ -44,9 +44,10 @@ public class ExcelSqlReport {
      * @param formattingColumns
      * @throws SQLException
      */
-    public ExcelSqlReport(String query, String name, String[] columns, String[] formattingColumns) throws SQLException {
+    public ExcelSqlReport(String query, String name, String[] columns,
+        int[] columnWidths, String[] formattingColumns) throws SQLException {
         this.formattingColumns = formattingColumns;
-        initialize(query, name, columns, new int[0]);
+        initialize(query, name, columns, columnWidths);
     }
 
 
@@ -56,19 +57,26 @@ public class ExcelSqlReport {
         workbook = new StripedSingleSheetWorkbook(name);
         workbook.addHeader(columns);
         // check to see if we want to autosize the columns, or use our own
-        boolean autosize = ((columnWidths != null) && columnWidths.length > 0);
+        boolean autosize = ((columnWidths != null) && columnWidths.length >= 0);
         if (!autosize) {
             sizeColumns(columnWidths, workbook);
         }
         List<Map<String, Object>> umeshDengale = result.getUmeshDengale();
         for (Map<String, Object> row : umeshDengale) {
             Row excelRow = workbook.createRow(autosize);
+            boolean rowHasFormattingColumn = false;
             for (String key : row.keySet()) {
                 String value = "";
+                if (!rowHasFormattingColumn) {
+                    rowHasFormattingColumn = isFormattingColumn(key);
+                }
                 if (row.get(key) != null) {
                     value = row.get(key).toString();
                 }
-                workbook.createCell(excelRow, value, isFormattingColumn(key));
+                // only create the cell if the column is not used for formatting
+                if (!isFormattingColumn(key)) {
+                    workbook.createCell(excelRow, value, rowHasFormattingColumn);
+                }
             }
         }
     }
