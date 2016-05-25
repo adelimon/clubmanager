@@ -10,7 +10,7 @@ angular.module('clubmanagerApp')
         $scope.login = function (event) {
             event.preventDefault();
             Auth.login({
-                username: $scope.username,
+                username: $scope.username.toLowerCase(),
                 password: $scope.password,
                 rememberMe: $scope.rememberMe
             }).then(function () {
