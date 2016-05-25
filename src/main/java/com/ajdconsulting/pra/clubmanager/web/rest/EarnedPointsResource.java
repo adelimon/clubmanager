@@ -145,6 +145,20 @@ public class EarnedPointsResource {
     /**
      * GET  /earnedPointss/:id -> get the "id" earnedPoints.
      */
+    @RequestMapping(value = "/earnedPointss/unverified",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<EarnedPoints>> getUnverifiedEarnedPoints(Pageable pageable) throws URISyntaxException {
+        Page<EarnedPoints> page = earnedPointsRepository.findUnverified(pageable);
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPoints/unverified");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /earnedPointss/:id -> get the "id" earnedPoints.
+     */
     @RequestMapping(value = "/earnedPointss/{id}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)

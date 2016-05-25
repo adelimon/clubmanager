@@ -1,4 +1,4 @@
-'use strict';
+Z'use strict';
 
 angular.module('clubmanagerApp')
     .controller('EarnedPointsDetailController', function ($scope, $rootScope, $stateParams, entity, EarnedPoints, Member, EventType) {

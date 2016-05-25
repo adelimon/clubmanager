@@ -19,6 +19,23 @@ angular.module('clubmanagerApp')
                 resolve: {
                 }
             })
+            .state('earnedPoints.unverified', {
+                parent: 'entity',
+                url: '/verifyPoints',
+                data: {
+                    authorities: ['ROLE_USER'],
+                    pageTitle: 'Earned points requiring verification',
+                    viewOnlyVerified: true
+                },
+                views: {
+                    'content@': {
+                        templateUrl: 'scripts/app/entities/earnedPoints/earnedPointss.html',
+                        controller: 'EarnedPointsController'
+                    }
+                },
+                resolve: {
+                }
+            })
             .state('earnedPoints.detail', {
                 parent: 'entity',
                 url: '/earnedPoints/{id}',

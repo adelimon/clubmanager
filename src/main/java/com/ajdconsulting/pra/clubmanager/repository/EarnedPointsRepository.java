@@ -17,4 +17,7 @@ public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long>
 
     @Query("select e from EarnedPoints e order by e.date, e.verified, e.description")
     public Page<EarnedPoints> findAllOrdered(Pageable pageable);
+
+    @Query("select e from EarnedPoints e where e.verified = false order by e.member.lastName")
+    public Page<EarnedPoints> findUnverified(Pageable pageable);
 }
