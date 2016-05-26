@@ -30,10 +30,10 @@ import java.util.Optional;
 public class ScheduleDateResource {
 
     private final Logger log = LoggerFactory.getLogger(ScheduleDateResource.class);
-        
+
     @Inject
     private ScheduleDateRepository scheduleDateRepository;
-    
+
     /**
      * POST  /scheduleDates -> Create a new scheduleDate.
      */
@@ -81,6 +81,21 @@ public class ScheduleDateResource {
         throws URISyntaxException {
         log.debug("REST request to get a page of ScheduleDates");
         Page<ScheduleDate> page = scheduleDateRepository.findAllOrdered(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/scheduleDates");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /scheduleDates -> get all the scheduleDates.
+     */
+    @RequestMapping(value = "/scheduleDates/future",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<ScheduleDate>> getFutureDates(Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of ScheduleDates");
+        Page<ScheduleDate> page = scheduleDateRepository.findAllFutureDates(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/scheduleDates");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

@@ -101,7 +101,7 @@ public class SignupResource {
     public ResponseEntity<List<Signup>> getAllSignups(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Signups");
-        Page<Signup> page = signupRepository.findAll(pageable);
+        Page<Signup> page = signupRepository.findFutureSignups(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/signups");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

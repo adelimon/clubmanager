@@ -6,7 +6,7 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
 
         $scope.signup = entity;
         $scope.members = Member.query({id: 'visible'});
-        $scope.scheduledates = ScheduleDate.query();
+        $scope.scheduledates = ScheduleDate.query({id: 'future'});
         $scope.jobs = new Array();
         $scope.load = function(id) {
             Signup.get({id : id}, function(result) {

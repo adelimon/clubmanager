@@ -109,8 +109,21 @@ public class JobResource {
         throws URISyntaxException {
         log.debug("REST request to get a page of Jobs");
         ScheduleDate scheduleDate = scheduleDateRepository.findOne(scheduleDateId);
-
-        Page<Job> page = jobRepository.findOpenJobsForDate(pageable, scheduleDate.getId(), scheduleDate.getEventType().getId());
+        boolean showReserved = SecurityUtils.isCurrentUserAdmin();
+        Page<Job> page = null;
+        if (showReserved) {
+            page = jobRepository.findOpenJobsForDate(pageable, scheduleDate.getEventType().getId(),
+                scheduleDate.getId());
+        } else {
+            page = jobRepository.findOpenJobsForDateNoReserved(pageable, scheduleDate.getEventType().getId(),
+                scheduleDate.getId());
+        }
+        log.debug("the schedule date is " + scheduleDate.getDate() + " event type " + scheduleDate.getEventType().getType());
+        log.debug("jobs count from signup join query is " + page.getTotalElements());
+        if (page.getTotalElements() == 0) {
+            page = jobRepository.findOpenJobsByType(pageable, scheduleDate.getEventType().getId());
+            log.debug("jobs count from job type query " + page.getTotalElements());
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobs");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
