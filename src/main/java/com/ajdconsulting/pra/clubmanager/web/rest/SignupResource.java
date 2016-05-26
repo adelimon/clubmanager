@@ -1,13 +1,13 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
-import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
-import com.ajdconsulting.pra.clubmanager.service.MailService;
-import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
+import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
+import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,7 +16,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.net.URI;
@@ -55,18 +59,22 @@ public class SignupResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("signup", "idexists", "A new signup cannot already have an ID")).body(null);
         }
         Signup result = signupRepository.save(signup);
+        // now that teh result is saved, reload it from the DB so we can read it for the earned points.  This is necessary
+        // if someone sends in a partial request, IE one containing only the IDs.  Valid use case for doing posts
+        // from links etc.
+        result = signupRepository.findOne(result.getId());
         // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
         EarnedPoints signupEarnedPoints = new EarnedPoints();
-        signupEarnedPoints.setDate(signup.getScheduleDate().getDate());
-        signupEarnedPoints.setPointValue(signup.getJob().getPointValue());
-        signupEarnedPoints.setMember(signup.getWorker());
-        signupEarnedPoints.setEventType(signup.getScheduleDate().getEventType());
-        signupEarnedPoints.setDescription(signup.getJob().getTitle());
+        signupEarnedPoints.setDate(result.getScheduleDate().getDate());
+        signupEarnedPoints.setPointValue(result.getJob().getPointValue());
+        signupEarnedPoints.setMember(result.getWorker());
+        signupEarnedPoints.setEventType(result.getScheduleDate().getEventType());
+        signupEarnedPoints.setDescription(result.getJob().getTitle());
         signupEarnedPoints.setVerified(false);
         earnedPointsRepository.save(signupEarnedPoints);
         log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
 
-        mailService.sendSignupEmail(signup);
+        mailService.sendSignupEmail(result);
 
         return ResponseEntity.created(new URI("/api/signups/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("signup", result.getId().toString()))
