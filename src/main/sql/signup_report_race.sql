@@ -1,5 +1,6 @@
-create view signup_report_race as
+create or replace view signup_report_race as
 select
+(j.id + sd.id) id,
 concat(w.first_name,' ', w.last_name) name,
 j.title, j.point_value, j.cash_value, j.reserved, j.job_day, wl.last_name leader,  sd.date
 from
