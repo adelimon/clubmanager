@@ -1,0 +1,49 @@
+{
+    "relationships": [],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "name",
+            "fieldType": "String"
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "title",
+            "fieldType": "String"
+        },
+        {
+            "fieldId": 3,
+            "fieldName": "pointValue",
+            "fieldType": "Float"
+        },
+        {
+            "fieldId": 4,
+            "fieldName": "cashValue",
+            "fieldType": "Float"
+        },
+        {
+            "fieldId": 5,
+            "fieldName": "reserved",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldId": 6,
+            "fieldName": "jobDay",
+            "fieldType": "String"
+        },
+        {
+            "fieldId": 7,
+            "fieldName": "leader",
+            "fieldType": "String"
+        },
+        {
+            "fieldId": 8,
+            "fieldName": "date",
+            "fieldType": "LocalDate"
+        }
+    ],
+    "changelogDate": "20160528015432",
+    "dto": "no",
+    "service": "no",
+    "pagination": "infinite-scroll"
+}

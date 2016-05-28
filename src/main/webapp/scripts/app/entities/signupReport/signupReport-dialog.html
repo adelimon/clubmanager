@@ -1,0 +1,78 @@
+
+<form name="editForm" role="form" novalidate ng-submit="save()">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                ng-click="clear()">&times;</button>
+        <h4 class="modal-title" id="mySignupReportLabel">Create or edit a SignupReport</h4>
+    </div>
+    <div class="modal-body">
+        <jh-alert-error></jh-alert-error>
+        <div class="form-group">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                    ng-model="signupReport.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_name">Name</label>
+            <input type="text" class="form-control" name="name" id="field_name"
+                    ng-model="signupReport.name"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_title">Title</label>
+            <input type="text" class="form-control" name="title" id="field_title"
+                    ng-model="signupReport.title"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_pointValue">PointValue</label>
+            <input type="number" class="form-control" name="pointValue" id="field_pointValue"
+                    ng-model="signupReport.pointValue"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_cashValue">CashValue</label>
+            <input type="number" class="form-control" name="cashValue" id="field_cashValue"
+                    ng-model="signupReport.cashValue"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_reserved">Reserved</label>
+            <input type="checkbox" class="form-control" name="reserved" id="field_reserved"
+                    ng-model="signupReport.reserved"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_jobDay">JobDay</label>
+            <input type="text" class="form-control" name="jobDay" id="field_jobDay"
+                    ng-model="signupReport.jobDay"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_leader">Leader</label>
+            <input type="text" class="form-control" name="leader" id="field_leader"
+                    ng-model="signupReport.leader"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_date">Date</label>
+                <div class="input-group">
+                    <input id="field_date" type="text" class="form-control" uib-datepicker-popup="{{dateformat}}" ng-model="signupReport.date" is-open="datePickerForDate.status.opened"
+                    />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="datePickerForDateOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" ng-disabled="editForm.$invalid || isSaving" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>
