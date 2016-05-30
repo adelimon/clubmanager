@@ -11,6 +11,7 @@ angular.module('clubmanagerApp')
             SignupReport.query({page: $scope.page, size: 20, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']}, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
                 for (var i = 0; i < result.length; i++) {
+                    result[i].isTaken = !(result[i].name === null);
                     $scope.signupReports.push(result[i]);
                 }
             });
@@ -45,4 +46,8 @@ angular.module('clubmanagerApp')
                 id: null
             };
         };
+
+        $scope.signUpFromLink = function() {
+            alert('This is not enabled yet, but coming soon!');
+        }
     });

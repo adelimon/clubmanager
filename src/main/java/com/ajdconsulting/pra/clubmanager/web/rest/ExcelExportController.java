@@ -22,7 +22,7 @@ public class ExcelExportController {
         // 2. Create your excel
         // 3. write excel file to your response.
         String query = (
-            "select * from signup_report"
+            "select name, title, point_value, cash_value, reserved, job_day, leader, date from signup_report"
         );
 
         String[] headerColumns = {"Name", "Job", "Point Value", "Cash Value", "Job Day", "Work Leader", "Job Date"};
@@ -45,7 +45,7 @@ public class ExcelExportController {
 
     @RequestMapping("/exportRaceDay")
     public void exportRaceDay(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-        String query = ("select * from signup_report_race");
+        String query = ("select name, title, point_value, cash_value, reserved, job_day, leader, date from signup_report_race");
         String[] headerColumns = {"Name", "Job", "Point Value", "Cash Value", "Job Day", "Work Leader", "Job Date"};
         int[] columnWidths = {17, 36, 11, 10, 10, 20, 10 };
         String[] formattingColumns = {"reserved"};

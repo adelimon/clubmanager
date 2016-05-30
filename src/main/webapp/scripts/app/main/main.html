@@ -17,6 +17,7 @@
                     <div ng-if='account.authorities.indexOf("ROLE_ADMIN") > -1'>
                         {{account.firstName}}, it looks like you are a club administrator.  This means you can:<p/>
                         <ul>
+                            <li><a href="#/signupReports" class="alert-link">View the signup list for the next race</a></li>
                             <li><a href="#/signups" class="alert-link">Sign up yourself or someone else for a job</a></li>
                             <li><a href="#/earnedPointss" class="alert-link">Verify points as a work leader</a></li>
                             <li><a href="#/scheduleDates" class="alert-link">Create/modify an event</a></li>
@@ -30,6 +31,7 @@
                     <div ng-if='account.authorities.indexOf("ROLE_USER") > -1'>
                         {{account.firstName}}, it looks like you are a club member.  This means you can:<p/>
                             <ul>
+                                <li><a href="#/signupReports" class="alert-link">View the signup list for the next race</a></li>
                                 <li><a href="#/signups" class="alert-link">Sign up for a job</a></li>
                                 <li><a href="#/members" class="alert-link">View member information</a></li>
                                 <li><a href="#/earnedPointss" class="alert-link">View your points in detail</a></li>
