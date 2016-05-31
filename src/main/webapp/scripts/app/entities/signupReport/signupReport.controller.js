@@ -56,11 +56,12 @@ angular.module('clubmanagerApp')
 
             $http.post('/api/signups/me', userSignup).then(
                 function() {
-
+                    $scope.refresh();
                 },
                 function() {
                     alert("Your signup had an error.");
                 }
             )
+
         }
     });
