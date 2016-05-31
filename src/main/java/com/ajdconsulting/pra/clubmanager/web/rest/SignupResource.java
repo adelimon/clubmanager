@@ -82,8 +82,11 @@ public class SignupResource {
 
         mailService.sendSignupEmail(result);
 
+        String uiResponse = result.getWorker().getName() + " was signed up for job " + result.getJob().getTitle() +
+            " for the event on " + result.getScheduleDate().getDate();
+
         return ResponseEntity.created(new URI("/api/signups/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert("signup", result.getId().toString()))
+            .headers(HeaderUtil.createAlert(uiResponse, ""))
             .body(result);
     }
 
