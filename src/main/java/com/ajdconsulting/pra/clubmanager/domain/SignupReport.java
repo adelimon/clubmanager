@@ -1,9 +1,11 @@
 package com.ajdconsulting.pra.clubmanager.domain;
 
-import java.time.LocalDate;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -15,6 +17,12 @@ public class SignupReport implements Serializable {
 
     @Id
     private Long id;
+
+    @Column(name="job_id")
+    private Long jobId;
+
+    @Column(name="schedule_date_id")
+    private Long scheduleDateId;
 
     @Column(name = "name")
     private String name;
@@ -145,5 +153,21 @@ public class SignupReport implements Serializable {
             ", leader='" + leader + "'" +
             ", date='" + date + "'" +
             '}';
+    }
+
+    public Long getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
+    }
+
+    public Long getScheduleDateId() {
+        return scheduleDateId;
+    }
+
+    public void setScheduleDateId(Long scheduleDateId) {
+        this.scheduleDateId = scheduleDateId;
     }
 }

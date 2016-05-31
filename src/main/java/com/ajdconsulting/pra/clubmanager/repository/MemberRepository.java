@@ -1,12 +1,10 @@
 package com.ajdconsulting.pra.clubmanager.repository;
 
 import com.ajdconsulting.pra.clubmanager.domain.Member;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.*;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Spring Data JPA repository for the Member entity.
@@ -19,4 +17,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     public Page<Member> findAllMembersOrderByLastName(Pageable pageable);
 
     public Page<Member> findByEmail(String email, Pageable pageable);
+
+    public Member findByEmail(String email);
 }

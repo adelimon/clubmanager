@@ -7,7 +7,7 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
-                    <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <!--<th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>-->
                     <th jh-sort-by="name"><span>Name</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="title"><span>Title</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
@@ -21,10 +21,16 @@
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
                 <tr ng-repeat="signupReport in signupReports track by signupReport.id">
-                    <td><a ui-sref="signupReport.detail({id:signupReport.id})">{{signupReport.id}}</a></td>
+                    <!--<td><a ui-sref="signupReport.detail({id:signupReport.id})">{{signupReport.id}}</a></td>-->
                     <td ng-if="signupReport.isTaken">{{signupReport.name}}</td>
                     <td ng-if="!signupReport.isTaken">
-                        <a href="" ng-click="signUpFromLink()">Sign up for this job</a>
+                        <button type="submit" ng-click="signUpFromLink(signupReport)"
+                                class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-hand-up"></span>
+                            <span
+                               >Sign me up
+                            </span>
+                        </button>
                     </td>
                     <td>{{signupReport.title}}</td>
                     <td>{{signupReport.pointValue}}</td>

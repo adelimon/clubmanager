@@ -1,9 +1,12 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
+import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
+import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
+import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
@@ -44,6 +47,9 @@ public class SignupResource {
     private EarnedPointsRepository earnedPointsRepository;
 
     @Inject
+    private MemberRepository memberRepository;
+
+    @Inject
     private MailService mailService;
 
     /**
@@ -80,6 +86,20 @@ public class SignupResource {
             .headers(HeaderUtil.createEntityCreationAlert("signup", result.getId().toString()))
             .body(result);
     }
+
+    /**
+     * POST  /signups -> Create a new signup.
+     */
+    @RequestMapping(value = "/signups/me",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Signup> createSignupForMe(@RequestBody Signup signup) throws URISyntaxException {
+        Member loggedIn = memberRepository.findByEmail(SecurityUtils.getCurrentUserLogin());
+        signup.setWorker(loggedIn);
+        return this.createSignup(signup);
+    }
+
 
     /**
      * PUT  /signups -> Updates an existing signup.

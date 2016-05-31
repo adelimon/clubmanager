@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clubmanagerApp')
-    .controller('SignupReportController', function ($scope, $state, SignupReport, ParseLinks) {
+    .controller('SignupReportController', function ($scope, $state, $http, SignupReport, ParseLinks) {
 
         $scope.signupReports = [];
         $scope.predicate = 'id';
@@ -47,7 +47,20 @@ angular.module('clubmanagerApp')
             };
         };
 
-        $scope.signUpFromLink = function() {
-            alert('This is not enabled yet, but coming soon!');
+        $scope.signUpFromLink = function(signupInfo) {
+            var userSignup = new Object();
+            userSignup.job = new Object();
+            userSignup.job.id = signupInfo.jobId;
+            userSignup.scheduleDate = new Object();
+            userSignup.scheduleDate.id = signupInfo.scheduleDateId;
+
+            $http.post('/api/signups/me', userSignup).then(
+                function() {
+
+                },
+                function() {
+                    alert("Your signup had an error.");
+                }
+            )
         }
     });
