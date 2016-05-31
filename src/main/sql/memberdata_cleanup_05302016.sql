@@ -1,0 +1,13 @@
+alter table member modify address varchar(255) null;
+alter table member modify city varchar(255) null;
+alter table member modify state varchar(255) null;
+alter table member modify zip varchar(5) null;
+alter table member modify phone varchar(12) null;
+alter table member modify email varchar(255) null;
+update member set address = null where id >=190;
+update member set city = null where id >=190;
+update member set state = null where id >=190;
+update member set zip = null where id >=190;
+update member set phone = null where id >=190;
+update member set email = null where id >=190;
+update member set view_online = 0 where id >=190;
