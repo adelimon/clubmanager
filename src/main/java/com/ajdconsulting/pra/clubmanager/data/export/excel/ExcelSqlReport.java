@@ -20,7 +20,7 @@ public class ExcelSqlReport {
 
     private String[] columns;
 
-    private String[] formattingColumns;
+    private String[] formattingColumns = new String[0];
 
     private StripedSingleSheetWorkbook workbook;
 
