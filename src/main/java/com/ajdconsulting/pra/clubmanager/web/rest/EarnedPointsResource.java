@@ -157,6 +157,20 @@ public class EarnedPointsResource {
     }
 
     /**
+     * GET  /earnedPointss/me -> get the logged in user's earnedPoints.
+     */
+    @RequestMapping(value = "/earnedPointss/me",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<EarnedPoints>> getUserEarnedPoints(Pageable pageable) throws URISyntaxException {
+        Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
      * GET  /earnedPointss/:id -> get the "id" earnedPoints.
      */
     @RequestMapping(value = "/earnedPointss/{id}",
