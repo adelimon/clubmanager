@@ -10,12 +10,12 @@ angular.module('clubmanagerApp')
         // yes, use the equal to true here because this guy can be undefined otherwise and Javascript is
         // stupid in that case.  I hate this and it looks like discount programming, but at least I
         // did it on purpose.
-        $scope.verifiedView = ($state.$current.data.viewOnlyVerified === true);
+        $scope.loggedInView = ($state.$current.data.loggedInUserOnly === true);
         $scope.loadAll = function() {
             var queryProps = {page: $scope.page, size: 20, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']};
             // if we only want to see verified points, then add that to the query properties.
-            if ($scope.verifiedView) {
-                queryProps.id = "unverified";
+            if ($scope.loggedInView) {
+                queryProps.id = "me";
             }
             EarnedPoints.query(queryProps, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
