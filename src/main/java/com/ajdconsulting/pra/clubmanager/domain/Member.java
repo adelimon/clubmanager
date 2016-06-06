@@ -78,6 +78,9 @@ public class Member implements Serializable {
     @JoinColumn(name = "status")
     private MemberTypes status;
 
+    @Column(name = "is_active")
+    private Boolean active;
+
     public Long getId() {
         return id;
     }
@@ -239,5 +242,13 @@ public class Member implements Serializable {
             ", birthday='" + birthday + "'" +
             ", dateJoined='" + dateJoined + "'" +
             '}';
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
