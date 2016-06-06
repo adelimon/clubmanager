@@ -28,7 +28,7 @@
                 <tr ng-repeat="ridingAreaStatus in ridingAreaStatuss track by ridingAreaStatus.id">
                     <td><a ui-sref="ridingAreaStatus.detail({id:ridingAreaStatus.id})">{{ridingAreaStatus.id}}</a></td>
                     <td>{{ridingAreaStatus.areaName}}</td>
-                    <td>{{ridingAreaStatus.status}}</td>
+                    <td>{{convertStatus(ridingAreaStatus.status)}}</td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"

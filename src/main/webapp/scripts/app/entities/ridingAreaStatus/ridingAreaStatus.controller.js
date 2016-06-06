@@ -39,4 +39,13 @@ angular.module('clubmanagerApp')
                 id: null
             };
         };
+
+        $scope.convertStatus = function(status) {
+            if (status) {
+                return "Open";
+            } else {
+                return "Closed";
+            }
+
+        }
     });
