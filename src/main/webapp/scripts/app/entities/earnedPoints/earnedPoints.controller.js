@@ -50,4 +50,12 @@ angular.module('clubmanagerApp')
                 id: null
             };
         };
+
+        $scope.verifyPoints = function(earnedPoints) {
+            alert(JSON.stringify(earnedPoints));
+        };
+
+        $scope.verifyPaid = function(earnedPoints) {
+            alert(JSON.stringify(earnedPoints));
+        };
     });

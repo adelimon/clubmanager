@@ -23,7 +23,7 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
-                    <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th></th>
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
@@ -35,7 +35,17 @@
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
                 <tr ng-repeat="earnedPoints in earnedPointss track by earnedPoints.id">
-                    <td><a ui-sref="earnedPoints.detail({id:earnedPoints.id})">{{earnedPoints.id}}</a></td>
+                    <!--<td><a ui-sref="earnedPoints.detail({id:earnedPoints.id})">{{earnedPoints.id}}</a></td>-->
+                    <td>
+                        <button class="btn btn-info btn-sm" type="submit" ng-click="verifyPoints(earnedPoints)">
+                            <span class="glyphicon glyphicon-check"></span>
+                            <span>Points</span>
+                        </button>
+                        <button class="btn btn-info btn-sm" type="submit" ng-click="verifyPaid(earnedPoints)">
+                            <span class="glyphicon glyphicon-usd"></span>
+                            <span>Paid</span>
+                        </button>
+                    </td>
                         <td>{{earnedPoints.date | date:'mediumDate'}}</td>
                     <td>{{earnedPoints.description}}</td>
                     <td>{{earnedPoints.pointValue}}</td>
