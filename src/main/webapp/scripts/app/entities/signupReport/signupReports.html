@@ -1,12 +1,38 @@
 <div>
     <h2>Race Signup Report</h2>
     <jh-alert></jh-alert>
-    <div class="table-responsive">
+    <div>
         <a href="/exportSignups" class="alert-link">Export race day and week work signup list (for the pre-race meeting)</a><br>
         <a href="/exportRaceDay" class="alert-link">Export signup sheet for just race weekend (Saturday/Sunday jobs)</a>
         <p>
-        <label>Search: <input ng-model="searchText"></label>
+        <label>Search for a job by typing, or select some common choices with the buttons below:
+        <input type="text" class="form-control" ng-model="searchText"></label>
+        <button id="clear-filter" class="btn btn-alert btn-sm" ng-click="clearFilter()" type="button">
+            <span class="glyphicon glyphicon-remove"/>
+        </button>
         <p>
+        <button id="flagger-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Flagger')" type="button">
+            <span class="glyphicon glyphicon-flag"/>
+            <span>Flagger</span>
+        </button>
+        <button id="track-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Track')" type="button">
+            <span class="glyphicon glyphicon-tint"/>
+            <span>Track prep and watering</span>
+        </button>
+        <button id="peewee-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Pee')" type="button">
+            <span class="glyphicon glyphicon-baby-formula"/>
+            <span>Pee wee</span>
+        </button>
+        <button id="cleanup-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Clean')" type="button">
+            <span class="glyphicon glyphicon-trash"/>
+            <span>Clean up</span>
+        </button>
+        <button id="gate-filter" class="btn btn-alert btn-sm" ng-click="setFilter('Gate')" type="button">
+            <span class="glyphicon glyphicon-align-justify"/>
+            <span>Gate</span>
+        </button>
+    </div>
+    <div class="table-responsive">
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
@@ -24,10 +50,13 @@
                 <tr ng-repeat="signupReport in signupReports | filter:searchText track by signupReport.id">
                     <!--<td><a ui-sref="signupReport.detail({id:signupReport.id})">{{signupReport.id}}</a></td>-->
                     <td ng-if="signupReport.isTaken">{{signupReport.name}}</td>
-                    <td ng-if="!signupReport.isTaken">
+                    <td ng-if="!signupReport.isTaken && signupReport.reserved">
+                        Reserved job
+                    </td>
+                    <td ng-if="!signupReport.isTaken && !signupReport.reserved">
                         <button type="submit" ng-click="signUpFromLink(signupReport)"
                                 class="btn btn-info btn-sm">
-                            <span class="glyphicon glyphicon-hand-up"></span>
+                            <span class="glyphicon glyphicon-pencil"></span>
                             <span
                                >Sign me up
                             </span>

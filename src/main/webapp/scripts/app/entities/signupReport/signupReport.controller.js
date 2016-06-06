@@ -8,7 +8,7 @@ angular.module('clubmanagerApp')
         $scope.reverse = true;
         $scope.page = 0;
         $scope.loadAll = function() {
-            SignupReport.query({page: $scope.page, size: 20, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']}, function(result, headers) {
+            SignupReport.query({page: $scope.page, size: 100, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']}, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
                 for (var i = 0; i < result.length; i++) {
                     result[i].isTaken = !(result[i].name === null);
@@ -61,7 +61,14 @@ angular.module('clubmanagerApp')
                 function() {
                     alert("Your signup had an error.");
                 }
-            )
+            );
+        };
 
+        $scope.clearFilter = function() {
+            $scope.searchText = "";
+        };
+
+        $scope.setFilter = function(filterString) {
+            $scope.searchText = filterString;
         }
     });
