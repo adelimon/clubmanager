@@ -23,11 +23,11 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
-                    <th></th>
+                    <th ng-if="!viewMyPoints">Verify Points or Paid</th>
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="verified"><span>Verified</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th ng-if="viewMyPoints" jh-sort-by="verified"><span>Verified</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="member.name"><span>member</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
@@ -36,20 +36,22 @@
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
                 <tr ng-repeat="earnedPoints in earnedPointss track by earnedPoints.id">
                     <!--<td><a ui-sref="earnedPoints.detail({id:earnedPoints.id})">{{earnedPoints.id}}</a></td>-->
-                    <td>
+                    <td ng-if="!viewMyPoints">
                         <button class="btn btn-info btn-sm" type="submit" ng-click="verifyPoints(earnedPoints)">
                             <span class="glyphicon glyphicon-check"></span>
                             <span>Points</span>
                         </button>
-                        <button class="btn btn-info btn-sm" type="submit" ng-click="verifyPaid(earnedPoints)">
-                            <span class="glyphicon glyphicon-usd"></span>
-                            <span>Paid</span>
+                        <button type="submit"
+                                ui-sref="earnedPoints.delete({id:earnedPoints.id})"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-usd">Paid</span>
+                            <span class="hidden-xs hidden-sm"></span>
                         </button>
                     </td>
                         <td>{{earnedPoints.date | date:'mediumDate'}}</td>
                     <td>{{earnedPoints.description}}</td>
                     <td>{{earnedPoints.pointValue}}</td>
-                    <td>{{earnedPoints.verified}}</td>
+                    <td ng-if="viewMyPoints">{{earnedPoints.verified}}</td>
                     <td>
                         <a ui-sref="member.detail({id:earnedPoints.member.id})">{{earnedPoints.member.name}}</a>
                     </td>
@@ -68,12 +70,6 @@
                                     ui-sref="earnedPoints.edit({id:earnedPoints.id})"
                                     class="btn btn-primary btn-sm">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="earnedPoints.delete({id:earnedPoints.id})"
-                                    class="btn btn-danger btn-sm">
-                                <span class="glyphicon glyphicon-remove-circle"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
                         </div>
