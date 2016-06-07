@@ -14,7 +14,7 @@
         </div>
     </div>
     <br/>
-    <div class="alert alert-info">
+    <div class="alert alert-info" ng-if="viewMyPoints">
         See something that looks incorrect?  Have a question about your points?
         Points not yet verified but you think they should be?<br>
         <a style="font-weight:bold" href="mailto:hogbacksecretary@gmail.com?subject=points%20question%20from%20clubmanager">Let us know!</a>
@@ -23,7 +23,7 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
-                    <th ng-if="!viewMyPoints">Verify Points or Paid</th>
+                    <th ng-if="!viewMyPoints">Verify Points</th>
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
@@ -37,15 +37,9 @@
                 <tr ng-repeat="earnedPoints in earnedPointss track by earnedPoints.id">
                     <!--<td><a ui-sref="earnedPoints.detail({id:earnedPoints.id})">{{earnedPoints.id}}</a></td>-->
                     <td ng-if="!viewMyPoints">
-                        <button class="btn btn-info btn-sm" type="submit" ng-click="verifyPoints(earnedPoints)">
+                        <button class="btn btn-success btn-sm" type="submit" ng-click="verifyPoints(earnedPoints)">
                             <span class="glyphicon glyphicon-check"></span>
-                            <span>Points</span>
-                        </button>
-                        <button type="submit"
-                                ui-sref="earnedPoints.delete({id:earnedPoints.id})"
-                                class="btn btn-danger btn-sm">
-                            <span class="glyphicon glyphicon-usd">Paid</span>
-                            <span class="hidden-xs hidden-sm"></span>
+                            <span>Verify</span>
                         </button>
                     </td>
                         <td>{{earnedPoints.date | date:'mediumDate'}}</td>
@@ -61,15 +55,15 @@
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
-                                    ui-sref="earnedPoints.detail({id:earnedPoints.id})"
-                                    class="btn btn-info btn-sm">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                            <button type="submit"
                                     ui-sref="earnedPoints.edit({id:earnedPoints.id})"
                                     class="btn btn-primary btn-sm">
                                 <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="earnedPoints.delete({id:earnedPoints.id})"
+                                    class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-remove"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
                         </div>

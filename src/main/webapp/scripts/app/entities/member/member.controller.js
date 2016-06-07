@@ -49,4 +49,11 @@ angular.module('clubmanagerApp')
                 id: null
             };
         };
+        $scope.clearFilter = function() {
+            $scope.searchText = "";
+        };
+
+        $scope.setFilter = function(filterString) {
+            $scope.searchText = filterString;
+        }
     });

@@ -115,8 +115,19 @@ public class EarnedPointsResource {
         }
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
         addVerifiedPointsToMember(earnedPoints);
+        // reload the record so we have all the associated info, used to return a useful message to the UI.
+        result = earnedPointsRepository.findOne(result.getId());
+        String resultMsg = result.getMember().getName() + "'s " + result.getPointValue() + " pts recorded for " +
+            result.getDescription() + " on " + result.getDate();
+        HttpHeaders alert = HeaderUtil.createAlert(resultMsg, "");
+        if (!result.getVerified()) {
+            // typical header behaviors is going to be to let them know what was updated.  But just in case there is
+            // another update (and who knows why there would be), handle that too. Verification is 99.99999% of the
+            // use case.  This is just being clean and neat.
+            alert = HeaderUtil.createEntityUpdateAlert("earnedPoints", earnedPoints.getId().toString());
+        }
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert("earnedPoints", earnedPoints.getId().toString()))
+            .headers(alert)
             .body(result);
     }
 
