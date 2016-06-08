@@ -5,6 +5,6 @@ angular.module("clubmanagerApp")
 
 .constant("ENV", "dev")
 
-.constant("VERSION", "1.0-april2016")
+.constant("VERSION", "2.0-jun2016")
 
 ;
