@@ -1,10 +1,10 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.SignupReport;
 import com.ajdconsulting.pra.clubmanager.repository.SignupReportRepository;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.net.URI;
@@ -29,10 +33,10 @@ import java.util.Optional;
 public class SignupReportResource {
 
     private final Logger log = LoggerFactory.getLogger(SignupReportResource.class);
-        
+
     @Inject
     private SignupReportRepository signupReportRepository;
-    
+
     /**
      * POST  /signupReports -> Create a new signupReport.
      */
@@ -79,7 +83,7 @@ public class SignupReportResource {
     public ResponseEntity<List<SignupReport>> getAllSignupReports(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of SignupReports");
-        Page<SignupReport> page = signupReportRepository.findAll(pageable); 
+        Page<SignupReport> page = signupReportRepository.findAllOrdered(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/signupReports");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

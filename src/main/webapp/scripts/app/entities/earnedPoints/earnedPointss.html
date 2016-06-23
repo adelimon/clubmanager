@@ -1,6 +1,13 @@
 <div>
     <h2>Earned Points</h2>
     <jh-alert></jh-alert>
+    <div>
+        <label>Search for a points entry by typing a member name:
+        <input type="text" class="form-control" ng-model="searchText"></label>
+        <button id="clear-filter" class="btn btn-alert btn-sm" ng-click="clearFilter()" type="button">
+            <span class="glyphicon glyphicon-remove"/>
+        </button>
+    </div>
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
@@ -34,7 +41,7 @@
                 </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="earnedPoints in earnedPointss track by earnedPoints.id">
+                <tr ng-repeat="earnedPoints in earnedPointss | filter:searchText track by earnedPoints.id">
                     <!--<td><a ui-sref="earnedPoints.detail({id:earnedPoints.id})">{{earnedPoints.id}}</a></td>-->
                     <td ng-if="!viewMyPoints">
                         <button class="btn btn-success btn-sm" type="submit" ng-click="verifyPoints(earnedPoints)">
