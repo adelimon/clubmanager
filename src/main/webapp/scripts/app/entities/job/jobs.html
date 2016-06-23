@@ -1,12 +1,19 @@
 <div>
     <h2>Jobs</h2>
     <jh-alert></jh-alert>
+    <div>
+        <label>Search for a job by typing its title, work leader, job type, or job day:
+        <input type="text" class="form-control" ng-model="searchText"></label>
+        <button id="clear-filter" class="btn btn-alert btn-sm" ng-click="clearFilter()" type="button">
+            <span class="glyphicon glyphicon-remove"/>
+        </button>
+    </div>
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
                 <button class="btn btn-primary" ui-sref="job.new" >
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span 
+                    <span
                        >Create new Job
                     </span>
                 </button>
@@ -30,7 +37,7 @@
                 </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="job in jobs track by job.id">
+                <tr ng-repeat="job in jobs | filter:searchText track by job.id">
                     <td><a ui-sref="job.detail({id:job.id})">{{job.id}}</a></td>
                     <td>{{job.title}}</td>
                     <td>{{job.pointValue}}</td>
@@ -47,7 +54,7 @@
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
                                     ui-sref="job.detail({id:job.id})"
-                                    class="btn btn-info btn-sm"> 
+                                    class="btn btn-info btn-sm">
                                 <span class="glyphicon glyphicon-eye-open"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
@@ -59,7 +66,7 @@
                             </button>
                             <button type="submit"
                                     ui-sref="job.delete({id:job.id})"
-                                    class="btn btn-danger btn-sm">                                    
+                                    class="btn btn-danger btn-sm">
                                 <span class="glyphicon glyphicon-remove-circle"></span>
                                 <span class="hidden-xs hidden-sm"></span>
                             </button>
