@@ -1,16 +1,15 @@
 package com.ajdconsulting.pra.clubmanager.security;
 
-import java.io.IOException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.csrf.CsrfException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
-import org.springframework.security.web.csrf.CsrfException;
+import java.io.IOException;
 
 /**
  * An implementation of AccessDeniedHandler by wrapping the AccessDeniedHandlerImpl.
@@ -38,7 +37,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             cookie.setPath("/");
             response.addCookie(cookie);
         }
-
+        setErrorPage("/#/login");
         accessDeniedHandlerImpl.handle(request, response, accessDeniedException);
     }
 
