@@ -2,6 +2,7 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.MemberTypes;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
@@ -62,6 +63,10 @@ public class MemberResource {
         if (member.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("member", "idexists", "A new member cannot already have an ID")).body(null);
         }
+        member.setActive(false);
+        MemberTypes memberType = new MemberTypes();
+        memberType.setId(9L);
+        member.setStatus(memberType);
         Member result = memberRepository.save(member);
         return ResponseEntity.created(new URI("/api/members/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("member", result.getId().toString()))
