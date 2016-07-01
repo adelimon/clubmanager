@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Spring Data JPA repository for the EarnedPoints entity.
  */
@@ -21,4 +23,7 @@ public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long>
 
     @Query("select e from EarnedPoints e where e.verified = false and e.member.status <> 9 order by e.member.lastName")
     public Page<EarnedPoints> findUnverified(Pageable pageable);
+
+    @Query("select e from EarnedPoints e where e.member.id = :id")
+    public List<EarnedPoints> findByMemberId(@Param("id") long id);
 }

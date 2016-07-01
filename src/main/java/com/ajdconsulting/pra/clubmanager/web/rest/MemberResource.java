@@ -1,7 +1,11 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.Signup;
+import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
@@ -39,6 +43,12 @@ public class MemberResource {
 
     @Inject
     private MemberRepository memberRepository;
+
+    @Inject
+    private EarnedPointsRepository earnedPointsRepository;
+
+    @Inject
+    private SignupRepository signupRepository;
 
     /**
      * POST  /members -> Create a new member.
@@ -182,6 +192,15 @@ public class MemberResource {
     @Timed
     public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         log.debug("REST request to delete Member : {}", id);
+        // delete all earned points for this member first
+        List<EarnedPoints> allMemberPoints = earnedPointsRepository.findByMemberId(id);
+        for (EarnedPoints points : allMemberPoints) {
+            earnedPointsRepository.delete(points);
+        }
+        List<Signup> workerSignups = signupRepository.findByWorkerId(id);
+        for (Signup signup : workerSignups) {
+            signupRepository.delete(signup);
+        }
         memberRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
