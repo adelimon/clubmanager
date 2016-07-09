@@ -87,8 +87,10 @@ public class EarnedPointsResource {
     private void subtractPointsFromMember(@Valid @RequestBody EarnedPoints earnedPoints) {
         Member earner = memberRepository.findOne(earnedPoints.getMember().getId());
         // only subtract if the member has points for the current year - we don't allow folks to go negative
-        // on points, that wouldn't make a ton of sense..
-        if (earner.getCurrentYearPoints() > 0) {
+        // on points, that wouldn't make a ton of sense.   Also only remove verified entries, for the same reason
+        // we could be deleting a paid entry and wouldn't want to subtract points in that case (although we should
+        // ok not really, just a politicaly comment inserted in code :) ).
+        if (earnedPoints.getVerified() && (earner.getCurrentYearPoints() > 0)) {
             float newPointsTotal = (earner.getCurrentYearPoints() - earnedPoints.getPointValue());
             // also check to make sure when we do the subtraction that the total doesn't go below
             // zero, because that would make no sense.
@@ -180,6 +182,21 @@ public class EarnedPointsResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
+    /**
+     * GET  /earnedPointss/myVerifications -> get the earned Points the logged in user has to verify.
+     */
+    @RequestMapping(value = "/earnedPointss/myVerifications",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<EarnedPoints>> getUserVerifications(Pageable pageable) throws URISyntaxException {
+        Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
 
     /**
      * GET  /earnedPointss/:id -> get the "id" earnedPoints.
