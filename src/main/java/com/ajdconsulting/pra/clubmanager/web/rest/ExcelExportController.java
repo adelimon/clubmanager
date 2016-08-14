@@ -37,7 +37,7 @@ public class ExcelExportController {
         String query =
             "select concat(last_name, ', ', first_name) name, mt.type status, " +
                 "current_year_points, '' signature from member m, member_types mt " +
-                "where m.status != 9 and mt.id = m.status order by is_active desc, last_name";
+                "where m.status != 9 and mt.id = m.status";
 
         String[] headerColumns = {"Name", "Status", "Points", "Signature"};
         int[] columnWidths = {20, 20, 10, 65};
