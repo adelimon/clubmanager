@@ -69,20 +69,36 @@ public class SignupResource {
         // if someone sends in a partial request, IE one containing only the IDs.  Valid use case for doing posts
         // from links etc.
         result = signupRepository.findOne(result.getId());
+        boolean isMeetingSignup = (signup.getScheduleDate().getEventType().getType().equals("Meeting"));
+
         // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
         EarnedPoints signupEarnedPoints = new EarnedPoints();
+        String earnedPointsDesc = "";
+        boolean verified = false;
+        float pointValue = 0.0f;
+
         signupEarnedPoints.setDate(result.getScheduleDate().getDate());
-        signupEarnedPoints.setPointValue(result.getJob().getPointValue());
+        if (!isMeetingSignup) {
+            pointValue = result.getJob().getPointValue();
+            earnedPointsDesc = result.getJob().getTitle();
+        } else {
+            // this is a meeting signup, so just say "meeting"
+            earnedPointsDesc = "Meeting";
+            // always verify a meeting attendance since only admins can enter it
+            // anyway, and it will usually be the secretary anyway.
+            verified = true;
+        }
         signupEarnedPoints.setMember(result.getWorker());
         signupEarnedPoints.setEventType(result.getScheduleDate().getEventType());
-        signupEarnedPoints.setDescription(result.getJob().getTitle());
-        signupEarnedPoints.setVerified(false);
+        signupEarnedPoints.setDescription(earnedPointsDesc);
+        signupEarnedPoints.setVerified(verified);
+        signupEarnedPoints.setPointValue(pointValue);
         earnedPointsRepository.save(signupEarnedPoints);
         log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
 
         mailService.sendSignupEmail(result);
 
-        String uiResponse = result.getWorker().getName() + " was signed up for job " + result.getJob().getTitle() +
+        String uiResponse = result.getWorker().getName() + " was signed up for job " + earnedPointsDesc +
             " for the event on " + result.getScheduleDate().getDate();
 
         return ResponseEntity.created(new URI("/api/signups/" + result.getId()))

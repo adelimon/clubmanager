@@ -16,6 +16,6 @@ public interface ScheduleDateRepository extends JpaRepository<ScheduleDate,Long>
     @Query("select s from ScheduleDate s order by date")
     public Page<ScheduleDate> findAllOrdered(Pageable pageable);
 
-    @Query("select s from ScheduleDate s where s.date >= current_date() order by date")
+    @Query("select s from ScheduleDate s where ((s.eventType.type = 'Meeting') or (s.date >= current_date())) order by date")
     public Page<ScheduleDate> findAllFutureDates(Pageable pageable);
 }
