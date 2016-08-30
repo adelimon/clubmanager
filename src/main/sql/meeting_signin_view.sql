@@ -8,3 +8,5 @@ m.status != 9 and
 sd.event_type_id = 7 and
 sd.date > now() and
 sd.date < DATE_ADD(now(), INTERVAL 14 DAY)
+order by
+m.last_name
