@@ -1,6 +1,6 @@
 create or replace view meeting_signin as
 select
-m.last_name, m.first_name, sd.id, sd.date meeting_date
+m.id member_id, m.last_name, m.first_name, sd.id meeting_id, sd.date meeting_date
 from
 member m, schedule_date sd
 where
