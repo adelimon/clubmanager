@@ -19,11 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.net.URI;
@@ -69,7 +65,10 @@ public class SignupResource {
         // if someone sends in a partial request, IE one containing only the IDs.  Valid use case for doing posts
         // from links etc.
         result = signupRepository.findOne(result.getId());
-        boolean isMeetingSignup = (signup.getScheduleDate().getEventType().getType().equals("Meeting"));
+        boolean isMeetingSignup = false;
+        if ((signup.getScheduleDate() != null) && (signup.getScheduleDate().getEventType() != null) ){
+            isMeetingSignup = "Meeting".equals(signup.getScheduleDate().getEventType().getType());
+        }
 
         // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
         EarnedPoints signupEarnedPoints = new EarnedPoints();
