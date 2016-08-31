@@ -73,7 +73,11 @@ public class EarnedPointsResource {
         // check if the entry is verified.  If it is, then also add the points to the member's total for the year.
         if (earnedPoints.getVerified()) {
             Member earner = memberRepository.findOne(earnedPoints.getMember().getId());
-            earner.setCurrentYearPoints(earner.getCurrentYearPoints()+earnedPoints.getPointValue());
+            Float currentYearTotal = earnedPoints.getPointValue();
+            if (earner.getCurrentYearPoints() != null) {
+                currentYearTotal += earner.getCurrentYearPoints();
+            }
+            earner.setCurrentYearPoints(currentYearTotal);
             memberRepository.save(earner);
         }
     }
