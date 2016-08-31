@@ -11,4 +11,4 @@ left join signup s on (s.job_id = j.id  and s.schedule_date_id in (select id fro
 inner join schedule_date sd on (sd.event_type_id = j.event_type_id and sd.date > now())
 left join member w on w.id = s.worker_id
 left join member  wl on wl.id = j.work_leader_id
-order by date, title
+order by job_day, title
