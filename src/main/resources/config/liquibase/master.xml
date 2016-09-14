@@ -17,5 +17,6 @@
     <include file="classpath:config/liquibase/changelog/20160513022713_added_entity_PaidLabor.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20160515175107_added_entity_PaidSignup.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20160605171253_added_entity_RidingAreaStatus.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20160912015436_added_entity_BoardMember.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
 </databaseChangeLog>
