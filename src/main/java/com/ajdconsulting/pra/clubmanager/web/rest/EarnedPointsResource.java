@@ -11,6 +11,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -182,6 +183,20 @@ public class EarnedPointsResource {
     @Timed
     public ResponseEntity<List<EarnedPoints>> getUserEarnedPoints(Pageable pageable) throws URISyntaxException {
         Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /earnedPointss/me -> get the logged in user's earnedPoints.
+     */
+    @RequestMapping(value = "/earnedPointss/member/{memberId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<EarnedPoints>> getMemberEarnedPoints(Pageable pageable, @PathVariable Long memberId) throws URISyntaxException {
+        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);

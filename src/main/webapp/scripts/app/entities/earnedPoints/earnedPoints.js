@@ -36,6 +36,23 @@ angular.module('clubmanagerApp')
                 resolve: {
                 }
             })
+            .state('earnedPoints.member', {
+                parent: 'entity',
+                url: '/earnedPointss/member/{id}',
+                data: {
+                    authorities: ['ROLE_USER'],
+                    pageTitle: 'Earned points for member',
+                    loggedInUserOnly: true
+                },
+                views: {
+                    'content@': {
+                        templateUrl: 'scripts/app/entities/earnedPoints/earnedPointss.html',
+                        controller: 'EarnedPointsController'
+                    }
+                },
+                resolve: {
+                }
+            })
             .state('earnedPoints.detail', {
                 parent: 'entity',
                 url: '/earnedPoints/{id}',
