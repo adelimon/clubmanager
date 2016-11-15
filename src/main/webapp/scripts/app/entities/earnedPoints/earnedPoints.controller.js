@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clubmanagerApp')
-    .controller('EarnedPointsController', function ($scope, $state, EarnedPoints, ParseLinks) {
+    .controller('EarnedPointsController', function ($scope, $state, $location, EarnedPoints, ParseLinks) {
 
         $scope.earnedPointss = [];
         $scope.predicate = 'id';
@@ -13,8 +13,16 @@ angular.module('clubmanagerApp')
         $scope.viewMyPoints = ($state.$current.data.loggedInUserOnly === true);
         $scope.loadAll = function() {
             var queryProps = {page: $scope.page, size: 20, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']};
+            var path = $location.path();
+            var isMemberPoints = (path.indexOf('member/') > -1);
+            if (isMemberPoints) {
+                var pathSplit = path.split('/');
+                var id = pathSplit[pathSplit.length-1];
+                queryProps.id = "member"+id;
+                queryProps.memberLookup = true;
+            }
             // if we only want to see verified points, then add that to the query properties.
-            if ($scope.viewMyPoints) {
+            if (!isMemberPoints && $scope.viewMyPoints) {
                 queryProps.id = "me";
             }
             EarnedPoints.query(queryProps, function(result, headers) {

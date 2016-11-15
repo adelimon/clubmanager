@@ -70,7 +70,14 @@
                     <!--<td>{{member.occupation}}</td>-->
                     <td>{{member.phone}}</td>
                     <td>{{member.email}}</td>
-                    <td>{{member.currentYearPoints}}</td>
+                    <td>
+                        <button type="submit"
+                                ui-sref="earnedPoints.member({id:member.id})"
+                                class="btn btn-warning btn-sm">
+                            <span class="glyphicon glyphicon-credit-card">View</span>
+                            <span class="hidden-xs hidden-sm"></span>
+                        </button>
+                    </td>
                         <!--<td>{{member.birthday | date:'mediumDate'}}</td>-->
                         <!--<td>{{member.dateJoined | date:'mediumDate'}}</td>-->
                     <td class="text-right">

@@ -191,7 +191,7 @@ public class EarnedPointsResource {
     /**
      * GET  /earnedPointss/me -> get the logged in user's earnedPoints.
      */
-    @RequestMapping(value = "/earnedPointss/member/{memberId}",
+    @RequestMapping(value = "/earnedPointss/member{memberId}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
