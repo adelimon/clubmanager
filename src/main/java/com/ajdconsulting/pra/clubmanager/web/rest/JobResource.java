@@ -158,4 +158,23 @@ public class JobResource {
         jobRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("job", id.toString())).build();
     }
+
+    /**
+     * DELETE  /jobs/:id -> delete the "id" job.
+     */
+    @RequestMapping(value = "/jobs/clone/{id}/{count}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Job> cloneJob(@PathVariable Long id, @PathVariable Long count) throws URISyntaxException {
+        log.debug("REST request to delete Job : {}", id);
+        Job jobToCopy = jobRepository.findOne(id);
+        ResponseEntity<Job> job = null;
+        for (int index = 0; index < count; index++) {
+            jobToCopy.setId(null);
+            job = createJob(jobToCopy);
+        }
+        return job;
+    }
+
 }
