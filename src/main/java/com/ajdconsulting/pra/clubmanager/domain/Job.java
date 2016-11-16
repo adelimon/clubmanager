@@ -22,21 +22,24 @@ public class Job implements Serializable {
     @NotNull
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @NotNull
     @Min(value = 0)
     @Column(name = "point_value", nullable = false)
     private Float pointValue;
-    
+
     @Column(name = "cash_value")
     private Float cashValue;
-    
+
     @Column(name = "job_day")
     private String jobDay;
 
     @Column(name = "reserved")
     private Boolean reserved;
-    
+
+    @Column(name = "online")
+    private Boolean online;
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
@@ -56,7 +59,7 @@ public class Job implements Serializable {
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -64,7 +67,7 @@ public class Job implements Serializable {
     public Float getPointValue() {
         return pointValue;
     }
-    
+
     public void setPointValue(Float pointValue) {
         this.pointValue = pointValue;
     }
@@ -72,7 +75,7 @@ public class Job implements Serializable {
     public Float getCashValue() {
         return cashValue;
     }
-    
+
     public void setCashValue(Float cashValue) {
         this.cashValue = cashValue;
     }
@@ -80,7 +83,7 @@ public class Job implements Serializable {
     public String getJobDay() {
         return jobDay;
     }
-    
+
     public void setJobDay(String jobDay) {
         this.jobDay = jobDay;
     }
@@ -88,9 +91,17 @@ public class Job implements Serializable {
     public Boolean getReserved() {
         return reserved;
     }
-    
+
     public void setReserved(Boolean reserved) {
         this.reserved = reserved;
+    }
+
+    public Boolean getOnline() {
+        return online;
+    }
+
+    public void setOnline(Boolean online) {
+        this.online = online;
     }
 
     public EventType getEventType() {
