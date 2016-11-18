@@ -5,6 +5,7 @@ angular.module('clubmanagerApp').controller('JobDialogController',
         function($scope, $stateParams, $uibModalInstance, entity, Job, EventType, Member) {
 
         $scope.job = entity;
+            $scope.job.online = true;
         $scope.eventtypes = EventType.query();
         $scope.members = Member.query();
         $scope.load = function(id) {
