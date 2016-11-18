@@ -19,6 +19,22 @@ angular.module('clubmanagerApp')
                 resolve: {
                 }
             })
+            .state('member.signin', {
+                parent: 'entity',
+                url: '/members/signin',
+                data: {
+                    authorities: ['ROLE_USER'],
+                    pageTitle: 'Members'
+                },
+                views: {
+                    'content@': {
+                        templateUrl: 'scripts/app/entities/member/members-signin.html',
+                        controller: 'MemberController'
+                    }
+                },
+                resolve: {
+                }
+            })
             .state('member.detail', {
                 parent: 'entity',
                 url: '/member/{id}',
