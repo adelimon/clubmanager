@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('clubmanagerApp')
-    .controller('MemberController', function ($scope, $state, Member, ParseLinks) {
+    .controller('MemberController', function ($scope, $state, $location, $http, Member, ParseLinks) {
 
         $scope.members = [];
+        $scope.signedUp = [];
         $scope.predicate = 'id';
         $scope.reverse = true;
         $scope.page = 0;
@@ -56,5 +57,28 @@ angular.module('clubmanagerApp')
         $scope.setFilter = function(filterString) {
             $scope.searchText = filterString;
         }
+
+        $scope.signUpFromLink = function(member) {
+            //alert(JSON.stringify(member));
+            var urlSplit = $location.path().split("/");
+            var eventId = urlSplit[urlSplit.length-1];
+            var memberId = member.id;
+
+            alert( eventId + " " + memberId);
+
+            $http.post('/api/earnedPoints/'+memberId+'/'+eventId).then(
+                function() {
+                    $scope.signedUp.push(memberId);
+                    $scope.refresh();
+                },
+                function() {
+                    alert("Your signup had an error.");
+                }
+            );
+        };
+
+        $scope.checkHide = function(id) {
+            return ($scope.signedUp.indexOf(id) > -1);
+        };
 
     });

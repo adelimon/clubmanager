@@ -1,9 +1,12 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
+import com.ajdconsulting.pra.clubmanager.domain.EventType;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import com.ajdconsulting.pra.clubmanager.repository.ScheduleDateRepository;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
@@ -27,6 +30,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +49,9 @@ public class EarnedPointsResource {
     @Inject
     private MemberRepository memberRepository;
 
+    @Inject
+    private ScheduleDateRepository scheduleDateRepository;
+
     /**
      * POST  /earnedPointss -> Create a new earnedPoints.
      */
@@ -59,6 +66,34 @@ public class EarnedPointsResource {
         }
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
         addVerifiedPointsToMember(earnedPoints);
+        return ResponseEntity.created(new URI("/api/earnedPointss/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert("earnedPoints", result.getId().toString()))
+            .body(result);
+    }
+
+    @RequestMapping(value = "/earnedPoints/{memberId}/{eventId}",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<EarnedPoints> createEarnedPointsFromSignup(@PathVariable Long memberId, @PathVariable Long eventId) throws URISyntaxException {
+
+        ScheduleDate scheduleDate = scheduleDateRepository.findOne(eventId);
+        Member member = memberRepository.findOne(memberId);
+        EventType eventType = scheduleDate.getEventType();
+
+        EarnedPoints earnedPoints = new EarnedPoints();
+        earnedPoints.setDescription("Attended");
+        earnedPoints.setEventType(eventType);
+        earnedPoints.setMember(member);
+        earnedPoints.setVerified(true);
+        earnedPoints.setDate(LocalDate.now());
+        if (eventType.getType().equals("Meeting")) {
+            earnedPoints.setPointValue(0.0f);
+        } else if (eventType.getType().equals("Work Day")) {
+            earnedPoints.setPointValue(2.0f);
+        }
+
+        EarnedPoints result = earnedPointsRepository.save(earnedPoints);
         return ResponseEntity.created(new URI("/api/earnedPointss/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("earnedPoints", result.getId().toString()))
             .body(result);

@@ -16,7 +16,9 @@
                     <td>{{member.firstName}}</td>
                     <td>
                         <button type="submit"
-                                ui-sref="earnedPoints.member({id:member.id})"
+                                id="{{member.id}}"
+                                ng-hide="checkHide(member.id)"
+                                ng-click="signUpFromLink(member)"
                                 class="btn btn-default btn-lg">
                             <span class="glyphicon glyphicon-pencil">Sign In</span>
                             <span class="hidden-xs hidden-sm"></span>
