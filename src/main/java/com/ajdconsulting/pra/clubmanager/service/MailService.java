@@ -139,4 +139,10 @@ public class MailService {
             signup.getJob().getWorkLeader().getPhone() + " or " + workLeaderEmail + " for questions or further instructions.";
         sendEmail(worker.getEmail(), subject, memberContext, false, false);
     }
+
+    @Async
+    public void sendEmailToMembership(String subject, String content) {
+
+        sendEmail("everyone@membermail.palmyramx.com", subject, content, false, false);
+    }
 }
