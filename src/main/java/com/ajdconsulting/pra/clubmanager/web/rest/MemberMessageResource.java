@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.MemberMessage;
 import com.ajdconsulting.pra.clubmanager.repository.MemberMessageRepository;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +32,13 @@ import java.util.Optional;
 public class MemberMessageResource {
 
     private final Logger log = LoggerFactory.getLogger(MemberMessageResource.class);
-        
+
     @Inject
     private MemberMessageRepository memberMessageRepository;
-    
+
+    @Inject
+    private MailService mailService;
+
     /**
      * POST  /memberMessages -> Create a new memberMessage.
      */
@@ -50,6 +55,20 @@ public class MemberMessageResource {
         return ResponseEntity.created(new URI("/api/memberMessages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("memberMessage", result.getId().toString()))
             .body(result);
+    }
+
+    @RequestMapping(value = "/memberMessages/send{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Boolean> sendMessage(@PathVariable Long id) {
+        MemberMessage message = memberMessageRepository.findOne(id);
+
+        mailService.sendEmailToMembership(message.getSubject(), message.getMessageText());
+        message.setSendDate(LocalDate.now());
+        memberMessageRepository.save(message);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     /**
@@ -80,7 +99,7 @@ public class MemberMessageResource {
     public ResponseEntity<List<MemberMessage>> getAllMemberMessages(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of MemberMessages");
-        Page<MemberMessage> page = memberMessageRepository.findAll(pageable); 
+        Page<MemberMessage> page = memberMessageRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/memberMessages");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

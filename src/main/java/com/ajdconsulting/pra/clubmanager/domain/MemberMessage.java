@@ -4,6 +4,7 @@ package com.ajdconsulting.pra.clubmanager.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -20,11 +21,14 @@ public class MemberMessage implements Serializable {
     @NotNull
     @Column(name = "subject", nullable = false)
     private String subject;
-    
+
     @NotNull
     @Column(name = "message_text", nullable = false)
     private String messageText;
-    
+
+    @Column(name = "send_date", nullable = true)
+    private LocalDate sendDate;
+
     public Long getId() {
         return id;
     }
@@ -36,7 +40,7 @@ public class MemberMessage implements Serializable {
     public String getSubject() {
         return subject;
     }
-    
+
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -44,9 +48,17 @@ public class MemberMessage implements Serializable {
     public String getMessageText() {
         return messageText;
     }
-    
+
     public void setMessageText(String messageText) {
         this.messageText = messageText;
+    }
+
+    public LocalDate getSendDate() {
+        return this.sendDate;
+    }
+
+    public void setSendDate(LocalDate sendDate) {
+        this.sendDate = sendDate;
     }
 
     @Override

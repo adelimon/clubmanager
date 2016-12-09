@@ -88,6 +88,9 @@ angular.module('clubmanagerApp')
                     })
                 }]
             })
+            .state('memberMessage.send', {
+                
+            })
             .state('memberMessage.delete', {
                 parent: 'memberMessage',
                 url: '/{id}/delete',
