@@ -1,9 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
-import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
-import com.ajdconsulting.pra.clubmanager.domain.Member;
-import com.ajdconsulting.pra.clubmanager.domain.MemberTypes;
-import com.ajdconsulting.pra.clubmanager.domain.Signup;
+import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
@@ -15,6 +12,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +28,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -209,4 +208,65 @@ public class MemberResource {
         memberRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
+
+    /**
+     * GET  /members -> get all the members.
+     */
+    @RequestMapping(value = "/members/dues",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<MemberDues>> getAllMemberDues(Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of Members");
+        List<MemberDues> memberDues = new ArrayList<MemberDues>();
+        List<Member> allMembers = memberRepository.findAll();
+        for (Member member : allMembers) {
+            // skip all paid labor, since we don't want to count them in this total
+            String memberType = member.getStatus().getType();
+            if (!"Paid Labor".equals(memberType)) {
+                MemberDues dues = new MemberDues();
+                dues.setFirstName(member.getFirstName());
+                dues.setLastName(member.getLastName());
+                dues.setMemberType(memberType);
+                List<EarnedPoints> memberPoints = earnedPointsRepository.findByMemberId(member.getId());
+                float totalPoints = 0f;
+                float totalDues = 0f;
+                if (memberPoints.size() == 0) {
+                    totalDues = 500f;
+                }
+                boolean paysZero = ("Life member".equals(memberType) ||
+                    "Sponsorship".equals(memberType)
+                );
+                if (paysZero) {
+                    totalDues = 0f;
+                } else {
+                    for (EarnedPoints entry : memberPoints) {
+                        totalPoints += entry.getPointValue();
+                        // life members and sponsored always pay zero.
+                        if (paysZero) {
+                            totalDues = 0.0f;
+                        } else {
+                            // everyone else pays the total dues (500), minus the number of points, divided by 500.  If the
+                            // total goes negative, then their total due is zero.
+                            float standardAmount = 500f;
+                            float earnedAmount = (totalPoints * (standardAmount / 21));
+                            totalDues = (standardAmount - earnedAmount);
+                            if (totalDues < 0) {
+                                totalDues = 0;
+                            }
+                        }
+                    }
+                }
+                dues.setPoints(totalPoints);
+                dues.setAmountDue(totalDues);
+                memberDues.add(dues);
+            }
+        }
+        boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
+        Page<MemberDues> page = new PageImpl<MemberDues>(memberDues);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
 }
