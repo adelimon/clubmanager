@@ -205,6 +205,16 @@ public class Member implements Serializable {
         this.status = status;
     }
 
+    public boolean isPaidLabor() {
+        return ("Paid Labor".equals(this.status.getType()));
+    }
+
+    public boolean paysDues() {
+        return !("Life member".equals(status.getType()) ||
+            "Sponsorship".equals(status.getType())
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

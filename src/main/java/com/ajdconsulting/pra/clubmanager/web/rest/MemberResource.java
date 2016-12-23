@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -221,52 +222,54 @@ public class MemberResource {
         log.debug("REST request to get a page of Members");
         List<MemberDues> memberDues = new ArrayList<MemberDues>();
         List<Member> allMembers = memberRepository.findAll();
+        // sort the list by last name
+        allMembers.sort((Member o1, Member o2) -> o1.getLastName().compareTo(o2.getLastName()));
+
         for (Member member : allMembers) {
             // skip all paid labor, since we don't want to count them in this total
-            String memberType = member.getStatus().getType();
-            if (!"Paid Labor".equals(memberType)) {
-                MemberDues dues = new MemberDues();
-                dues.setFirstName(member.getFirstName());
-                dues.setLastName(member.getLastName());
-                dues.setMemberType(memberType);
-                List<EarnedPoints> memberPoints = earnedPointsRepository.findByMemberId(member.getId());
-                float totalPoints = 0f;
-                float totalDues = 0f;
-                if (memberPoints.size() == 0) {
-                    totalDues = 500f;
-                }
-                boolean paysZero = ("Life member".equals(memberType) ||
-                    "Sponsorship".equals(memberType)
-                );
-                if (paysZero) {
-                    totalDues = 0f;
-                } else {
-                    for (EarnedPoints entry : memberPoints) {
-                        totalPoints += entry.getPointValue();
-                        // life members and sponsored always pay zero.
-                        if (paysZero) {
-                            totalDues = 0.0f;
-                        } else {
-                            // everyone else pays the total dues (500), minus the number of points, divided by 500.  If the
-                            // total goes negative, then their total due is zero.
-                            float standardAmount = 500f;
-                            float earnedAmount = (totalPoints * (standardAmount / 21));
-                            totalDues = (standardAmount - earnedAmount);
-                            if (totalDues < 0) {
-                                totalDues = 0;
-                            }
-                        }
-                    }
-                }
-                dues.setPoints(totalPoints);
-                dues.setAmountDue(totalDues);
-                memberDues.add(dues);
-            }
+            if (member.isPaidLabor()) continue;
+
+            MemberDues dues = new MemberDues(member);
+
+            float totalPoints = getTotalPoints(member);
+            float totalDues = getTotalDues(member, totalPoints);
+
+            dues.setPoints(totalPoints);
+            dues.setAmountDue(totalDues);
+            memberDues.add(dues);
         }
         boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
         Page<MemberDues> page = new PageImpl<MemberDues>(memberDues);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    private float getTotalDues(Member member, float totalPoints) {
+        float totalDues;
+        // life members and sponsored members pay no dues.
+        if (member.paysDues()) {
+            // Everyone else pays the total dues, minus the number of points, divided by standard amount.
+            float standardAmount = MemberDues.STANDARD_AMOUNT;
+            float earnedAmount = (totalPoints * (standardAmount / 21));
+            totalDues = (standardAmount - earnedAmount);
+            // If the total goes negative, then their total due is zero.  We don't pay people for points
+            // overages, we just say THANK YOU FOR YER SERVICE
+            if (totalDues < 0) {
+                totalDues = 0;
+            }
+        } else {
+            totalDues = 0;
+        }
+        return totalDues;
+    }
+
+    private float getTotalPoints(Member member) {
+        List<EarnedPoints> memberPoints = earnedPointsRepository.findByMemberId(member.getId());
+        float totalPoints = 0;
+        for (EarnedPoints entry : memberPoints) {
+            totalPoints += entry.getPointValue();
+        }
+        return totalPoints;
     }
 
 }
