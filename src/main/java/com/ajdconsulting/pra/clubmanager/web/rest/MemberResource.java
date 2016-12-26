@@ -250,7 +250,7 @@ public class MemberResource {
         if (member.paysDues()) {
             // Everyone else pays the total dues, minus the number of points, divided by standard amount.
             float standardAmount = MemberDues.STANDARD_AMOUNT;
-            float earnedAmount = (totalPoints * (standardAmount / 21));
+            float earnedAmount = (totalPoints * MemberDues.PAID_PER_POINT);
             totalDues = (standardAmount - earnedAmount);
             // If the total goes negative, then their total due is zero.  We don't pay people for points
             // overages, we just say THANK YOU FOR YER SERVICE

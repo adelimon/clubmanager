@@ -4,6 +4,8 @@ public class MemberDues {
 
     public static final float STANDARD_AMOUNT = 500;
 
+    public static final float PAID_PER_POINT = 20;
+
     private String firstName;
 
     private String lastName;
