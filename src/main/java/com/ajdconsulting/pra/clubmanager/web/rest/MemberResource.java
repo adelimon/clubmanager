@@ -231,8 +231,9 @@ public class MemberResource {
 
             MemberDues dues = new MemberDues(member);
 
-            float totalPoints = getTotalPoints(member);
-            float totalDues = getTotalDues(member, totalPoints);
+            List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(member.getId());
+            float totalPoints = member.getTotalPoints(earnedPoints);
+            float totalDues = member.getTotalDues(totalPoints);
 
             dues.setPoints(totalPoints);
             dues.setAmountDue(totalDues);
@@ -242,34 +243,6 @@ public class MemberResource {
         Page<MemberDues> page = new PageImpl<MemberDues>(memberDues);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-
-    private float getTotalDues(Member member, float totalPoints) {
-        float totalDues;
-        // life members and sponsored members pay no dues.
-        if (member.paysDues()) {
-            // Everyone else pays the total dues, minus the number of points, divided by standard amount.
-            float standardAmount = MemberDues.STANDARD_AMOUNT;
-            float earnedAmount = (totalPoints * MemberDues.PAID_PER_POINT);
-            totalDues = (standardAmount - earnedAmount);
-            // If the total goes negative, then their total due is zero.  We don't pay people for points
-            // overages, we just say THANK YOU FOR YER SERVICE
-            if (totalDues < 0) {
-                totalDues = 0;
-            }
-        } else {
-            totalDues = 0;
-        }
-        return totalDues;
-    }
-
-    private float getTotalPoints(Member member) {
-        List<EarnedPoints> memberPoints = earnedPointsRepository.findByMemberId(member.getId());
-        float totalPoints = 0;
-        for (EarnedPoints entry : memberPoints) {
-            totalPoints += entry.getPointValue();
-        }
-        return totalPoints;
     }
 
 }

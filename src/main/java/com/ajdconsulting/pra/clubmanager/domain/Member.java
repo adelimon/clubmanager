@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -214,6 +215,35 @@ public class Member implements Serializable {
             "Sponsorship".equals(status.getType())
         );
     }
+
+    public float getTotalDues(float totalPoints) {
+        float totalDues;
+        // life members and sponsored members pay no dues.
+        if (this.paysDues()) {
+            // Everyone else pays the total dues, minus the number of points, divided by standard amount.
+            float standardAmount = MemberDues.STANDARD_AMOUNT;
+            float earnedAmount = (totalPoints * MemberDues.PAID_PER_POINT);
+            totalDues = (standardAmount - earnedAmount);
+            // If the total goes negative, then their total due is zero.  We don't pay people for points
+            // overages, we just say THANK YOU FOR YER SERVICE
+            if (totalDues < 0) {
+                totalDues = 0;
+            }
+        } else {
+            totalDues = 0;
+        }
+        return totalDues;
+    }
+
+    public float getTotalPoints(List<EarnedPoints> memberPoints) {
+
+        float totalPoints = 0;
+        for (EarnedPoints entry : memberPoints) {
+            totalPoints += entry.getPointValue();
+        }
+        return totalPoints;
+    }
+
 
     @Override
     public boolean equals(Object o) {
