@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
@@ -9,6 +10,8 @@ import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
+import javassist.Modifier;
+import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -254,6 +258,23 @@ public class MemberResource {
         throws IOException, URISyntaxException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> allMemberDues = this.getAllMemberDues(page).getBody();
+        Class memberDuesClass = MemberDues.class;
+        Field[] declaredFields = memberDuesClass.getDeclaredFields();
+        List<String> headerFields = new ArrayList<String>();
+
+        for (Field classField : declaredFields) {
+            boolean nonStatic = !Modifier.isStatic(classField.getModifiers());
+            if (nonStatic) {
+                headerFields.add(classField.getName());
+            }
+        }
+
+        StripedSingleSheetWorkbook workbook = new StripedSingleSheetWorkbook("dues");
+        workbook.addHeader(headerFields);
+        for (MemberDues dues : allMemberDues) {
+            Row row = workbook.createRow(true);
+
+        }
 
     }
 }

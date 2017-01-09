@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Wrapper for the POI interactions with excel.  This allows us an easier usage of that lib since we abstract all
@@ -103,6 +104,14 @@ public class StripedSingleSheetWorkbook {
             // wehn I will probably have to get up with kids in like 7 hours.
             this.createCell(row, headerColumns[index], true);
         }
+    }
+
+    public void addHeader(List<String> headerColumns) {
+        String[] headers = new String[headerColumns.size()];
+        for (int index = 0; index < headerColumns.size(); index++) {
+            headers[index] = headerColumns.get(index);
+        }
+        addHeader(headers);
     }
 
     /**
