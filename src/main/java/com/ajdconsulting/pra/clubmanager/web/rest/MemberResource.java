@@ -1,5 +1,8 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.data.export.excel.BasicSingleSheetWorkbook;
+import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelHttpOutputStream;
+import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelWorkbook;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
@@ -255,26 +258,29 @@ public class MemberResource {
 
     @RequestMapping("/exportDues")
     public void exportDuesReport(HttpServletRequest request, HttpServletResponse response)
-        throws IOException, URISyntaxException {
+        throws IOException, URISyntaxException, NoSuchFieldException {
         Pageable page = new PageRequest(1, 400);
-        List<MemberDues> allMemberDues = this.getAllMemberDues(page).getBody();
-        Class memberDuesClass = MemberDues.class;
-        Field[] declaredFields = memberDuesClass.getDeclaredFields();
-        List<String> headerFields = new ArrayList<String>();
 
+        List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
+        Class clazz = objectList.get(0).getClass();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        List<String> headerFields = new ArrayList<String>();
         for (Field classField : declaredFields) {
             boolean nonStatic = !Modifier.isStatic(classField.getModifiers());
             if (nonStatic) {
                 headerFields.add(classField.getName());
             }
         }
-
-        StripedSingleSheetWorkbook workbook = new StripedSingleSheetWorkbook("dues");
+        ExcelWorkbook workbook = new BasicSingleSheetWorkbook("dues");
         workbook.addHeader(headerFields);
-        for (MemberDues dues : allMemberDues) {
+        for (MemberDues dues : objectList) {
             Row row = workbook.createRow(true);
-
+            workbook.createCell(row, dues.getFirstName());
+            workbook.createCell(row, dues.getLastName());
+            workbook.createCell(row, dues.getMemberType());
+            workbook.createCell(row, dues.getPoints());
+            workbook.createCell(row, dues.getAmountDue());
         }
-
+        workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
     }
 }
