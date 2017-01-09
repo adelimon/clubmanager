@@ -256,22 +256,15 @@ public class MemberResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @RequestMapping("/exportDues")
+    @RequestMapping("/members/exportDues")
     public void exportDuesReport(HttpServletRequest request, HttpServletResponse response)
         throws IOException, URISyntaxException, NoSuchFieldException {
         Pageable page = new PageRequest(1, 400);
 
         List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
-        Class clazz = objectList.get(0).getClass();
-        Field[] declaredFields = clazz.getDeclaredFields();
-        List<String> headerFields = new ArrayList<String>();
-        for (Field classField : declaredFields) {
-            boolean nonStatic = !Modifier.isStatic(classField.getModifiers());
-            if (nonStatic) {
-                headerFields.add(classField.getName());
-            }
-        }
+
         ExcelWorkbook workbook = new BasicSingleSheetWorkbook("dues");
+        String[] headerFields = {"First Name", "Last Name", "Member Type", "Points", "Amount Due"};
         workbook.addHeader(headerFields);
         for (MemberDues dues : objectList) {
             Row row = workbook.createRow(true);
@@ -281,6 +274,7 @@ public class MemberResource {
             workbook.createCell(row, dues.getPoints());
             workbook.createCell(row, dues.getAmountDue());
         }
+
         workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
     }
 }
