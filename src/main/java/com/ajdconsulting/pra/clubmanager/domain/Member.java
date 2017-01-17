@@ -212,7 +212,8 @@ public class Member implements Serializable {
 
     public boolean paysDues() {
         return !("Life member".equals(status.getType()) ||
-            "Sponsorship".equals(status.getType())
+            "Sponsorship".equals(status.getType()) ||
+            "Distant Rider".equals(status.getType())
         );
     }
 
