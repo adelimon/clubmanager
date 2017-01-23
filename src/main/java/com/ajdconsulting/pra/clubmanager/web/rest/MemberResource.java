@@ -10,6 +10,7 @@ import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
+import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
@@ -35,10 +36,14 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -61,6 +66,9 @@ public class MemberResource {
 
     @Inject
     private SignupRepository signupRepository;
+
+    @Inject
+    private MailService mailService;
 
     /**
      * POST  /members -> Create a new member.
@@ -276,5 +284,18 @@ public class MemberResource {
         }
 
         workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
+    }
+
+    @RequestMapping("/members/sendDues")
+    public void sendDues(HttpServletRequest request, HttpServletResponse response) throws URISyntaxException, IOException {
+        Pageable page = new PageRequest(1, 400);
+        List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/activationEmail.html")));
+        contents.equals(contents);
+        for (MemberDues dues : objectList) {
+
+        }
     }
 }

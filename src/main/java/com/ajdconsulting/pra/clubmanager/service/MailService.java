@@ -2,6 +2,7 @@ package com.ajdconsulting.pra.clubmanager.service;
 
 import com.ajdconsulting.pra.clubmanager.config.JHipsterProperties;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.MemberDues;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.domain.User;
 
@@ -20,6 +21,7 @@ import org.apache.commons.lang.WordUtils;
 
 import javax.inject.Inject;
 import javax.mail.internet.MimeMessage;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -144,5 +146,15 @@ public class MailService {
     public void sendEmailToMembership(String subject, String content) {
 
         sendEmail("everyone@membermail.palmyramx.com", subject, content, false, false);
+    }
+
+    @Async
+    public void sendDuesEmail(MemberDues dues) {
+        String to = dues.getEmail();
+        String from = "hogbacksecretary@gmail.com";
+
+        String content = "";
+
+        sendEmail(to, "2017 Palmyra Racing Association Renewal", content, false, false);
     }
 }

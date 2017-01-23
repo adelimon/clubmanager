@@ -15,11 +15,13 @@ public class MemberDues {
     private float points;
 
     private float amountDue;
+    private String email;
 
     public MemberDues(Member member) {
         this.setFirstName(member.getFirstName());
         this.setLastName(member.getLastName());
         this.setMemberType(member.getStatus().getType());
+        this.setEmail(member.getEmail());
     }
 
     public String getFirstName() {
@@ -60,5 +62,13 @@ public class MemberDues {
 
     public void setAmountDue(float amountDue) {
         this.amountDue = amountDue;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
