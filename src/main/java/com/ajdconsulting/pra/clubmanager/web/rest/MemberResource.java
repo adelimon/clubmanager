@@ -36,7 +36,9 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -297,10 +299,11 @@ public class MemberResource {
         contents.equals(contents);
         for (MemberDues dues : objectList) {
             double payPalAmount = dues.getAmountDue() * 1.03;
-            String amountWithFee = DecimalFormat.getCurrencyInstance().format(payPalAmount);
+            String amountWithFee = DecimalFormat.getCurrencyInstance().format(payPalAmount).replace("$", "");
             String amountNoFee = DecimalFormat.getCurrencyInstance().format(dues.getAmountDue());
             String memberEmail = contents;
-            memberEmail = memberEmail.replace("{MEMBER_NAME}", dues.getFirstName());
+            String memberFullName = dues.getFirstName() + " " + dues.getLastName();
+            memberEmail = memberEmail.replace("{MEMBER_NAME}", memberFullName);
             memberEmail = memberEmail.replace("{STATUS}", dues.getMemberType());
             memberEmail = memberEmail.replace("{DUES}", amountNoFee);
             memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
