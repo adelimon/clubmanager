@@ -44,6 +44,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -292,10 +293,18 @@ public class MemberResource {
         List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
-        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/activationEmail.html")));
+        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/memberRenewalEmail.html")));
         contents.equals(contents);
         for (MemberDues dues : objectList) {
-
+            double payPalAmount = dues.getAmountDue() * 1.03;
+            String amountWithFee = DecimalFormat.getCurrencyInstance().format(payPalAmount);
+            String amountNoFee = DecimalFormat.getCurrencyInstance().format(dues.getAmountDue());
+            String memberEmail = contents;
+            memberEmail = memberEmail.replace("{MEMBER_NAME}", dues.getFirstName());
+            memberEmail = memberEmail.replace("{STATUS}", dues.getMemberType());
+            memberEmail = memberEmail.replace("{DUES}", amountNoFee);
+            memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
+            mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
         }
     }
 }
