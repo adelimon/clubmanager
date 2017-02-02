@@ -308,8 +308,8 @@ public class MemberResource {
         for (int index = 0; index < batchSize; index++) {
             MemberDues dues = objectList.get(index);
             double payPalAmount = dues.getAmountDue() * 1.03;
-            String amountWithFee = DecimalFormat.getCurrencyInstance().format(payPalAmount).replace("$", "");
-            String amountNoFee = DecimalFormat.getCurrencyInstance().format(dues.getAmountDue());
+            String amountWithFee = payPalAmount+"";
+            String amountNoFee = dues.getAmountDue()+"";
             String memberEmail = contents;
             String memberFullName = dues.getFirstName() + " " + dues.getLastName();
             memberEmail = memberEmail.replace("{MEMBER_NAME}", memberFullName);
