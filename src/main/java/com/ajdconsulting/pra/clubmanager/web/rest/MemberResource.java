@@ -318,20 +318,25 @@ public class MemberResource {
             memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
             memberEmail = memberEmail.replace("EMAIL", dues.getEmail());
             boolean isInStoneAge = StringUtils.isEmpty(dues.getEmail());
+            String logMessage = "";
             if (!isInStoneAge) {
                 mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
-                log.debug("Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee);
+                logMessage = "Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee;
             } else {
                 memberEmail = "NO EMAIL ON RECORD" + memberEmail;
-                log.debug("Dues processed for " + memberFullName + " does not have email.  Please process manually.");
+                logMessage = "Dues processed for " + memberFullName + " does not have email.  Please process manually.";
             }
+
             Member member = memberRepository.findOne(dues.getMemberId());
             member.setRenewalSent(true);
             memberRepository.save(member);
             BufferedWriter duesLogger =
-                Files.newBufferedWriter(Paths.get(s + "/renewalsout/" + dues.getLastName() + dues.getFirstName() + ".html"));
+                Files.newBufferedWriter(Paths.get(s + "/renewalsoutput/" + dues.getLastName() + dues.getFirstName() + ".html"));
             duesLogger.write(memberEmail);
             duesLogger.flush();
+            log.debug(logMessage);
+            response.getWriter().write(logMessage+"\n");
+            response.getWriter().flush();
         }
     }
 }
