@@ -15,6 +15,7 @@ import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
 import javassist.Modifier;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -248,6 +249,9 @@ public class MemberResource {
         allMembers.sort((Member o1, Member o2) -> o1.getLastName().compareTo(o2.getLastName()));
 
         for (Member member : allMembers) {
+            // skip anyone who has already been sent
+            if (member.isRenewalSent()) continue;
+
             // skip all paid labor, since we don't want to count them in this total
             if (member.isPaidLabor()) continue;
 
@@ -256,7 +260,7 @@ public class MemberResource {
             List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(member.getId());
             float totalPoints = member.getTotalPoints(earnedPoints);
             float totalDues = member.getTotalDues(totalPoints);
-
+            dues.setMemberId(member.getId());
             dues.setPoints(totalPoints);
             dues.setAmountDue(totalDues);
             memberDues.add(dues);
@@ -289,15 +293,20 @@ public class MemberResource {
         workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
     }
 
-    @RequestMapping("/members/sendDues")
-    public void sendDues(HttpServletRequest request, HttpServletResponse response) throws URISyntaxException, IOException {
+    @RequestMapping("/members/sendDues/{batchSize}")
+    public void sendDues(HttpServletRequest request, HttpServletResponse response, @PathVariable Long batchSize)
+        throws URISyntaxException, IOException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
         String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/memberRenewalEmail.html")));
         contents.equals(contents);
-        for (MemberDues dues : objectList) {
+        if (batchSize > objectList.size()) {
+            batchSize = (long)objectList.size();
+        }
+        for (int index = 0; index < batchSize; index++) {
+            MemberDues dues = objectList.get(index);
             double payPalAmount = dues.getAmountDue() * 1.03;
             String amountWithFee = DecimalFormat.getCurrencyInstance().format(payPalAmount).replace("$", "");
             String amountNoFee = DecimalFormat.getCurrencyInstance().format(dues.getAmountDue());
@@ -307,7 +316,22 @@ public class MemberResource {
             memberEmail = memberEmail.replace("{STATUS}", dues.getMemberType());
             memberEmail = memberEmail.replace("{DUES}", amountNoFee);
             memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
-            mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
+            memberEmail = memberEmail.replace("EMAIL", dues.getEmail());
+            boolean isInStoneAge = StringUtils.isEmpty(dues.getEmail());
+            if (!isInStoneAge) {
+                mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
+                log.debug("Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee);
+            } else {
+                memberEmail = "NO EMAIL ON RECORD" + memberEmail;
+                log.debug("Dues processed for " + memberFullName + " does not have email.  Please process manually.");
+            }
+            Member member = memberRepository.findOne(dues.getMemberId());
+            member.setRenewalSent(true);
+            memberRepository.save(member);
+            BufferedWriter duesLogger =
+                Files.newBufferedWriter(Paths.get(s + "/renewalsout/" + dues.getLastName() + dues.getFirstName() + ".html"));
+            duesLogger.write(memberEmail);
+            duesLogger.flush();
         }
     }
 }

@@ -16,12 +16,14 @@ public class MemberDues {
 
     private float amountDue;
     private String email;
+    private long memberId;
 
     public MemberDues(Member member) {
         this.setFirstName(member.getFirstName());
         this.setLastName(member.getLastName());
         this.setMemberType(member.getStatus().getType());
         this.setEmail(member.getEmail());
+        this.setMemberId(member.getId());
     }
 
     public String getFirstName() {
@@ -70,5 +72,13 @@ public class MemberDues {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public Long getMemberId() {
+        return memberId;
     }
 }

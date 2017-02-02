@@ -55,8 +55,7 @@ public class Member implements Serializable {
     private String occupation;
 
     @NotNull
-    @Size(min = 12, max = 12)
-    @Column(name = "phone", length = 12, nullable = false)
+    @Column(name = "phone", length = 12, nullable = true)
     private String phone;
 
     @Column(name = "view_online")
@@ -81,6 +80,9 @@ public class Member implements Serializable {
 
     @Column(name = "is_active")
     private Boolean active;
+
+    @Column(name = "renewal_sent")
+    private Boolean renewalSent;
 
     public Long getId() {
         return id;
@@ -291,5 +293,13 @@ public class Member implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Boolean isRenewalSent() {
+        return renewalSent;
+    }
+
+    public void setRenewalSent(boolean renewalSent) {
+        this.renewalSent = renewalSent;
     }
 }
