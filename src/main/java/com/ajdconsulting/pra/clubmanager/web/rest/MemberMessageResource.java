@@ -52,6 +52,8 @@ public class MemberMessageResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("memberMessage", "idexists", "A new memberMessage cannot already have an ID")).body(null);
         }
         MemberMessage result = memberMessageRepository.save(memberMessage);
+        // now that it is saved, send the message to the membership
+        mailService.sendEmailToMembership(result.getSubject(), result.getMessageText());
         return ResponseEntity.created(new URI("/api/memberMessages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("memberMessage", result.getId().toString()))
             .body(result);

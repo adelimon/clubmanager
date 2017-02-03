@@ -27,7 +27,7 @@ public class MemberMessage implements Serializable {
     private String messageText;
 
     @Column(name = "send_date", nullable = true)
-    private LocalDate sendDate;
+    private LocalDate sendDate = LocalDate.now();
 
     public Long getId() {
         return id;

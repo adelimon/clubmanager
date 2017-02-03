@@ -144,8 +144,8 @@ public class MailService {
 
     @Async
     public void sendEmailToMembership(String subject, String content) {
-
-        sendEmail("everyone@membermail.palmyramx.com", subject, content, false, false);
+        content = content.replaceAll("\\n", "<br/>");
+        sendEmail("everyone@membermail.palmyramx.com", subject, content, false, true);
     }
 
     @Async

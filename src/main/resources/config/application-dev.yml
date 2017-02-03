@@ -63,7 +63,7 @@ jhipster:
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: signup@palmyramx.com
+        from: hogbacksecretary@gmail.com
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
         spark:
