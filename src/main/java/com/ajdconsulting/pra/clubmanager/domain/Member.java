@@ -82,7 +82,7 @@ public class Member implements Serializable {
     private Boolean active;
 
     @Column(name = "renewal_sent")
-    private Boolean renewalSent;
+    private Boolean renewalSent=false;
 
     public Long getId() {
         return id;
