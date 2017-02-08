@@ -232,6 +232,9 @@ public class Member implements Serializable {
             if (totalDues < 0) {
                 totalDues = 0;
             }
+            if ("Reserve".equals(status.getType())) {
+                totalDues = 40.0f;
+            }
         } else {
             totalDues = 0;
         }
