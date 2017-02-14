@@ -84,6 +84,12 @@ public class Member implements Serializable {
     @Column(name = "renewal_sent")
     private Boolean renewalSent=false;
 
+    @Column(name = "current_year_paid")
+    private Boolean currentYearPaid=false;
+
+    @Column(name = "current_year_renewed")
+    private Boolean currentYearRenewed=false;
+
     public Long getId() {
         return id;
     }
@@ -304,5 +310,21 @@ public class Member implements Serializable {
 
     public void setRenewalSent(boolean renewalSent) {
         this.renewalSent = renewalSent;
+    }
+
+    public Boolean getCurrentYearPaid() {
+        return currentYearPaid;
+    }
+
+    public void setCurrentYearPaid(Boolean currentYearPaid) {
+        this.currentYearPaid = currentYearPaid;
+    }
+
+    public Boolean getCurrentYearRenewed() {
+        return currentYearRenewed;
+    }
+
+    public void setCurrentYearRenewed(Boolean currentYearRenewed) {
+        this.currentYearRenewed = currentYearRenewed;
     }
 }

@@ -17,6 +17,8 @@ public class MemberDues {
     private float amountDue;
     private String email;
     private long memberId;
+    private String paid;
+    private String renewed;
 
     public MemberDues(Member member) {
         this.setFirstName(member.getFirstName());
@@ -24,6 +26,16 @@ public class MemberDues {
         this.setMemberType(member.getStatus().getType());
         this.setEmail(member.getEmail());
         this.setMemberId(member.getId());
+        if (member.getCurrentYearPaid()) {
+            paid = "Yes";
+        } else {
+            paid = "No";
+        }
+        if (member.getCurrentYearRenewed()) {
+            renewed = "Yes";
+        } else {
+            renewed = "No";
+        }
     }
 
     public String getFirstName() {
@@ -80,5 +92,21 @@ public class MemberDues {
 
     public Long getMemberId() {
         return memberId;
+    }
+
+    public String getPaid() {
+        return paid;
+    }
+
+    public void setPaid(String paid) {
+        this.paid = paid;
+    }
+
+    public String getRenewed() {
+        return renewed;
+    }
+
+    public void setRenewed(String renewed) {
+        this.renewed = renewed;
     }
 }

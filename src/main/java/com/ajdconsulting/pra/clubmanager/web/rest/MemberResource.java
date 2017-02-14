@@ -240,7 +240,7 @@ public class MemberResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<MemberDues>> getAllMemberDues(Pageable pageable)
+    public ResponseEntity<List<MemberDues>> getAllMemberDues(Pageable pageable, boolean includeSent)
         throws URISyntaxException {
         log.debug("REST request to get a page of Members");
         List<MemberDues> memberDues = new ArrayList<MemberDues>();
@@ -250,7 +250,7 @@ public class MemberResource {
 
         for (Member member : allMembers) {
             // skip anyone who has already been sent
-            if (member.isRenewalSent()) continue;
+            if (!includeSent && member.isRenewalSent()) continue;
 
             // skip all paid labor, since we don't want to count them in this total
             if (member.isPaidLabor()) continue;
@@ -276,10 +276,10 @@ public class MemberResource {
         throws IOException, URISyntaxException, NoSuchFieldException {
         Pageable page = new PageRequest(1, 400);
 
-        List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
+        List<MemberDues> objectList = this.getAllMemberDues(page, true).getBody();
 
         ExcelWorkbook workbook = new BasicSingleSheetWorkbook("dues");
-        String[] headerFields = {"First Name", "Last Name", "Member Type", "Points", "Amount Due"};
+        String[] headerFields = {"First Name", "Last Name", "Member Type", "Points", "Amount Due", "Renewed", "Paid"};
         workbook.addHeader(headerFields);
         for (MemberDues dues : objectList) {
             Row row = workbook.createRow(true);
@@ -288,6 +288,8 @@ public class MemberResource {
             workbook.createCell(row, dues.getMemberType());
             workbook.createCell(row, dues.getPoints());
             workbook.createCell(row, dues.getAmountDue());
+            workbook.createCell(row, dues.getRenewed());
+            workbook.createCell(row, dues.getPaid());
         }
 
         workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
@@ -297,7 +299,7 @@ public class MemberResource {
     public void sendDues(HttpServletRequest request, HttpServletResponse response, @PathVariable Long batchSize)
         throws URISyntaxException, IOException {
         Pageable page = new PageRequest(1, 400);
-        List<MemberDues> objectList = this.getAllMemberDues(page).getBody();
+        List<MemberDues> objectList = this.getAllMemberDues(page, false).getBody();
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
         String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/memberRenewalEmail.html")));
