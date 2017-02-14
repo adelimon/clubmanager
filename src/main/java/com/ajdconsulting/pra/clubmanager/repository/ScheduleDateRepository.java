@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ScheduleDateRepository extends JpaRepository<ScheduleDate,Long> {
 
-    @Query("select s from ScheduleDate s order by date")
+    @Query("select s from ScheduleDate s where year(s.date) = year(current_date()) order by date")
     public Page<ScheduleDate> findAllOrdered(Pageable pageable);
 
     @Query("select s from ScheduleDate s where ((s.date >= current_date() - 7)) order by date")
