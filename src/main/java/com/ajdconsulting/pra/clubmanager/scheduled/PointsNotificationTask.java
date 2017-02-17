@@ -38,7 +38,7 @@ public class PointsNotificationTask {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    @Scheduled(cron = "0 23 * * 0")
+    @Scheduled(cron = "0 15 10 ? * MON")
     public void sendPointsUpdateEmail() {
         log.info("PointsNotificationTask :: Starting points email job....");
         Pageable page = new PageRequest(1, 400);
