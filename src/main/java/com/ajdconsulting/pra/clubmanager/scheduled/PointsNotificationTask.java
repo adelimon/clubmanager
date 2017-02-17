@@ -38,16 +38,16 @@ public class PointsNotificationTask {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    //@Scheduled(fixedRate = 5000)
-    // crontab: 0 23 * 3,4,5,6,7,8,9,10,11 0
+    @Scheduled(cron = "0 23 * * 0")
     public void sendPointsUpdateEmail() {
+        log.info("PointsNotificationTask :: Starting points email job....");
         Pageable page = new PageRequest(1, 400);
         List<MemberPointsInfo> allPoints = new ArrayList<MemberPointsInfo>();
 
         List<Member> allMembers = memberRepository.findAll();
 
         for (Member member : allMembers) {
-            List<EarnedPoints> points = earnedPointsRepository.findByMemberId(member.getId());
+            List<EarnedPoints> points = earnedPointsRepository.findByMemberIdThisYear(member.getId());
             // skip folks who have no points, are paid labor, or have an empty email
             boolean skip = ((member.isPaidLabor()) ||
                 (points.size() == 0) || StringUtils.isEmpty(member.getEmail())
@@ -58,8 +58,9 @@ public class PointsNotificationTask {
             allPoints.add(memberPointsInfo);
             mailService.sendEmail(memberPointsInfo.getMemberEmail(), memberPointsInfo.getSubject(),
                 memberPointsInfo.getPointsDetail(), false, false);
+            log.info("PointsNotificationTask :: Sending points email for " + member.getName());
         }
-
+        log.info("PointsNotificationTask :: Points email job finished!");
     }
 
 }
