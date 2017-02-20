@@ -263,6 +263,10 @@ public class MemberResource {
             dues.setMemberId(member.getId());
             dues.setPoints(totalPoints);
             dues.setAmountDue(totalDues);
+            if (totalDues == 0.0) {
+                member.setCurrentYearPaid(true);
+                memberRepository.save(member);
+            }
             memberDues.add(dues);
         }
         boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
