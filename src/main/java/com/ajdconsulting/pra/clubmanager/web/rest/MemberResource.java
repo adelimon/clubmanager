@@ -8,9 +8,12 @@ import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
+import com.ajdconsulting.pra.clubmanager.repository.UserRepository;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
+import com.ajdconsulting.pra.clubmanager.service.UserService;
+import com.ajdconsulting.pra.clubmanager.web.rest.dto.ManagedUserDTO;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
@@ -74,6 +77,12 @@ public class MemberResource {
     @Inject
     private MailService mailService;
 
+    @Inject
+    private UserService userService;
+
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /members -> Create a new member.
      */
@@ -86,11 +95,16 @@ public class MemberResource {
         if (member.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("member", "idexists", "A new member cannot already have an ID")).body(null);
         }
-        member.setActive(false);
-        MemberTypes memberType = new MemberTypes();
-        memberType.setId(9L);
-        member.setStatus(memberType);
         Member result = memberRepository.save(member);
+
+        User newUser = userService.createUserInformation(member.getEmail(), "pra0190",
+            member.getFirstName(), member.getLastName(), member.getEmail(), "en");
+        newUser.setActivated(true);
+        userRepository.save(newUser);
+
+        //ManagedUserDTO managedUserDTO = new ManagedUserDTO(newUser);
+        //userService.createUser(managedUserDTO);
+
         return ResponseEntity.created(new URI("/api/members/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("member", result.getId().toString()))
             .body(result);
