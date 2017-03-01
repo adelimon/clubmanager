@@ -359,4 +359,5 @@ public class MemberResource {
             response.getWriter().flush();
         }
     }
+
 }
