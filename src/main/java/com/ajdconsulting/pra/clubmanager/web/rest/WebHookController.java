@@ -5,6 +5,7 @@ import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since clubmanager 2017 release 2
  */
 @Controller
+@EnableWebSecurity
 public class WebHookController {
 
     private final Logger log = LoggerFactory.getLogger(WebHookController.class);
