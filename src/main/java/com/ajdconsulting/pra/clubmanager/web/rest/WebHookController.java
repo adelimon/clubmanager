@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class WebHookController {
      * @param request incoming POST from Wufoo
      * @param response simple response object to send back (just say OK always).
      */
-    @RequestMapping("/rulesAck")
+    @RequestMapping(path = "/rulesAck", method = RequestMethod.POST)
     public void processRulesAcknowledgement(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("Field3");
         String email = request.getParameter("Field4");
