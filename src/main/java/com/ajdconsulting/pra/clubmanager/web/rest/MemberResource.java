@@ -20,6 +20,9 @@ import com.codahale.metrics.annotation.Timed;
 import javassist.Modifier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -269,24 +272,29 @@ public class MemberResource {
             // skip all paid labor, since we don't want to count them in this total
             if (member.isPaidLabor()) continue;
 
-            MemberDues dues = new MemberDues(member);
-
-            List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(member.getId());
-            float totalPoints = member.getTotalPoints(earnedPoints);
-            float totalDues = member.getTotalDues(totalPoints);
-            dues.setMemberId(member.getId());
-            dues.setPoints(totalPoints);
-            dues.setAmountDue(totalDues);
-            if (totalDues == 0.0) {
-                member.setCurrentYearPaid(true);
-                memberRepository.save(member);
-            }
+            MemberDues dues = getMemberDues(member);
             memberDues.add(dues);
         }
         boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
         Page<MemberDues> page = new PageImpl<MemberDues>(memberDues);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    public MemberDues getMemberDues(Member member) {
+        MemberDues dues = new MemberDues(member);
+
+        List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(member.getId());
+        float totalPoints = member.getTotalPoints(earnedPoints);
+        float totalDues = member.getTotalDues(totalPoints);
+        dues.setMemberId(member.getId());
+        dues.setPoints(totalPoints);
+        dues.setAmountDue(totalDues);
+        if (totalDues == 0.0) {
+            member.setCurrentYearPaid(true);
+            memberRepository.save(member);
+        }
+        return dues;
     }
 
     @RequestMapping("/members/exportDues")
@@ -313,50 +321,79 @@ public class MemberResource {
         workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
     }
 
-    @RequestMapping("/members/sendDues/{batchSize}")
-    public void sendDues(HttpServletRequest request, HttpServletResponse response, @PathVariable Long batchSize)
-        throws URISyntaxException, IOException {
+    @RequestMapping(value = "/members/sendDues/{batchSize}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<JSONObject> sendDues(@PathVariable Long batchSize)
+        throws URISyntaxException, IOException, JSONException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> objectList = this.getAllMemberDues(page, false).getBody();
-        Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/memberRenewalEmail.html")));
-        contents.equals(contents);
+        String baseEmailContent = getEmailContent();
         if (batchSize > objectList.size()) {
             batchSize = (long)objectList.size();
         }
+
+        JSONArray jsonResponse = new JSONArray();
         for (int index = 0; index < batchSize; index++) {
             MemberDues dues = objectList.get(index);
-            double payPalAmount = dues.getAmountDue() * 1.03;
-            String amountWithFee = payPalAmount+"";
-            String amountNoFee = dues.getAmountDue()+"";
-            String memberEmail = contents;
-            String memberFullName = dues.getFirstName() + " " + dues.getLastName();
-            memberEmail = memberEmail.replace("{MEMBER_NAME}", memberFullName);
-            memberEmail = memberEmail.replace("{STATUS}", dues.getMemberType());
-            memberEmail = memberEmail.replace("{DUES}", amountNoFee);
-            memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
-            memberEmail = memberEmail.replace("EMAIL", dues.getEmail());
-            boolean isInStoneAge = StringUtils.isEmpty(dues.getEmail());
-            String logMessage = "";
-            if (!isInStoneAge) {
-                mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
-                logMessage = "Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee;
-            } else {
-                memberEmail = "NO EMAIL ON RECORD" + memberEmail;
-                logMessage = "Dues processed for " + memberFullName + " does not have email.  Please process manually.";
-            }
-
-            Member member = memberRepository.findOne(dues.getMemberId());
-            member.setRenewalSent(true);
-            memberRepository.save(member);
-            BufferedWriter duesLogger =
-                Files.newBufferedWriter(Paths.get(s + "/renewalsoutput/" + dues.getLastName() + dues.getFirstName() + ".html"));
-            duesLogger.write(memberEmail);
-            duesLogger.flush();
-            log.debug(logMessage);
-            response.getWriter().write(logMessage+"\n");
-            response.getWriter().flush();
+            jsonResponse.put(buildSendDues(baseEmailContent, dues));
         }
+        return new ResponseEntity<JSONObject>(jsonResponse.toJSONObject(jsonResponse), HttpStatus.OK);
+    }
+
+    private JSONObject buildSendDues(String baseEmailContent, MemberDues dues)
+        throws IOException, JSONException {
+
+        double payPalAmount = (dues.getAmountDue() * 1.03)+0.25;
+        String amountWithFee = payPalAmount+"";
+        String amountNoFee = dues.getAmountDue()+"";
+        String memberEmail = baseEmailContent;
+        String memberFullName = dues.getFirstName() + " " + dues.getLastName();
+        memberEmail = memberEmail.replace("{MEMBER_NAME}", memberFullName);
+        memberEmail = memberEmail.replace("{STATUS}", dues.getMemberType());
+        memberEmail = memberEmail.replace("{DUES}", amountNoFee);
+        memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
+        memberEmail = memberEmail.replace("EMAIL", dues.getEmail());
+        boolean isInStoneAge = StringUtils.isEmpty(dues.getEmail());
+        String logMessage = "";
+        if (!isInStoneAge) {
+            mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
+            logMessage = "Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee;
+        } else {
+            memberEmail = "NO EMAIL ON RECORD" + memberEmail;
+            logMessage = "Dues processed for " + memberFullName + " does not have email.  Please process manually.";
+        }
+
+        Member member = memberRepository.findOne(dues.getMemberId());
+        member.setRenewalSent(true);
+        memberRepository.save(member);
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        BufferedWriter duesLogger =
+            Files.newBufferedWriter(Paths.get(s + "/renewalsoutput/" + dues.getLastName() + dues.getFirstName() + ".html"));
+        duesLogger.write(memberEmail);
+        duesLogger.flush();
+        log.debug(logMessage);
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put(member.getName(), logMessage);
+        return jsonResponse;
+    }
+
+    private String getEmailContent() throws IOException {
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/memberRenewalEmail.html")));
+        return contents;
+    }
+
+    @RequestMapping(value = "/members/sendDues/members/{id}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<JSONObject> resendDues(@PathVariable Long id) throws IOException, JSONException {
+        Member member = memberRepository.findOne(id);
+        member.setRenewalSent(false);
+        MemberDues memberDues = getMemberDues(member);
+        JSONObject jsonResponse = buildSendDues(getEmailContent(), memberDues);
+        return new ResponseEntity<JSONObject>(jsonResponse, HttpStatus.OK);
     }
 }
