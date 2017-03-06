@@ -396,4 +396,5 @@ public class MemberResource {
         JSONObject jsonResponse = buildSendDues(getEmailContent(), memberDues);
         return new ResponseEntity<JSONObject>(jsonResponse, HttpStatus.OK);
     }
+
 }
