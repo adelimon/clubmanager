@@ -1,3 +1,5 @@
 #!/bin/bash
+rm nohup.out
 pkill java
-nohup ./mvnw
+nohup ./mvnw &
+tail -f nohup.out
