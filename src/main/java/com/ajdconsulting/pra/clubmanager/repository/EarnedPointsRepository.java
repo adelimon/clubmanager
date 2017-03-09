@@ -33,6 +33,6 @@ public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long>
     @Query("select e from EarnedPoints e where e.member.id = :id order by e.date")
     public List<EarnedPoints> findByMemberId(@Param("id") long id);
 
-    @Query("select e from EarnedPoints e where e.member.id = :id and year(e.date) = year(current_date()) order by e.date")
+    @Query("select e from EarnedPoints e where e.member.id = :id and year(e.date) = year(current_date()) and e.date >= current_date() order by e.date")
     public List<EarnedPoints> findByMemberIdThisYear(@Param("id") long id);
 }

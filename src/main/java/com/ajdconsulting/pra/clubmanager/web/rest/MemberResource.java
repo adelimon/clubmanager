@@ -328,7 +328,7 @@ public class MemberResource {
         throws URISyntaxException, IOException, JSONException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> objectList = this.getAllMemberDues(page, false).getBody();
-        String baseEmailContent = getEmailContent();
+        String baseEmailContent = getEmailContent("memberRenewal");
         if (batchSize > objectList.size()) {
             batchSize = (long)objectList.size();
         }
@@ -336,6 +336,9 @@ public class MemberResource {
         JSONArray jsonResponse = new JSONArray();
         for (int index = 0; index < batchSize; index++) {
             MemberDues dues = objectList.get(index);
+            if (dues.getMemberType().equals("New Member")) {
+                baseEmailContent = getEmailContent("newMember");
+            }
             jsonResponse.put(buildSendDues(baseEmailContent, dues));
         }
         return new ResponseEntity<JSONObject>(jsonResponse.toJSONObject(jsonResponse), HttpStatus.OK);
@@ -367,22 +370,28 @@ public class MemberResource {
         Member member = memberRepository.findOne(dues.getMemberId());
         member.setRenewalSent(true);
         memberRepository.save(member);
+
+        logMemberEmailHtml(dues, memberEmail);
+        log.debug(logMessage);
+
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put(member.getName(), logMessage);
+        return jsonResponse;
+    }
+
+    private void logMemberEmailHtml(MemberDues dues, String memberEmail) throws IOException {
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
         BufferedWriter duesLogger =
             Files.newBufferedWriter(Paths.get(s + "/renewalsoutput/" + dues.getLastName() + dues.getFirstName() + ".html"));
         duesLogger.write(memberEmail);
         duesLogger.flush();
-        log.debug(logMessage);
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(member.getName(), logMessage);
-        return jsonResponse;
     }
 
-    private String getEmailContent() throws IOException {
+    private String getEmailContent(String emailName) throws IOException {
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
-        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/memberRenewalEmail.html")));
+        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/" + emailName + "Email.html")));
         return contents;
     }
 
@@ -393,7 +402,11 @@ public class MemberResource {
         Member member = memberRepository.findOne(id);
         member.setRenewalSent(false);
         MemberDues memberDues = getMemberDues(member);
-        JSONObject jsonResponse = buildSendDues(getEmailContent(), memberDues);
+        String emailName = "memberRenewal";
+        if (member.getStatus().getId() == 13) {
+            emailName = "newMember";
+        }
+        JSONObject jsonResponse = buildSendDues(getEmailContent(emailName), memberDues);
         return new ResponseEntity<JSONObject>(jsonResponse, HttpStatus.OK);
     }
 
