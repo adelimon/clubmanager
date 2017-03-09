@@ -324,7 +324,7 @@ public class MemberResource {
     @RequestMapping(value = "/members/sendDues/{batchSize}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<JSONObject> sendDues(@PathVariable Long batchSize)
+    public ResponseEntity<JSONArray> sendDues(@PathVariable Long batchSize)
         throws URISyntaxException, IOException, JSONException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> objectList = this.getAllMemberDues(page, false).getBody();
@@ -341,7 +341,8 @@ public class MemberResource {
             }
             jsonResponse.put(buildSendDues(baseEmailContent, dues));
         }
-        return new ResponseEntity<JSONObject>(jsonResponse.toJSONObject(jsonResponse), HttpStatus.OK);
+
+        return new ResponseEntity<JSONArray>(jsonResponse, HttpStatus.OK);
     }
 
     private JSONObject buildSendDues(String baseEmailContent, MemberDues dues)
