@@ -64,5 +64,7 @@ angular.module('clubmanagerApp').controller('MemberDialogController',
                 $scope.member.phone = "585-555-1234";
                 $scope.member.email = "n/a"
             }
+            $scope.member.state = "NY";
+            $scope.member.viewOnline = true;
         };
 }]);
