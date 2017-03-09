@@ -349,6 +349,9 @@ public class MemberResource {
         throws IOException, JSONException {
 
         double payPalAmount = (dues.getAmountDue() * 1.03)+0.25;
+        if (dues.getAmountDue() == 0.0) {
+            payPalAmount = 0.0;
+        }
         String amountWithFee = payPalAmount+"";
         String amountNoFee = dues.getAmountDue()+"";
         String memberEmail = baseEmailContent;
