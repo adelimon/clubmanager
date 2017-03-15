@@ -92,8 +92,8 @@ public class MemberWorkResource {
     @Timed
     public List<MemberWork> getAllMemberWorks() {
         log.debug("REST request to get all MemberWorks");
-        return memberWorkRepository.findAll();
-            }
+        return memberWorkRepository.findAllForMember(SecurityUtils.getCurrentUserLogin());
+    }
 
     /**
      * GET  /memberWorks/:id -> get the "id" memberWork.
