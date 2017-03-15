@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface MemberWorkRepository extends JpaRepository<MemberWork,Long> {
 
-    @Query("select m from MemberWork where m.member.email = :email order by m.start desc")
+    @Query("select m from MemberWork m where m.member.email = :email order by m.start desc")
     public List<MemberWork> findAllForMember(@Param("email") String email);
 }
