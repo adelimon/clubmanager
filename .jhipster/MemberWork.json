@@ -1,0 +1,43 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "member",
+            "otherEntityName": "member",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "lastName"
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "start",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "end",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 3,
+            "fieldName": "description",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength"
+            ],
+            "fieldValidateRulesMinlength": "5"
+        }
+    ],
+    "changelogDate": "20170314231241",
+    "dto": "no",
+    "service": "no",
+    "pagination": "no"
+}
