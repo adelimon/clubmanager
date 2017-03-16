@@ -43,7 +43,7 @@ public class WebHookController {
      * @param request incoming POST from Wufoo
      * @param response simple response object to send back (just say OK always).
      */
-    @RequestMapping(path = "/webhook/rules", method = RequestMethod.GET)
+    @RequestMapping(path = "/webhook/rules", method = RequestMethod.POST)
     public void processRulesAcknowledgement(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("Field3");
         String email = request.getParameter("Field4");
@@ -60,6 +60,5 @@ public class WebHookController {
         } else {
             log.info("No member found with email " + email);
         }
-
     }
 }
