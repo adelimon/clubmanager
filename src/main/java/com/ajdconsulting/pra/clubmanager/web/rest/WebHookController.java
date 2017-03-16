@@ -43,7 +43,7 @@ public class WebHookController {
      * @param request incoming POST from Wufoo
      * @param response simple response object to send back (just say OK always).
      */
-    @RequestMapping(path = "/rulesAck", method = RequestMethod.POST)
+    @RequestMapping(path = "/webhook/rules", method = RequestMethod.GET)
     public void processRulesAcknowledgement(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("Field3");
         String email = request.getParameter("Field4");
