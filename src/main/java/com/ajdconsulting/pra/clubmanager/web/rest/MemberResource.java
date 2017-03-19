@@ -129,10 +129,13 @@ public class MemberResource {
         Member oldMemberRecord = memberRepository.findOne(member.getId());
         String oldEmail = oldMemberRecord.getEmail();
         Member result = memberRepository.save(member);
-        User user = userRepository.findOneByEmail(oldEmail).get();
-        user.setLogin(result.getEmail());
-        user.setEmail(result.getEmail());
-        userRepository.save(user);
+        // if the email has changed, then save the new one to the user record
+        if (oldEmail.equals(result.getEmail())) {
+            User user = userRepository.findOneByEmail(oldEmail).get();
+            user.setLogin(result.getEmail());
+            user.setEmail(result.getEmail());
+            userRepository.save(user);
+        }
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("member", member.getId().toString()))
