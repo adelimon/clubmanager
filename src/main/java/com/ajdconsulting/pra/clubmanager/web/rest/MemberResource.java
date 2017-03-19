@@ -130,7 +130,7 @@ public class MemberResource {
         String oldEmail = oldMemberRecord.getEmail();
         Member result = memberRepository.save(member);
         // if the email has changed, then save the new one to the user record
-        if (oldEmail.equals(result.getEmail())) {
+        if (!oldEmail.equals(result.getEmail())) {
             User user = userRepository.findOneByEmail(oldEmail).get();
             user.setLogin(result.getEmail());
             user.setEmail(result.getEmail());
