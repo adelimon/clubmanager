@@ -45,7 +45,7 @@ app.post('/webhook/rules', function (req, res) {
         }
     );
 
-
+    res.send(200);
 });
 
 app.listen(3000, function () {
