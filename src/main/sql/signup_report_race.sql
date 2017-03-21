@@ -10,5 +10,6 @@ inner join schedule_date sd on (sd.event_type_id = j.event_type_id and sd.date >
 left join member w on w.id = s.worker_id
 left join member  wl on wl.id = j.work_leader_id
 where
-j.event_type_id = (select id from event_type where type = 'RACE')
-order by date, title
+j.event_type_id = (select id from event_type where type = 'RACE') and
+date = (select date from schedule_date where year(date) = year(now()) and date > now() order by date limit 1)
+order by sort_order
