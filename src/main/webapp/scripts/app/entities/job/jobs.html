@@ -31,6 +31,7 @@
                     <th jh-sort-by="cashValue"><span>CashValue</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="jobDay"><span>JobDay</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="reserved"><span>Reserved</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="mealTicket"><span>Meal Ticket</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="workLeader.name"><span>workLeader</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
@@ -44,6 +45,7 @@
                     <td>{{job.cashValue}}</td>
                     <td>{{job.jobDay}}</td>
                     <td>{{job.reserved}}</td>
+                    <td>{{job.mealTicket}}</td>
                     <td>
                         <a ui-sref="eventType.detail({id:job.eventType.id})">{{job.eventType.type}}</a>
                     </td>

@@ -40,6 +40,9 @@ public class Job implements Serializable {
     @Column(name = "online")
     private Boolean online;
 
+    @Column(name = "mealTicket")
+    private Boolean mealTicket;
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
@@ -120,6 +123,14 @@ public class Job implements Serializable {
         this.workLeader = member;
     }
 
+    public Boolean getMealTicket() {
+        return mealTicket;
+    }
+
+    public void setMealTicket(Boolean mealTicket) {
+        this.mealTicket = mealTicket;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -151,4 +162,6 @@ public class Job implements Serializable {
             ", reserved='" + reserved + "'" +
             '}';
     }
+
+
 }
