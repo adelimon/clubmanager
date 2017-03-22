@@ -86,7 +86,9 @@ public class SignupResource {
             log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
 
             // only send emails if the user isn't an admin, this will prevent lots of emails from going out.
-            mailService.sendSignupEmail(result);
+            if (!SecurityUtils.isCurrentUserAdmin()) {
+                mailService.sendSignupEmail(result);
+            }
 
             uiResponse += result.getWorker().getName() + " was signed up for job " +
                 signupEarnedPoints.getDescription() +
