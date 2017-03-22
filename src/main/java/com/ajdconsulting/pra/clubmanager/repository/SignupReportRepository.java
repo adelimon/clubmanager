@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface SignupReportRepository extends JpaRepository<SignupReport,Long> {
 
-    @Query("select report from SignupReport report order by report.title")
+    @Query("select report from SignupReport report")
     public Page<SignupReport> findAllOrdered(Pageable pageable);
 }

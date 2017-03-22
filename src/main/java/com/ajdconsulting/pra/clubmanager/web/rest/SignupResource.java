@@ -2,9 +2,11 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
 import com.ajdconsulting.pra.clubmanager.domain.Signup;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import com.ajdconsulting.pra.clubmanager.repository.ScheduleDateRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +49,9 @@ public class SignupResource {
     private MemberRepository memberRepository;
 
     @Inject
+    private ScheduleDateRepository scheduleDateRepository;
+
+    @Inject
     private MailService mailService;
 
     /**
@@ -60,23 +66,44 @@ public class SignupResource {
         if (signup.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("signup", "idexists", "A new signup cannot already have an ID")).body(null);
         }
-        Signup result = signupRepository.save(signup);
-        // now that teh result is saved, reload it from the DB so we can read it for the earned points.  This is necessary
-        // if someone sends in a partial request, IE one containing only the IDs.  Valid use case for doing posts
-        // from links etc.
-        result = signupRepository.findOne(result.getId());
-        boolean isMeetingSignup = false;
-        if ((signup.getScheduleDate() != null) && (signup.getScheduleDate().getEventType() != null) ){
-            isMeetingSignup = "Meeting".equals(signup.getScheduleDate().getEventType().getType());
-        }
+        List<Signup> signupList = buildSignupList(signup);
 
-        // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
+        String uiResponse = "";
+        Signup result = null;
+        for (Signup signupEntry : signupList) {
+            result = signupRepository.save(signupEntry);
+            // now that teh result is saved, reload it from the DB so we can read it for the earned points.  This is necessary
+            // if someone sends in a partial request, IE one containing only the IDs.  Valid use case for doing posts
+            // from links etc.
+            result = signupRepository.findOne(result.getId());
+            boolean isMeetingSignup = false;
+            if ((signup.getScheduleDate() != null) && (signup.getScheduleDate().getEventType() != null)) {
+                isMeetingSignup = "Meeting".equals(signup.getScheduleDate().getEventType().getType());
+            }
+
+            // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
+            EarnedPoints signupEarnedPoints = buildEarnedPoints(result, signupEntry, isMeetingSignup);
+            log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
+
+            // only send emails if the user isn't an admin, this will prevent lots of emails from going out.
+            mailService.sendSignupEmail(result);
+
+            uiResponse += result.getWorker().getName() + " was signed up for job " +
+                signupEarnedPoints.getDescription() +
+                " for the event on " + result.getScheduleDate().getDate();
+        }
+        return ResponseEntity.created(new URI("/api/signups/" + result.getId()))
+            .headers(HeaderUtil.createAlert(uiResponse, ""))
+            .body(result);
+    }
+
+    private EarnedPoints buildEarnedPoints(Signup result, Signup signupEntry, boolean isMeetingSignup) {
         EarnedPoints signupEarnedPoints = new EarnedPoints();
         String earnedPointsDesc = "";
         boolean verified = false;
         float pointValue = 0.0f;
 
-        signupEarnedPoints.setDate(result.getScheduleDate().getDate());
+        signupEarnedPoints.setDate(signupEntry.getScheduleDate().getDate());
         if (!isMeetingSignup) {
             pointValue = result.getJob().getPointValue();
             earnedPointsDesc = result.getJob().getTitle();
@@ -93,16 +120,32 @@ public class SignupResource {
         signupEarnedPoints.setVerified(verified);
         signupEarnedPoints.setPointValue(pointValue);
         earnedPointsRepository.save(signupEarnedPoints);
-        log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
+        return signupEarnedPoints;
+    }
 
-        mailService.sendSignupEmail(result);
+    private List<Signup> buildSignupList(@RequestBody Signup signup) {
+        List<Signup> signupList = new ArrayList<Signup>();
 
-        String uiResponse = result.getWorker().getName() + " was signed up for job " + earnedPointsDesc +
-            " for the event on " + result.getScheduleDate().getDate();
-
-        return ResponseEntity.created(new URI("/api/signups/" + result.getId()))
-            .headers(HeaderUtil.createAlert(uiResponse, ""))
-            .body(result);
+        boolean isReserved = signup.getJob().getReserved();
+        // if a job is reserved, the book the person for the whole year.
+        if (isReserved) {
+            List<ScheduleDate> dates = scheduleDateRepository.findAllOrdered();
+            for (ScheduleDate eventDate : dates) {
+                boolean sameEventType = eventDate.getEventType().equals(
+                    signup.getScheduleDate().getEventType()
+                );
+                if (sameEventType) {
+                    Signup eventSignup = new Signup();
+                    eventSignup.setJob(signup.getJob());
+                    eventSignup.setWorker(signup.getWorker());
+                    eventSignup.setScheduleDate(eventDate);
+                    signupList.add(eventSignup);
+                }
+            }
+        } else {
+            signupList.add(signup);
+        }
+        return signupList;
     }
 
     /**

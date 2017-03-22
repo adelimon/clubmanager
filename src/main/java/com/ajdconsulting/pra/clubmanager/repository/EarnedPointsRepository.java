@@ -20,9 +20,6 @@ public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long>
     @Query("select e from EarnedPoints e where e.member.id = :memberId order by e.date")
     public Page<EarnedPoints> findForMemberId(Pageable pageable, @Param("memberId") Long memberId);
 
-    //@Query("select e from EarnedPoints e where e.")
-    //public Page<EarnedPoints> findWorkLeaderVerifications(Pageable pageable, @Param("userId") String userId);
-
     @Query("select e from EarnedPoints e where e.verified = false and e.member.status <> 9 and e.date < now() " +
         "order by e.member.lastName")
     public Page<EarnedPoints> findAllOrdered(Pageable pageable);
@@ -33,6 +30,6 @@ public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long>
     @Query("select e from EarnedPoints e where e.member.id = :id order by e.date")
     public List<EarnedPoints> findByMemberId(@Param("id") long id);
 
-    @Query("select e from EarnedPoints e where e.member.id = :id and year(e.date) = year(current_date()) and e.date >= current_date() order by e.date")
+    @Query("select e from EarnedPoints e where e.member.id = :id and e.verified = true and year(e.date) = year(current_date()) and e.date <= current_date() order by e.date")
     public List<EarnedPoints> findByMemberIdThisYear(@Param("id") long id);
 }
