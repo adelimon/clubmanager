@@ -57,26 +57,45 @@ public class ExcelSqlReport {
         workbook = new StripedSingleSheetWorkbook(name);
         workbook.addHeader(columns);
         // check to see if we want to autosize the columns, or use our own
-        boolean autosize = ((columnWidths != null) && columnWidths.length >= 0);
+        boolean autosize = false;
         if (!autosize) {
             sizeColumns(columnWidths, workbook);
         }
         List<Map<String, Object>> umeshDengale = result.getUmeshDengale();
+
         for (Map<String, Object> row : umeshDengale) {
+            int columnCount = row.size();
+            boolean hasFormattingColumn = false;
+            for (String columnName : formattingColumns) {
+                if (row.containsKey(columnName)) {
+                    hasFormattingColumn = (Boolean) row.get(columnName);
+                    columnCount--;
+                }
+            }
             Row excelRow = workbook.createRow(autosize);
-            boolean rowHasFormattingColumn = false;
             for (String key : row.keySet()) {
                 String value = "";
-                if (!rowHasFormattingColumn) {
-                    rowHasFormattingColumn = isFormattingColumn(key);
+                if (!hasFormattingColumn) {
+                    hasFormattingColumn = isFormattingColumn(key);
                 }
                 if (row.get(key) != null) {
                     value = row.get(key).toString();
+                    switch (value) {
+                        case "true":
+                            value = "Yes";
+                            break;
+                        case "false":
+                            value = "No";
+                            break;
+                    }
                 }
                 // only create the cell if the column is not used for formatting
                 if (!isFormattingColumn(key)) {
-                    workbook.createCell(excelRow, value, rowHasFormattingColumn);
+                    workbook.createCell(excelRow, value, hasFormattingColumn);
                 }
+            }
+            if (columnCount < row.size()) {
+                workbook.createCell(excelRow, "", hasFormattingColumn);
             }
         }
     }

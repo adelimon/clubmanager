@@ -1,17 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.data.export.excel;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Wrapper for the POI interactions with excel.  This allows us an easier usage of that lib since we abstract all
@@ -36,6 +26,8 @@ public class StripedSingleSheetWorkbook extends ExcelWorkbook {
         sheet.setMargin(Sheet.RightMargin, 0.25);
         sheet.setMargin(Sheet.TopMargin, 0.25);
         sheet.setMargin(Sheet.BottomMargin, 0.25);
+        sheet.getPrintSetup().setLandscape(true);
+        sheet.setRepeatingRows(CellRangeAddress.valueOf("1:1"));
     }
 
     protected void applyCellStyles(boolean useBoldFont, Cell cell) {
@@ -44,6 +36,7 @@ public class StripedSingleSheetWorkbook extends ExcelWorkbook {
             fillColor = IndexedColors.GREY_25_PERCENT;
         }
         CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
         style.setFillForegroundColor(fillColor.getIndex());
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setBorderTop(CellStyle.BORDER_THIN);

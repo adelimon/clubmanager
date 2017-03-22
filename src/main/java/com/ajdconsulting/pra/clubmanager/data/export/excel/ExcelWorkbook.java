@@ -41,7 +41,9 @@ public abstract class ExcelWorkbook {
             autoSizeColumns();
         }
         columnIndex = 0;
-        return sheet.createRow(rowIndex++);
+        Row row = sheet.createRow(rowIndex++);
+        row.setHeightInPoints(28.0f);
+        return row;
     }
 
     private void autoSizeColumns() {
