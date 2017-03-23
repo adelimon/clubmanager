@@ -5,6 +5,7 @@ import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelHttpOutputStream
 import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelWorkbook;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.ajdconsulting.pra.clubmanager.domain.*;
+import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
@@ -105,6 +106,8 @@ public class MemberResource {
         newUser.setActivated(true);
         userRepository.save(newUser);
 
+        MailingList.addMember(member);
+
         //ManagedUserDTO managedUserDTO = new ManagedUserDTO(newUser);
         //userService.createUser(managedUserDTO);
 
@@ -135,6 +138,7 @@ public class MemberResource {
             user.setLogin(result.getEmail());
             user.setEmail(result.getEmail());
             userRepository.save(user);
+            MailingList.updateMember(member);
         }
 
         return ResponseEntity.ok()
@@ -248,6 +252,7 @@ public class MemberResource {
     @Timed
     public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         log.debug("REST request to delete Member : {}", id);
+        Member member = memberRepository.findOne(id);
         // delete all earned points for this member first
         List<EarnedPoints> allMemberPoints = earnedPointsRepository.findByMemberId(id);
         for (EarnedPoints points : allMemberPoints) {
@@ -258,6 +263,7 @@ public class MemberResource {
             signupRepository.delete(signup);
         }
         memberRepository.delete(id);
+        MailingList.deleteMember(member);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
 
