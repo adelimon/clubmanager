@@ -64,7 +64,7 @@ angular.module('clubmanagerApp')
             var eventId = urlSplit[urlSplit.length-1];
             var memberId = member.id;
 
-            alert( eventId + " " + memberId);
+
 
             $http.post('/api/earnedPoints/'+memberId+'/'+eventId).then(
                 function() {
