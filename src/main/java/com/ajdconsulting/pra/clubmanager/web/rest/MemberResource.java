@@ -106,10 +106,13 @@ public class MemberResource {
         newUser.setActivated(true);
         userRepository.save(newUser);
 
-        MailingList.addMember(member);
-
-        //ManagedUserDTO managedUserDTO = new ManagedUserDTO(newUser);
-        //userService.createUser(managedUserDTO);
+        try {
+            MailingList.addMember(member);
+        } catch (IOException e) {
+            log.error("Failed to add member " + member.getName() + " email " + member.getEmail() + " to external mailing list.  Please add manually.", e);
+        } catch (JSONException e) {
+            log.error("Failed to add member " + member.getName() + " email " + member.getEmail() + " to external mailing list.  Please add manually.", e);
+        }
 
         return ResponseEntity.created(new URI("/api/members/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("member", result.getId().toString()))

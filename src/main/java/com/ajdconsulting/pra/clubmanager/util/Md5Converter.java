@@ -12,8 +12,12 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Md5Converter {
 
-    public static String toMd5(String str) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("MD5");
+    public static String toMd5(String str) {
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+        }
         digest.update(str.getBytes());
         return new BigInteger(1, digest.digest()).toString(16);
     }
