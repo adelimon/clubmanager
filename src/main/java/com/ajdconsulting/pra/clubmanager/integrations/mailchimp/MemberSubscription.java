@@ -19,11 +19,19 @@ public class MemberSubscription {
     public MemberSubscription(Member member, String status) throws JSONException {
         jsonSubscription = new JSONObject();
         jsonSubscription.put("email_address", member.getEmail());
-        jsonSubscription.put("status", "subscribed");
+        jsonSubscription.put("status", status);
+        JSONObject firstName = new JSONObject();
+        firstName.put("FNAME", member.getFirstName());
+        firstName.put("LNAME", member.getLastName());
+        jsonSubscription.put("merge_fields", firstName);
         jsonSubscription.put("email_type", "html");
     }
 
     public String toJson() {
         return jsonSubscription.toString();
+    }
+
+    public String toString() {
+        return this.toJson();
     }
 }

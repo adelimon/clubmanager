@@ -28,8 +28,8 @@ public class MailingList {
 
     private static final Logger log = LoggerFactory.getLogger(MailingList.class);
 
-    public static void addMember(Member member) throws IOException, JSONException {
-        MemberListClient listClient = new MemberListClient();
+    public static void addMember(Member member, String apiKey) throws IOException, JSONException {
+        MemberListClient listClient = new MemberListClient(apiKey);
         if (listClient.isOnList(member)) {
             log.debug(member.getEmail() + " was found on mailchimp so we are done");
         } else {
@@ -38,17 +38,26 @@ public class MailingList {
             if (!added) {
                 log.error("Failed to add member " + member.getName() + " email " + member.getEmail() +
                     " to external mailing list.  Please add manually.");
+            } else {
+                log.info("Added member " + member.getEmail() + " email " + member.getEmail() +
+                    " to external mailing list");
             }
         }
 
     }
 
-    public static void updateMember(Member member) {
-
+    public static void updateMember(Member member, String apiKey) throws IOException, JSONException {
+        // first remove the existing one
+        deleteMember(member, apiKey);
+        addMember(member, apiKey);
     }
 
-    public static void deleteMember(Member member) {
-
+    public static void deleteMember(Member member, String apiKey) throws IOException, JSONException {
+        MemberListClient listClient = new MemberListClient(apiKey);
+        if (listClient.isOnList(member)) {
+            log.debug(member.getEmail() + " was found on mailchimp so we are done");
+            listClient.removeFromList(member);
+        }
     }
 
 }

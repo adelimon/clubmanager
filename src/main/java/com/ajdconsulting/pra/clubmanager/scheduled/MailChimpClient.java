@@ -36,11 +36,15 @@ public class MailChimpClient {
 
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, JSONException {
+        String apiKey = "";//
+
         Member member = new Member();
         member.setEmail("newMessageguy@asdf.org");
+        member.setFirstName("new");
+        member.setLastName("AAAAAB");
+        MailingList.addMember(member, apiKey);
 
-        MailingList.addMember(member);
-
+        MailingList.deleteMember(member, apiKey);
     }
 
 }
