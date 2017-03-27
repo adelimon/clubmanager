@@ -6,10 +6,7 @@ import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelWorkbook;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
-import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
-import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
-import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
-import com.ajdconsulting.pra.clubmanager.repository.UserRepository;
+import com.ajdconsulting.pra.clubmanager.repository.*;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
@@ -79,6 +76,9 @@ public class MemberResource {
     private SignupRepository signupRepository;
 
     @Inject
+    private IntegrationRepository integrationRepository;
+
+    @Inject
     private MailService mailService;
 
     @Inject
@@ -106,9 +106,24 @@ public class MemberResource {
         newUser.setActivated(true);
         userRepository.save(newUser);
 
+        try {
+            MailingList.addMember(member, getMailingListApiKey());
+        } catch (IOException e) {
+            log.error("unable to update email for " + member.getName()  +
+                " on mailchimp.  please add " + member.getEmail() + " manually.", e);
+        } catch (JSONException e) {
+            log.error("unable to update email for " + member.getName()  +
+                " on mailchimp.  please add " + member.getEmail() + " manually.", e);
+        }
+
         return ResponseEntity.created(new URI("/api/members/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("member", result.getId().toString()))
             .body(result);
+    }
+
+    private String getMailingListApiKey() {
+        Integration mailchimp  = integrationRepository.findOne(1L);
+        return mailchimp.getApikey();
     }
 
     /**
@@ -255,6 +270,16 @@ public class MemberResource {
         List<Signup> workerSignups = signupRepository.findByWorkerId(id);
         for (Signup signup : workerSignups) {
             signupRepository.delete(signup);
+        }
+        // now clean up the external mailing list
+        try {
+            MailingList.deleteMember(member, getMailingListApiKey());
+        } catch (IOException e) {
+            log.error("unable to delete email for " + member.getName()  +
+                " on mailchimp.  please add " + member.getEmail() + " manually.", e);
+        } catch (JSONException e) {
+            log.error("unable to delete email for " + member.getName()  +
+                " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         }
         memberRepository.delete(id);
 
