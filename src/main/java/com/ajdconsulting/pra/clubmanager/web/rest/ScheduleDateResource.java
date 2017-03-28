@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.domain.EventType;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
 import com.ajdconsulting.pra.clubmanager.repository.ScheduleDateRepository;
@@ -19,6 +20,8 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +50,20 @@ public class ScheduleDateResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("scheduleDate", "idexists", "A new scheduleDate cannot already have an ID")).body(null);
         }
         ScheduleDate result = scheduleDateRepository.save(scheduleDate);
+        // if it's a race or harescramble, then add a workday on the day before.  Because that's the bidness rule.
+        if (scheduleDate.hasWorkDayBefore()) {
+            ScheduleDate workDay = new ScheduleDate();
+            EventType workDayEvent = new EventType();
+            workDayEvent.setId(9L);
+            workDayEvent.setType("Work Day");
+
+            workDay.setEventType(workDayEvent);
+            workDay.setDate(
+                scheduleDate.getDate().minus(1L, ChronoUnit.DAYS)
+            );
+
+            scheduleDateRepository.save(workDay);
+        }
         return ResponseEntity.created(new URI("/api/scheduleDates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("scheduleDate", result.getId().toString()))
             .body(result);

@@ -23,7 +23,7 @@ public class ScheduleDate implements Serializable {
     @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
-    
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
@@ -39,7 +39,7 @@ public class ScheduleDate implements Serializable {
     public LocalDate getDate() {
         return date;
     }
-    
+
     public void setDate(LocalDate date) {
         this.date = date;
     }
@@ -50,6 +50,13 @@ public class ScheduleDate implements Serializable {
 
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
+    }
+
+    public boolean hasWorkDayBefore() {
+        String eventType = getEventType().getType().toLowerCase();
+        boolean isRace = eventType.equals("race");
+        boolean isHarescramble = eventType.equals("harescramble");
+        return (isRace || isHarescramble);
     }
 
     @Override
