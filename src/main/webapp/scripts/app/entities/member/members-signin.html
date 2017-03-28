@@ -1,6 +1,26 @@
 <div>
     <h2>Member Sign In</h2>
     <jh-alert></jh-alert>
+    <div>
+        <label>Search for a member by typing, or select some common choices with the buttons below:
+            <input type="text" class="form-control" ng-model="searchText"></label>
+        <button id="clear-filter" class="btn btn-alert btn-sm" ng-click="clearFilter()" type="button">
+            <span class="glyphicon glyphicon-remove"/>
+        </button>
+        <p>
+            <button id="senior-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Senior')" type="button">
+                <span class="glyphicon glyphicon-education"/>
+                <span>Senior Members</span>
+            </button>
+            <button id="sponsor-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Sponsorship')" type="button">
+                <span class="glyphicon glyphicon-gift"/>
+                <span>Sponsored Riders</span>
+            </button>
+            <button id="paid-filter" class="btn btn-alert btn-sm"  ng-click="setFilter('Paid')" type="button">
+                <span class="glyphicon glyphicon-usd"/>
+                <span>Paid Labor</span>
+            </button>
+    </div>
     <div class="table-responsive">
         <table class="jh-table table table-striped">
             <thead>
@@ -11,7 +31,7 @@
                 </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="member in members | filter:'!Paid' track by member.id">
+                <tr ng-repeat="member in members | filter: searchText track by member.id">
                     <td>{{member.lastName}}</td>
                     <td>{{member.firstName}}</td>
                     <td>

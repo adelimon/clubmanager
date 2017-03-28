@@ -82,7 +82,7 @@ public class EarnedPointsResource {
         EventType eventType = scheduleDate.getEventType();
 
         EarnedPoints earnedPoints = new EarnedPoints();
-        earnedPoints.setDescription("Attended");
+        earnedPoints.setDescription("Attended " + eventType);
         earnedPoints.setEventType(eventType);
         earnedPoints.setMember(member);
         earnedPoints.setVerified(true);
