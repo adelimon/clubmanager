@@ -32,7 +32,7 @@
                         <li ui-sref-active="active" ><a ui-sref="member" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
                             &#xA0;<span >View member list</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="member.detail({id:'me'})" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                            &#xA0;<span >View your membership info</span></a></li>
+                            &#xA0;<span >View your personal info</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="earnedPoints.me" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
                             &#xA0;<span >View your points in detail</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="signupReport" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
@@ -50,7 +50,7 @@
                         <span>
                             <span class="glyphicon glyphicon-th-list"></span>
                             <span class="hidden-sm">
-                                Manage Club
+                                Manage club
                             </span>
                             <b class="caret"></b>
                         </span>
@@ -60,12 +60,32 @@
                         &#xA0;<span >Sign someone up for work</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="earnedPoints" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
                         &#xA0;<span >Verify worker points</span></a></li>
-                        <li ui-sref-active="active" ><a ui-sref="scheduleDate" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Create an event</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="member" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
                         &#xA0;<span >Create Members and Workers</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="job" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
                         &#xA0;<span >Create and view jobs</span></a></li>
+                        <li ui-sref-active="active" ><a ui-sref="signupReport" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
+                        &#xA0;<span >Signup report</span></a></li>
+                        <li ui-sref-active="active" ><a ui-sref="ridingAreaStatus" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
+                        &#xA0;<span >Set riding area status</span></a></li>
+                        <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
+                    </ul>
+                </li>
+                <li ng-class="{active: $state.includes('admin')}"  ng-switch-when="true" has-authority="ROLE_ADMIN" class="dropdown pointer">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                        <span>
+                            <span class="glyphicon glyphicon-th-list"></span>
+                            <span class="hidden-sm">
+                                Secretary functions
+                            </span>
+                            <b class="caret"></b>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ><a ui-sref="scheduleDate" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
+                            &#xA0;<span >Create a scheduled event</span></a></li>
+                        <li ui-sref-active="active" ><a ui-sref="job" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
+                            &#xA0;<span >Create and view jobs</span></a></li>
                         <!--
                         <li ui-sref-active="active" ><a ui-sref="memberNote" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
                         &#xA0;<span >Add note to a member</span></a></li>
@@ -73,24 +93,15 @@
                             &#xA0;<span >Update Member status</span></a></li>
                             -->
                         <li ui-sref-active="active" ><a ui-sref="memberTypes" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Create Member types</span></a></li>
+                            &#xA0;<span >Create Member types</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="eventType" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Create Event type</span></a></li>
-                        <li ui-sref-active="active" ><a ui-sref="signupReport" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Signup report</span></a></li>
-                        <li ui-sref-active="active" ><a ui-sref="ridingAreaStatus" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Riding area status</span></a></li>
+                            &#xA0;<span >Create Event type</span></a></li>
                         <li ui-sref-active="active" ><a ui-sref="boardMember" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Board members</span></a></li>
-                        <!--
-                        <li ui-sref-active="active" ><a ui-sref="memberMessage" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Member message</span></a></li>
-                        -->
-                        <li ui-sref-active="active" ><a ui-sref="integration" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
-                        &#xA0;<span >Integration</span></a></li>
+                            &#xA0;<span >Create and view board members</span></a></li>
                         <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
                     </ul>
                 </li>
+
                 <li ng-class="{active: $state.includes('account')}" class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="" id="account-menu">
                         <span>
@@ -125,6 +136,8 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu">
+                        <li ui-sref-active="active" ><a ui-sref="integration" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-asterisk"></span>
+                            &#xA0;<span>External Integrations</span></a></li>
                         <li ui-sref-active="active"><a ui-sref="user-management" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-user"></span>
                             &#xA0;<span>User management</span></a></li>
                         <li ui-sref-active="active"><a ui-sref="metrics" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-dashboard"></span>
