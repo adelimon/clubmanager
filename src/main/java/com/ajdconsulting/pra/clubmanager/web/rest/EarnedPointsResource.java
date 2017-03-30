@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.dates.CurrentFiscalYear;
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.EventType;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
@@ -188,7 +189,7 @@ public class EarnedPointsResource {
         if (SecurityUtils.isCurrentUserAdmin()) {
             page = earnedPointsRepository.findAllOrdered(pageable);
         } else {
-            page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+            page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin(), CurrentFiscalYear.getFiscalYear());
         }
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
@@ -217,7 +218,8 @@ public class EarnedPointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<EarnedPoints>> getUserEarnedPoints(Pageable pageable) throws URISyntaxException {
-        Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+        Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable,
+            SecurityUtils.getCurrentUserLogin(), CurrentFiscalYear.getFiscalYear());
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -231,7 +233,7 @@ public class EarnedPointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<EarnedPoints>> getMemberEarnedPoints(Pageable pageable, @PathVariable Long memberId) throws URISyntaxException {
-        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId);
+        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId, CurrentFiscalYear.getFiscalYear());
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -245,7 +247,8 @@ public class EarnedPointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<EarnedPoints>> getUserVerifications(Pageable pageable) throws URISyntaxException {
-        Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin());
+        Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable, SecurityUtils.getCurrentUserLogin(),
+            CurrentFiscalYear.getFiscalYear());
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
