@@ -45,11 +45,13 @@
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="firstName"><span>FirstName</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="lastName"><span>LastName</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <!--
                     <th jh-sort-by="address"><span>Address</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="city"><span>City</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="state"><span>State</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="zip"><span>Zip</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <!--<th jh-sort-by="occupation"><span>Occupation</span> <span class="glyphicon glyphicon-sort"></span></th>-->
+                    <th jh-sort-by="occupation"><span>Occupation</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    -->
                     <th jh-sort-by="phone"><span>Phone</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="email"><span>Email</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort_by="currentYearPoints"><span>Points</span></th>
@@ -59,15 +61,17 @@
                 </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="member in members | filter:searchText track by member.id">
+                <tr ng-repeat="member in members | orderBy: 'lastName' | filter:searchText track by member.id">
                     <td><a ui-sref="member.detail({id:member.id})">{{member.id}}</a></td>
                     <td>{{member.firstName}}</td>
                     <td>{{member.lastName}}</td>
+                    <!--
                     <td>{{member.address}}</td>
                     <td>{{member.city}}</td>
                     <td>{{member.state}}</td>
                     <td>{{member.zip}}</td>
-                    <!--<td>{{member.occupation}}</td>-->
+                    <td>{{member.occupation}}</td>
+                    -->
                     <td>{{member.phone}}</td>
                     <td>{{member.email}}</td>
                     <td>
