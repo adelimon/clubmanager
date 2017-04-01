@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('clubmanagerApp')
-    .controller('MemberController', function ($scope, $state, $location, $http, Member, ParseLinks) {
+    .controller('MemberController', function ($scope, $state, $location, $http, $rootScope, Member, ParseLinks) {
 
         $scope.members = [];
         $scope.signedUp = [];
         $scope.predicate = 'lastName';
-        $scope.reverse = true;
+        $scope.reverse = false;
         $scope.page = 0;
         $scope.loadAll = function() {
             Member.query({page: $scope.page, size: 250, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'lastName']}, function(result, headers) {
@@ -24,7 +24,31 @@ angular.module('clubmanagerApp')
         $scope.loadPage = function(page) {
             $scope.page = page;
             $scope.loadAll();
+            $scope.searchText = $rootScope.memberSearch;
         };
+        $scope.searchFilter = function(item) {
+            var userSearchTerm = $scope.searchText;
+            var userSearched = ((userSearchTerm !== "") && (userSearchTerm !== undefined));
+            var condition = true;
+            if (userSearched) {
+                userSearchTerm = userSearchTerm.toLowerCase();
+                $rootScope.memberSearch = userSearchTerm;
+                // if the user searched, then check the object for their search term.
+                condition = (item.lastName.toLowerCase().includes(userSearchTerm));
+                if (!condition) {
+                    condition = item.status.type.toLowerCase().includes(userSearchTerm);
+                }
+            } else {
+                var status = item.status.type;
+                // by default exclude paid labor and sponsored riders, unless they click the buttons asking for them
+                // these folks rarely would be looked for.
+                condition = (status !== "Paid Labor");
+            }
+
+            if (condition) {
+                return item;
+            }
+        }
         $scope.loadAll();
 
 

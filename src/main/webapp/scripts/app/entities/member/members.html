@@ -61,7 +61,7 @@
                 </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="member in members | orderBy: 'lastName' | filter:searchText track by member.id">
+                <tr ng-repeat="member in members | orderBy: 'lastName' | filter:searchFilter track by member.id">
                     <td><a ui-sref="member.detail({id:member.id})">{{member.id}}</a></td>
                     <td>{{member.firstName}}</td>
                     <td>{{member.lastName}}</td>
