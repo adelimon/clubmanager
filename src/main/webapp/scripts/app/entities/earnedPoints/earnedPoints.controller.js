@@ -7,6 +7,7 @@ angular.module('clubmanagerApp')
         $scope.predicate = 'id';
         $scope.reverse = true;
         $scope.page = 0;
+        $scope.pointsTotal = 0;
         // yes, use the equal to true here because this guy can be undefined otherwise and Javascript is
         // stupid in that case.  I hate this and it looks like discount programming, but at least I
         // did it on purpose.
@@ -28,7 +29,12 @@ angular.module('clubmanagerApp')
             EarnedPoints.query(queryProps, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
                 for (var i = 0; i < result.length; i++) {
-                    $scope.earnedPointss.push(result[i]);
+                    var pointsObject = result[i];
+                    $scope.earnedPointss.push(pointsObject);
+                    if (pointsObject.verified && !pointsObject.paid) {
+                        $scope.pointsTotal += pointsObject.pointValue;
+                    }
+
                 }
             });
         };

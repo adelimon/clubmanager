@@ -1,14 +1,14 @@
 <div>
     <h2>Earned Points</h2>
     <jh-alert></jh-alert>
-    <div>
+    <div ng-if="!viewMyPoints">
         <label>Search for a points entry by typing a member name:
         <input type="text" class="form-control" ng-model="searchText"></label>
         <button id="clear-filter" class="btn btn-alert btn-sm" ng-click="clearFilter()" type="button">
             <span class="glyphicon glyphicon-remove"/>
         </button>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid" ng-if="!viewMyPoints">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
                 <button class="btn btn-primary" ui-sref="earnedPoints.new" >
@@ -35,7 +35,7 @@
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="cashValue"><span>Cash Value</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="cashValue" ng-if="!viewMyPoints"><span>Cash Value</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th ng-if="viewMyPoints" jh-sort-by="verified"><span>Verified</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="member.name"><span>member</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
@@ -58,7 +58,7 @@
                         <td>{{earnedPoints.date | date:'mediumDate'}}</td>
                     <td>{{earnedPoints.description}}</td>
                     <td>{{earnedPoints.pointValue}}</td>
-                    <td>{{earnedPoints.cashValue}}</td>
+                    <td ng-if="!viewMyPoints">{{earnedPoints.cashValue}}</td>
                     <td ng-if="viewMyPoints">{{earnedPoints.verified}}</td>
                     <td>
                         <a ui-sref="member.detail({id:earnedPoints.member.id})">{{earnedPoints.member.name}}</a>
@@ -66,7 +66,7 @@
                     <td>
                         <a ui-sref="eventType.detail({id:earnedPoints.eventType.id})">{{earnedPoints.eventType.type}}</a>
                     </td>
-                    <td class="text-right">
+                    <td class="text-right" ng-if="!viewMyPoints">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
                                     ui-sref="earnedPoints.edit({id:earnedPoints.id})"
@@ -82,6 +82,10 @@
                             </button>
                         </div>
                     </td>
+                </tr>
+                <tr ng-if="viewMyPoints">
+                    <td>Total points for this year:</td>
+                    <td>{{pointsTotal}}</td>
                 </tr>
             </tbody>
         </table>
