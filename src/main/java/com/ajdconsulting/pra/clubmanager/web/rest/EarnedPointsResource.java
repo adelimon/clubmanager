@@ -8,6 +8,7 @@ import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.ScheduleDateRepository;
+import com.ajdconsulting.pra.clubmanager.restheaders.EarnedPointsHeader;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
@@ -156,12 +157,13 @@ public class EarnedPointsResource {
         if (earnedPoints.getId() == null) {
             return createEarnedPoints(earnedPoints);
         }
+        earnedPoints.setLastModifiedBy(SecurityUtils.getCurrentUserLogin());
+
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
         addVerifiedPointsToMember(earnedPoints);
         // reload the record so we have all the associated info, used to return a useful message to the UI.
         result = earnedPointsRepository.findOne(result.getId());
-        String resultMsg = result.getMember().getName() + "'s " + result.getPointValue() + " pts recorded for " +
-            result.getDescription() + " on " + result.getDate();
+        String resultMsg = new EarnedPointsHeader(result).toString();
         HttpHeaders alert = HeaderUtil.createAlert(resultMsg, "");
         if (!result.getVerified()) {
             // typical header behaviors is going to be to let them know what was updated.  But just in case there is

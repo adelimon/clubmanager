@@ -74,6 +74,11 @@ angular.module('clubmanagerApp')
             );
         };
 
+        $scope.payWork = function (earnedPoints) {
+            earnedPoints.paid = true;
+            $scope.verifyPoints(earnedPoints);
+        }
+
         $scope.clearFilter = function() {
             $scope.searchText = "";
         };

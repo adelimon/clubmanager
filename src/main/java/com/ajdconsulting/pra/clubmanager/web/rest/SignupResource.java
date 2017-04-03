@@ -121,6 +121,7 @@ public class SignupResource {
         signupEarnedPoints.setDescription(earnedPointsDesc);
         signupEarnedPoints.setVerified(verified);
         signupEarnedPoints.setPointValue(pointValue);
+        signupEarnedPoints.setCashValue(result.getJob().getCashValue());
         earnedPointsRepository.save(signupEarnedPoints);
         return signupEarnedPoints;
     }

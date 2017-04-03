@@ -23,20 +23,28 @@ public class EarnedPoints implements Serializable {
     @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
-    
+
     @NotNull
     @Column(name = "description", nullable = false)
     private String description;
-    
+
     @NotNull
     @Min(value = 0)
     @Column(name = "point_value", nullable = false)
     private Float pointValue;
-    
+
+    @Min(value = 0)
+    @Column(name = "cash_value", nullable = true)
+    private Float cashValue;
+
+    @NotNull
+    @Column(name = "paid", nullable = false)
+    private boolean paid;
+
     @NotNull
     @Column(name = "verified", nullable = false)
     private Boolean verified;
-    
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -44,6 +52,9 @@ public class EarnedPoints implements Serializable {
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
+
+    @Column(name = "last_modified_by")
+    private String lastModifiedBy;
 
     public Long getId() {
         return id;
@@ -56,7 +67,7 @@ public class EarnedPoints implements Serializable {
     public LocalDate getDate() {
         return date;
     }
-    
+
     public void setDate(LocalDate date) {
         this.date = date;
     }
@@ -64,7 +75,7 @@ public class EarnedPoints implements Serializable {
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -72,7 +83,7 @@ public class EarnedPoints implements Serializable {
     public Float getPointValue() {
         return pointValue;
     }
-    
+
     public void setPointValue(Float pointValue) {
         this.pointValue = pointValue;
     }
@@ -80,7 +91,7 @@ public class EarnedPoints implements Serializable {
     public Boolean getVerified() {
         return verified;
     }
-    
+
     public void setVerified(Boolean verified) {
         this.verified = verified;
     }
@@ -130,5 +141,29 @@ public class EarnedPoints implements Serializable {
             ", pointValue='" + pointValue + "'" +
             ", verified='" + verified + "'" +
             '}';
+    }
+
+    public void setCashValue(Float cashValue) {
+        this.cashValue = cashValue;
+    }
+
+    public Float getCashValue() {
+        return cashValue;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
     }
 }

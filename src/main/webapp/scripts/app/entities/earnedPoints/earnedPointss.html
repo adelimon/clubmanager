@@ -30,10 +30,12 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
-                    <th ng-if="!viewMyPoints">Verify Points</th>
+                    <th ng-if="!viewMyPoints">Points</th>
+                    <th ng-if="!viewMyPoints">Paid</th>
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="cashValue"><span>Cash Value</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th ng-if="viewMyPoints" jh-sort-by="verified"><span>Verified</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="member.name"><span>member</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
@@ -46,12 +48,17 @@
                     <td ng-if="!viewMyPoints">
                         <button class="btn btn-success btn-sm" type="submit" ng-click="verifyPoints(earnedPoints)">
                             <span class="glyphicon glyphicon-check"></span>
-                            <span>Verify</span>
+                        </button>
+                    </td>
+                    <td ng-if="!viewMyPoints">
+                        <button class="btn btn-warning btn-sm" type="submit" ng-click="payWork(earnedPoints)">
+                            <span class="glyphicon glyphicon-euro"></span>
                         </button>
                     </td>
                         <td>{{earnedPoints.date | date:'mediumDate'}}</td>
                     <td>{{earnedPoints.description}}</td>
                     <td>{{earnedPoints.pointValue}}</td>
+                    <td>{{earnedPoints.cashValue}}</td>
                     <td ng-if="viewMyPoints">{{earnedPoints.verified}}</td>
                     <td>
                         <a ui-sref="member.detail({id:earnedPoints.member.id})">{{earnedPoints.member.name}}</a>
