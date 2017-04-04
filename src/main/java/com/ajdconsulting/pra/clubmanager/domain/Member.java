@@ -74,9 +74,6 @@ public class Member implements Serializable {
     @Column(name = "date_joined")
     private LocalDate dateJoined;
 
-    @Column(name = "current_year_points")
-    private Float currentYearPoints;
-
     @ManyToOne
     @JoinColumn(name = "status")
     private MemberTypes status;
@@ -199,14 +196,6 @@ public class Member implements Serializable {
 
     public void setDateJoined(LocalDate dateJoined) {
         this.dateJoined = dateJoined;
-    }
-
-    public Float getCurrentYearPoints() {
-        return currentYearPoints;
-    }
-
-    public void setCurrentYearPoints(Float currentYearPoints) {
-        this.currentYearPoints = currentYearPoints;
     }
 
     public MemberTypes getStatus() {

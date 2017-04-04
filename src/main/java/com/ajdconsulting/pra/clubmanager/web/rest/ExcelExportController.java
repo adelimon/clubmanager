@@ -28,11 +28,11 @@ public class ExcelExportController {
     public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         String query =
             "select concat(last_name, ', ', first_name) name, mt.type status, " +
-                "current_year_points, '' signature from member m, member_types mt " +
+                "'' signature from member m, member_types mt " +
                 "where m.status != 9 and mt.id = m.status order by last_name";
 
-        String[] headerColumns = {"Name", "Status", "Points", "Signature"};
-        int[] columnWidths = {20, 20, 10, 65};
+        String[] headerColumns = {"Name", "Status", "Signature"};
+        int[] columnWidths = {20, 20, 65};
         ExcelSqlReport report = new ExcelSqlReport(query, "meetingSignIn", headerColumns, columnWidths);
         report.write(ExcelHttpOutputStream.getOutputStream(response, "meetingSignIn.xlsx"));
     }

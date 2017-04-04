@@ -67,7 +67,7 @@ public class EarnedPointsResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("earnedPoints", "idexists", "A new earnedPoints cannot already have an ID")).body(null);
         }
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
-        addVerifiedPointsToMember(earnedPoints);
+
         return ResponseEntity.created(new URI("/api/earnedPointss/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("earnedPoints", result.getId().toString()))
             .body(result);
@@ -101,49 +101,6 @@ public class EarnedPointsResource {
             .body(result);
     }
 
-    /**
-     * When points are verified, add them to the member who earned them.  This updates their total column for the year
-     * for quick reference.
-     *
-     * @param earnedPoints the earned points entity.
-     */
-    private void addVerifiedPointsToMember(@Valid @RequestBody EarnedPoints earnedPoints) {
-        // check if the entry is verified.  If it is, then also add the points to the member's total for the year.
-        if (earnedPoints.getVerified()) {
-            Member earner = memberRepository.findOne(earnedPoints.getMember().getId());
-            Float currentYearTotal = earnedPoints.getPointValue();
-            if (earner.getCurrentYearPoints() != null) {
-                currentYearTotal += earner.getCurrentYearPoints();
-            }
-            earner.setCurrentYearPoints(currentYearTotal);
-            memberRepository.save(earner);
-        }
-    }
-
-    /**
-     * When points are removed, subtract them from the member who earned them.  This updates their total column for the year
-     * for quick reference.
-     *
-     * @param earnedPoints the earned points entity.
-     */
-    private void subtractPointsFromMember(@Valid @RequestBody EarnedPoints earnedPoints) {
-        Member earner = memberRepository.findOne(earnedPoints.getMember().getId());
-        // only subtract if the member has points for the current year - we don't allow folks to go negative
-        // on points, that wouldn't make a ton of sense.   Also only remove verified entries, for the same reason
-        // we could be deleting a paid entry and wouldn't want to subtract points in that case (although we should
-        // ok not really, just a politicaly comment inserted in code :) ).
-        if (earnedPoints.getVerified() && (earner.getCurrentYearPoints() > 0)) {
-            float newPointsTotal = (earner.getCurrentYearPoints() - earnedPoints.getPointValue());
-            // also check to make sure when we do the subtraction that the total doesn't go below
-            // zero, because that would make no sense.
-            if (newPointsTotal < 0) {
-                newPointsTotal = 0.0f;
-            }
-            earner.setCurrentYearPoints(newPointsTotal);
-        }
-        memberRepository.save(earner);
-    }
-
 
     /**
      * PUT  /earnedPointss -> Updates an existing earnedPoints.
@@ -160,7 +117,7 @@ public class EarnedPointsResource {
         earnedPoints.setLastModifiedBy(SecurityUtils.getCurrentUserLogin());
 
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
-        addVerifiedPointsToMember(earnedPoints);
+
         // reload the record so we have all the associated info, used to return a useful message to the UI.
         result = earnedPointsRepository.findOne(result.getId());
         String resultMsg = new EarnedPointsHeader(result).toString();
@@ -284,7 +241,6 @@ public class EarnedPointsResource {
     public ResponseEntity<Void> deleteEarnedPoints(@PathVariable Long id) {
         log.debug("REST request to delete EarnedPoints : {}", id);
         EarnedPoints earnedPoints = earnedPointsRepository.findOne(id);
-        subtractPointsFromMember(earnedPoints);
         earnedPointsRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("earnedPoints", id.toString())).build();
     }
