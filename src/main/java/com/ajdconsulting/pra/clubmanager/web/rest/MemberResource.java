@@ -4,6 +4,7 @@ import com.ajdconsulting.pra.clubmanager.data.export.excel.BasicSingleSheetWorkb
 import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelHttpOutputStream;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelWorkbook;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
+import com.ajdconsulting.pra.clubmanager.dates.CurrentFiscalYear;
 import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
 import com.ajdconsulting.pra.clubmanager.repository.*;
@@ -267,7 +268,9 @@ public class MemberResource {
         log.debug("REST request to delete Member : {}", id);
         Member member = memberRepository.findOne(id);
         // delete all earned points for this member first
-        List<EarnedPoints> allMemberPoints = earnedPointsRepository.findByMemberId(id);
+        List<EarnedPoints> allMemberPoints = earnedPointsRepository.findByMemberId(id,
+                CurrentFiscalYear.getFiscalYear()
+        );
         for (EarnedPoints points : allMemberPoints) {
             earnedPointsRepository.delete(points);
         }
@@ -333,7 +336,9 @@ public class MemberResource {
             }
         }
 
-        List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(member.getId());
+        List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(
+            member.getId(), CurrentFiscalYear.getFiscalYear()
+        );
         float totalPoints = member.getTotalPoints(earnedPoints);
         float totalDues = member.getTotalDues(totalPoints, boardMemberIds);
         dues.setMemberId(member.getId());

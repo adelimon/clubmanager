@@ -222,7 +222,7 @@ public class Member implements Serializable {
         // life members and sponsored members pay no dues. neither do current
         // year board members
         boolean isCurrentYearBoard = ArrayUtils.contains(boardMembers, this.getId());
-        if (!isCurrentYearBoard || this.memberTypePaysDues()) {
+        if (!isCurrentYearBoard && this.memberTypePaysDues()) {
             // Everyone else pays the total dues, minus the number of points, divided by standard amount.
             float standardAmount = MemberDues.STANDARD_AMOUNT;
             float earnedAmount = (totalPoints * MemberDues.PAID_PER_POINT);
