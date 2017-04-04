@@ -52,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -86,6 +87,9 @@ public class MemberResource {
 
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private BoardMemberRepository boardMemberRepository;
 
     /**
      * POST  /members -> Create a new member.
@@ -319,10 +323,19 @@ public class MemberResource {
 
     public MemberDues getMemberDues(Member member) {
         MemberDues dues = new MemberDues(member);
+        List<BoardMember> boardMembers = boardMemberRepository.findAll();
+
+        long[] boardMemberIds = new long[boardMembers.size()];
+        for (int index = 0; index < boardMemberIds.length; index++) {
+            BoardMember boardMember = boardMembers.get(index);
+            if (boardMember.getYear() == LocalDate.now().getYear()) {
+                boardMemberIds[index] = boardMember.getMember().getId();
+            }
+        }
 
         List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(member.getId());
         float totalPoints = member.getTotalPoints(earnedPoints);
-        float totalDues = member.getTotalDues(totalPoints);
+        float totalDues = member.getTotalDues(totalPoints, boardMemberIds);
         dues.setMemberId(member.getId());
         dues.setPoints(totalPoints);
         dues.setAmountDue(totalDues);

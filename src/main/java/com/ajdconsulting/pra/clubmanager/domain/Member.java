@@ -1,5 +1,8 @@
 package com.ajdconsulting.pra.clubmanager.domain;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -218,17 +221,19 @@ public class Member implements Serializable {
         return ("Paid Labor".equals(this.status.getType()));
     }
 
-    public boolean paysDues() {
+    public boolean memberTypePaysDues() {
         return !("Life member".equals(status.getType()) ||
             "Sponsorship".equals(status.getType()) ||
             "Distant Rider".equals(status.getType())
         );
     }
 
-    public float getTotalDues(float totalPoints) {
+    public float getTotalDues(float totalPoints, long[] boardMembers) {
         float totalDues;
-        // life members and sponsored members pay no dues.
-        if (this.paysDues()) {
+        // life members and sponsored members pay no dues. neither do current
+        // year board members
+        boolean isCurrentYearBoard = ArrayUtils.contains(boardMembers, this.getId());
+        if (!isCurrentYearBoard || this.memberTypePaysDues()) {
             // Everyone else pays the total dues, minus the number of points, divided by standard amount.
             float standardAmount = MemberDues.STANDARD_AMOUNT;
             float earnedAmount = (totalPoints * MemberDues.PAID_PER_POINT);
