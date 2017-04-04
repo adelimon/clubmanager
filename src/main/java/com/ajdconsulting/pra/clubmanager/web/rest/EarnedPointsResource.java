@@ -84,11 +84,11 @@ public class EarnedPointsResource {
         EventType eventType = scheduleDate.getEventType();
 
         EarnedPoints earnedPoints = new EarnedPoints();
-        earnedPoints.setDescription("Attended " + eventType);
+        earnedPoints.setDescription("Attended " + eventType.getType());
         earnedPoints.setEventType(eventType);
         earnedPoints.setMember(member);
         earnedPoints.setVerified(true);
-        earnedPoints.setDate(LocalDate.now());
+        earnedPoints.setDate(scheduleDate.getDate());
         if (eventType.getType().equals("Meeting")) {
             earnedPoints.setPointValue(0.0f);
         } else if (eventType.getType().equals("Work Day")) {
