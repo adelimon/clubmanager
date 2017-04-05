@@ -324,6 +324,16 @@ public class MemberResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/members/dues/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<MemberDues> getMemberDues(@PathVariable long id) {
+        Member member = memberRepository.findOne(id);
+        MemberDues dues = getMemberDues(member);
+        return new ResponseEntity<MemberDues>(dues, HttpStatus.OK);
+    }
+
     public MemberDues getMemberDues(Member member) {
         MemberDues dues = new MemberDues(member);
         List<BoardMember> boardMembers = boardMemberRepository.findAll();
