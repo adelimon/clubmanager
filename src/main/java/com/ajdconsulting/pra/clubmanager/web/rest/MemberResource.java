@@ -92,6 +92,9 @@ public class MemberResource {
     @Inject
     private BoardMemberRepository boardMemberRepository;
 
+    @Inject
+    private MemberYearlyDuesRepository memberYearlyDuesRepository;
+
     /**
      * POST  /members -> Create a new member.
      */
@@ -317,6 +320,13 @@ public class MemberResource {
 
             MemberDues dues = getMemberDues(member);
             memberDues.add(dues);
+            MemberYearlyDues yearlyDues = new MemberYearlyDues();
+            yearlyDues.setId(member.getId()+CurrentFiscalYear.getFiscalYear());
+            yearlyDues.setAmountDue(dues.getAmountDue());
+            yearlyDues.setPoints(dues.getPoints());
+            yearlyDues.setYear(CurrentFiscalYear.getFiscalYear());
+            yearlyDues.setMember(member);
+            memberYearlyDuesRepository.save(yearlyDues);
         }
         boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
         Page<MemberDues> page = new PageImpl<MemberDues>(memberDues);
