@@ -351,7 +351,9 @@ public class MemberResource {
         long[] boardMemberIds = new long[boardMembers.size()];
         for (int index = 0; index < boardMemberIds.length; index++) {
             BoardMember boardMember = boardMembers.get(index);
-            if (boardMember.getYear() == LocalDate.now().getYear()) {
+            boolean nextYearBoard =
+                (boardMember.getYear() == CurrentFiscalYear.getNextFiscalYear());
+            if (nextYearBoard) {
                 boardMemberIds[index] = boardMember.getMember().getId();
             }
         }

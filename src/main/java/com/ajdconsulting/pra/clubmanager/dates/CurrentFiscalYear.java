@@ -29,4 +29,8 @@ public final class CurrentFiscalYear {
         CurrentFiscalYear year = new CurrentFiscalYear();
         return year.fiscalYear;
     }
+
+    public static int getNextFiscalYear() {
+        return getFiscalYear()+1;
+    }
 }
