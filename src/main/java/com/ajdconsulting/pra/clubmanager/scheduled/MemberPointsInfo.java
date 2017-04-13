@@ -51,6 +51,9 @@ public class MemberPointsInfo {
                 pointsRecord.getDescription() + " - " + pointsRecord.getPointValue() + " (" + runningTotal + " points total)";
             builder.append(detail);
         }
+        builder.append("Please note that this email reflects points that are recorded.  If something appears to be");
+        builder.append("missing, then it may not have been recorded yet.  You can check your points totals live at ");
+        builder.append("any time by logging into http://apps.palmyramx.com and clicking on View your points in detail.");
         return builder.toString();
     }
 
