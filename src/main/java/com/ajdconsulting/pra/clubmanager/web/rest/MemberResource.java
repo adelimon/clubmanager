@@ -311,6 +311,8 @@ public class MemberResource {
         // sort the list by last name
         allMembers.sort((Member o1, Member o2) -> o1.getLastName().compareTo(o2.getLastName()));
 
+        memberYearlyDuesRepository.deleteAll();
+
         for (Member member : allMembers) {
             // skip anyone who has already been sent
             if (!includeSent && member.isRenewalSent()) continue;
