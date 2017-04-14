@@ -14,6 +14,9 @@ import java.util.List;
  * @author adelimon
  */
 public abstract class ExcelWorkbook {
+
+    private static final float DEFAULT_ROW_HEIGHT = 22.0f;
+
     protected Workbook workbook;
     protected Sheet sheet;
     protected int rowIndex;
@@ -34,6 +37,10 @@ public abstract class ExcelWorkbook {
     protected abstract void applyCellStyles(boolean useBoldFont, Cell cell);
 
     public Row createRow(boolean autosize) {
+        return createRow(autosize, DEFAULT_ROW_HEIGHT);
+    }
+
+    public Row createRow(boolean autosize, float height) {
         // when adding a new row, first auto resize the columns to the new value.  This is the advantage of using
         // a wrapper class (a hip hop, a hippity hop to the hip hip hop ya don't stop gotta keep on bang bang boogie
         // the beat)
@@ -42,7 +49,7 @@ public abstract class ExcelWorkbook {
         }
         columnIndex = 0;
         Row row = sheet.createRow(rowIndex++);
-        row.setHeightInPoints(28.0f);
+        row.setHeightInPoints(height);
         return row;
     }
 
@@ -75,7 +82,7 @@ public abstract class ExcelWorkbook {
      * @param headerColumns names for the headers.
      */
     public void addHeader(String[] headerColumns) {
-        Row row = this.createRow(false);
+        Row row = this.createRow(false, 28.5f);
         for (int index = 0; index < headerColumns.length; index++) {
             // TODO: this probably needs to be more flexible and allow you to pass in the cell style too.
             // I just don't feel like doing it at 10:30 on a Saturday night,

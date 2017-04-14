@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class ExcelSqlReport {
 
+    public static final float DEFAULT_FORMATTING_COLUMN_HEIGHT = 28.0f;
     private QueryResult result;
 
     private String name;
@@ -23,6 +24,8 @@ public class ExcelSqlReport {
     private String[] formattingColumns = new String[0];
 
     private StripedSingleSheetWorkbook workbook;
+
+    private float defaultHeight = 22f;
 
     /**
      * Standard report with no formatting columns.
@@ -36,6 +39,7 @@ public class ExcelSqlReport {
         initialize(query, name, columns, columnWidths);
     }
 
+
     /**
      * Create a report with formatting columns that are auto sized.
      * @param query
@@ -45,9 +49,15 @@ public class ExcelSqlReport {
      * @throws SQLException
      */
     public ExcelSqlReport(String query, String name, String[] columns,
-        int[] columnWidths, String[] formattingColumns) throws SQLException {
+        int[] columnWidths, String[] formattingColumns, float rowHeight) throws SQLException {
         this.formattingColumns = formattingColumns;
+        this.defaultHeight = rowHeight;
         initialize(query, name, columns, columnWidths);
+    }
+
+    public ExcelSqlReport(String query, String name, String[] columns,
+                          int[] columnWidths, String[] formattingColumns) throws SQLException {
+        this(query, name, columns, columnWidths, formattingColumns, DEFAULT_FORMATTING_COLUMN_HEIGHT);
     }
 
 
@@ -72,7 +82,7 @@ public class ExcelSqlReport {
                     columnCount--;
                 }
             }
-            Row excelRow = workbook.createRow(autosize);
+            Row excelRow = workbook.createRow(autosize, defaultHeight);
             for (String key : row.keySet()) {
                 String value = "";
                 if (!hasFormattingColumn) {

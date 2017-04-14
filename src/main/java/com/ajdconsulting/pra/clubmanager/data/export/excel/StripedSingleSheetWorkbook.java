@@ -21,12 +21,11 @@ public class StripedSingleSheetWorkbook extends ExcelWorkbook {
     }
 
     protected void setFormatting() {
-        sheet.setDefaultRowHeightInPoints((short) 40);
-        sheet.setMargin(Sheet.LeftMargin, 0.25);
-        sheet.setMargin(Sheet.RightMargin, 0.25);
-        sheet.setMargin(Sheet.TopMargin, 0.25);
-        sheet.setMargin(Sheet.BottomMargin, 0.25);
-        sheet.getPrintSetup().setLandscape(true);
+        sheet.setMargin(Sheet.LeftMargin, 0);
+        sheet.setMargin(Sheet.RightMargin, 0);
+        sheet.setMargin(Sheet.TopMargin, 0);
+        sheet.setMargin(Sheet.BottomMargin, 0);
+        sheet.getPrintSetup().setLandscape(false);
         sheet.setRepeatingRows(CellRangeAddress.valueOf("1:1"));
     }
 
