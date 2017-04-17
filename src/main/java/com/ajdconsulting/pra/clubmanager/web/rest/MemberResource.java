@@ -442,7 +442,8 @@ public class MemberResource {
         boolean isInStoneAge = StringUtils.isEmpty(dues.getEmail());
         String logMessage = "";
         if (!isInStoneAge) {
-            mailService.sendEmail(dues.getEmail(), "Your 2017 PRA membership", memberEmail, true, true);
+            String subject = "Your " + CurrentFiscalYear.getNextFiscalYear() + " PRA membership";
+            mailService.sendEmail(dues.getEmail(), subject, memberEmail, true, true);
             logMessage = "Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee;
         } else {
             memberEmail = "NO EMAIL ON RECORD" + memberEmail;

@@ -90,6 +90,9 @@ public class Member implements Serializable {
     @Column(name = "current_year_renewed")
     private Boolean currentYearRenewed=false;
 
+    @Column(name = "prefers_mail")
+    private Boolean prefersMail;
+
     public Long getId() {
         return id;
     }
@@ -320,5 +323,13 @@ public class Member implements Serializable {
 
     public void setCurrentYearRenewed(Boolean currentYearRenewed) {
         this.currentYearRenewed = currentYearRenewed;
+    }
+
+    public Boolean getPrefersMail() {
+        return prefersMail;
+    }
+
+    public void setPrefersMail(Boolean prefersMail) {
+        this.prefersMail = prefersMail;
     }
 }
