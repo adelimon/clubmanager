@@ -1,13 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
-import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
-import com.ajdconsulting.pra.clubmanager.domain.Member;
-import com.ajdconsulting.pra.clubmanager.domain.ScheduleDate;
-import com.ajdconsulting.pra.clubmanager.domain.Signup;
-import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
-import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
-import com.ajdconsulting.pra.clubmanager.repository.ScheduleDateRepository;
-import com.ajdconsulting.pra.clubmanager.repository.SignupRepository;
+import com.ajdconsulting.pra.clubmanager.domain.*;
+import com.ajdconsulting.pra.clubmanager.repository.*;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
@@ -52,6 +46,9 @@ public class SignupResource {
     private ScheduleDateRepository scheduleDateRepository;
 
     @Inject
+    private JobRepository jobRepository;
+
+    @Inject
     private MailService mailService;
 
     /**
@@ -82,7 +79,7 @@ public class SignupResource {
             }
 
             // now save an earned points record too.  This is kind of a dirty hack a roo but oh well.
-            EarnedPoints signupEarnedPoints = buildEarnedPoints(result, signupEntry, isMeetingSignup);
+            EarnedPoints signupEarnedPoints = buildEarnedPoints(result, isMeetingSignup);
             log.debug("Also saved a signup as a point earned record " + signupEarnedPoints.toString());
 
             // only send emails if the user isn't an admin, this will prevent lots of emails from going out.
@@ -99,13 +96,13 @@ public class SignupResource {
             .body(result);
     }
 
-    private EarnedPoints buildEarnedPoints(Signup result, Signup signupEntry, boolean isMeetingSignup) {
+    private EarnedPoints buildEarnedPoints(Signup result, boolean isMeetingSignup) {
         EarnedPoints signupEarnedPoints = new EarnedPoints();
         String earnedPointsDesc = "";
         boolean verified = false;
         float pointValue = 0.0f;
 
-        signupEarnedPoints.setDate(signupEntry.getScheduleDate().getDate());
+        signupEarnedPoints.setDate(result.getScheduleDate().getDate());
         if (!isMeetingSignup) {
             pointValue = result.getJob().getPointValue();
             earnedPointsDesc = result.getJob().getTitle();
@@ -129,7 +126,12 @@ public class SignupResource {
     private List<Signup> buildSignupList(@RequestBody Signup signup) {
         List<Signup> signupList = new ArrayList<Signup>();
 
-        boolean isReserved = signup.getJob().getReserved();
+        Long jobid = signup.getJob().getId();
+
+        // get the job from the repo.  the /me endpoint only passes in an ID, but for this we need to know
+        // everything about the job becuase we record it as EarnedPoints which requires a description
+        Job job = jobRepository.findOne(jobid);
+        boolean isReserved = job.getReserved();
         // if a job is reserved, the book the person for the whole year.
         if (isReserved) {
             List<ScheduleDate> dates = scheduleDateRepository.findAllOrdered();
