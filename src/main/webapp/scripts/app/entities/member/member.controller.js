@@ -34,7 +34,7 @@ angular.module('clubmanagerApp')
                 userSearchTerm = userSearchTerm.toLowerCase();
                 $rootScope.memberSearch = userSearchTerm;
                 // if the user searched, then check the object for their search term.
-                condition = (item.lastName.toLowerCase().includes(userSearchTerm));
+                condition = ((item.firstName+item.lastName).toLowerCase().includes(userSearchTerm));
                 if (!condition) {
                     condition = item.status.type.toLowerCase().includes(userSearchTerm);
                 }
