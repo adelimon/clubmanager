@@ -91,7 +91,7 @@ public class Member implements Serializable {
     private Boolean currentYearRenewed=false;
 
     @Column(name = "prefers_mail")
-    private Boolean prefersMail;
+    private Boolean prefersMail=false;
 
     public Long getId() {
         return id;

@@ -3,7 +3,6 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.BasicSingleSheetWorkbook;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelHttpOutputStream;
 import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelWorkbook;
-import com.ajdconsulting.pra.clubmanager.data.export.excel.StripedSingleSheetWorkbook;
 import com.ajdconsulting.pra.clubmanager.dates.CurrentFiscalYear;
 import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
@@ -12,11 +11,9 @@ import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.service.UserService;
-import com.ajdconsulting.pra.clubmanager.web.rest.dto.ManagedUserDTO;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
-import javassist.Modifier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.json.JSONArray;
@@ -32,30 +29,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,7 +95,20 @@ public class MemberResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("member", "idexists", "A new member cannot already have an ID")).body(null);
         }
         Member result = memberRepository.save(member);
+        boolean isMember = !result.isPaidLabor();
 
+        // don't create users for paid labor.  They typically don't have an email address, and this just breaks too
+        // many things.  They won't ever login anyway
+        if (isMember) {
+            createUser(member);
+        }
+
+        return ResponseEntity.created(new URI("/api/members/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert("member", result.getId().toString()))
+            .body(result);
+    }
+
+    private void createUser(@Valid @RequestBody Member member) {
         User newUser = userService.createUserInformation(member.getEmail(), "pra0190",
             member.getFirstName(), member.getLastName(), member.getEmail(), "en");
         newUser.setActivated(true);
@@ -117,20 +117,16 @@ public class MemberResource {
         try {
             MailingList.addMember(member, getMailingListApiKey());
         } catch (IOException e) {
-            log.error("unable to update email for " + member.getName()  +
+            log.error("unable to update email for " + member.getName() +
                 " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         } catch (JSONException e) {
-            log.error("unable to update email for " + member.getName()  +
+            log.error("unable to update email for " + member.getName() +
                 " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         }
-
-        return ResponseEntity.created(new URI("/api/members/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert("member", result.getId().toString()))
-            .body(result);
     }
 
     private String getMailingListApiKey() {
-        Integration mailchimp  = integrationRepository.findOne(1L);
+        Integration mailchimp = integrationRepository.findOne(1L);
         return mailchimp.getApikey();
     }
 
@@ -192,6 +188,7 @@ public class MemberResource {
 
     /**
      * Clear the personal info fields for a member.
+     *
      * @param member The member to clear fields on.
      */
     private void clearPersonalInfoFields(Member member) {
@@ -272,7 +269,7 @@ public class MemberResource {
         Member member = memberRepository.findOne(id);
         // delete all earned points for this member first
         List<EarnedPoints> allMemberPoints = earnedPointsRepository.findByMemberId(id,
-                CurrentFiscalYear.getFiscalYear()
+            CurrentFiscalYear.getFiscalYear()
         );
         for (EarnedPoints points : allMemberPoints) {
             earnedPointsRepository.delete(points);
@@ -285,10 +282,10 @@ public class MemberResource {
         try {
             MailingList.deleteMember(member, getMailingListApiKey());
         } catch (IOException e) {
-            log.error("unable to delete email for " + member.getName()  +
+            log.error("unable to delete email for " + member.getName() +
                 " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         } catch (JSONException e) {
-            log.error("unable to delete email for " + member.getName()  +
+            log.error("unable to delete email for " + member.getName() +
                 " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         }
         memberRepository.delete(id);
@@ -323,7 +320,7 @@ public class MemberResource {
             MemberDues dues = getMemberDues(member);
             memberDues.add(dues);
             MemberYearlyDues yearlyDues = new MemberYearlyDues();
-            yearlyDues.setId(member.getId()+CurrentFiscalYear.getFiscalYear());
+            yearlyDues.setId(member.getId() + CurrentFiscalYear.getFiscalYear());
             yearlyDues.setAmountDue(dues.getAmountDue());
             yearlyDues.setPoints(dues.getPoints());
             yearlyDues.setYear(CurrentFiscalYear.getFiscalYear());
@@ -408,7 +405,7 @@ public class MemberResource {
         List<MemberDues> objectList = this.getAllMemberDues(page, false).getBody();
         String baseEmailContent = getEmailContent("memberRenewal");
         if (batchSize > objectList.size()) {
-            batchSize = (long)objectList.size();
+            batchSize = (long) objectList.size();
         }
 
         JSONArray jsonResponse = new JSONArray();
@@ -426,12 +423,12 @@ public class MemberResource {
     private JSONObject buildSendDues(String baseEmailContent, MemberDues dues)
         throws IOException, JSONException {
 
-        double payPalAmount = (dues.getAmountDue() * 1.03)+0.25;
+        double payPalAmount = (dues.getAmountDue() * 1.03) + 0.25;
         if (dues.getAmountDue() == 0.0) {
             payPalAmount = 0.0;
         }
-        String amountWithFee = payPalAmount+"";
-        String amountNoFee = dues.getAmountDue()+"";
+        String amountWithFee = payPalAmount + "";
+        String amountNoFee = dues.getAmountDue() + "";
         String memberEmail = baseEmailContent;
         String memberFullName = dues.getFirstName() + " " + dues.getLastName();
         memberEmail = memberEmail.replace("{MEMBER_NAME}", memberFullName);
@@ -474,7 +471,7 @@ public class MemberResource {
     private String getEmailContent(String emailName) throws IOException {
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
-        String contents = new String(Files.readAllBytes(Paths.get(s+"/src/main/resources/mails/" + emailName + "Email.html")));
+        String contents = new String(Files.readAllBytes(Paths.get(s + "/src/main/resources/mails/" + emailName + "Email.html")));
         return contents;
     }
 
