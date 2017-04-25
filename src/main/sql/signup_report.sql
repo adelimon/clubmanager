@@ -1,18 +1,35 @@
-create or replace view signup_report as
-select
-(j.id + sd.id) id,
-j.id job_id,
-sd.id schedule_date_id,
-concat(w.first_name,' ', w.last_name) name,
-j.title, j.point_value, j.cash_value, j.meal_ticket, j.reserved, j.job_day, wl.last_name leader,  sd.date
-from
-job j
-left join signup s on (s.job_id = j.id  and s.schedule_date_id = (select id from schedule_date where year(date) = year(now()) and date > now() order by date limit 1))
-inner join schedule_date sd on (sd.event_type_id = j.event_type_id and sd.date > now())
-left join member w on w.id = s.worker_id
-left join member  wl on wl.id = j.work_leader_id
-where
-date = (select date from schedule_date where year(date) = year(now()) and date > now() order by date limit 1)
-order by sort_order
+CREATE OR REPLACE VIEW signup_report AS
+    SELECT
+        (`j`.`id` + `sd`.`id`)                         AS `id`,
+        `j`.`id`                                       AS `job_id`,
+        `sd`.`id`                                      AS `schedule_date_id`,
+        concat(`w`.`first_name`, ' ', `w`.`last_name`) AS `name`,
+        `j`.`title`                                    AS `title`,
+        `j`.`point_value`                              AS `point_value`,
+        `j`.`cash_value`                               AS `cash_value`,
+        `j`.`meal_ticket`                              AS `meal_ticket`,
+        `j`.`reserved`                                 AS `reserved`,
+        `j`.`job_day`                                  AS `job_day`,
+        `wl`.`last_name`                               AS `leader`,
+        `sd`.`date`                                    AS `date`
+    FROM ((((`job` `j` LEFT JOIN `signup` `s`
+            ON (((`s`.`job_id` = `j`.`id`) AND (`s`.`schedule_date_id` = (SELECT `schedule_date`.`id`
+                                                                          FROM `schedule_date`
+                                                                          WHERE ((`schedule_date`.`event_type_id` IN
+                                                                                  (1, 8)) AND
+                                                                                 (year(`schedule_date`.`date`) =
+                                                                                  year(now())) AND
+                                                                                 (`schedule_date`.`date` > now()))
+                                                                          ORDER BY `schedule_date`.`date`
+                                                                          LIMIT 1))))) JOIN `schedule_date` `sd`
+            ON (((`sd`.`event_type_id` = `j`.`event_type_id`) AND (`sd`.`date` > now())))) LEFT JOIN `member` `w`
+            ON ((`w`.`id` = `s`.`worker_id`))) LEFT JOIN `member` `wl` ON ((`wl`.`id` = `j`.`work_leader_id`)))
+    WHERE (`sd`.`date` = (SELECT `schedule_date`.`date`
+                          FROM `schedule_date`
+                          WHERE ((`schedule_date`.`event_type_id` IN (1, 8)) AND
+                                 (year(`schedule_date`.`date`) = year(now())) AND (`schedule_date`.`date` > now()))
+                          ORDER BY `schedule_date`.`date`
+                          LIMIT 1))
+    ORDER BY `j`.`sort_order`
 
 
