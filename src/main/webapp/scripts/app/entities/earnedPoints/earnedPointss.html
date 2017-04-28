@@ -1,13 +1,13 @@
 <div>
     <h2>Earned Points</h2>
     <jh-alert></jh-alert>
-    <div ng-if="!viewMyPoints">
-        <label>Search for a points entry by typing a member name:
+
+        <label>Search for a points entry:
         <input type="text" class="form-control" ng-model="searchText"></label>
         <button id="clear-filter" class="btn btn-alert btn-sm" ng-click="clearFilter()" type="button">
-            <span class="glyphicon glyphicon-remove"/>
+            <span class="glyphicon glyphicon-remove"></span>
         </button>
-    </div>
+
     <div class="container-fluid" ng-if="!viewMyPoints">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
