@@ -21,7 +21,7 @@ public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long>
     public Page<EarnedPoints> findForMemberId(Pageable pageable, @Param("memberId") Long memberId, @Param("year") Integer year);
 
     @Query("select e from EarnedPoints e where e.verified = false and e.member.status <> 9 " +
-        "order by e.member.lastName")
+        "order by e.date, e.member.lastName")
     public Page<EarnedPoints> findAllOrdered(Pageable pageable);
 
     @Query("select e from EarnedPoints e where e.verified = false and e.member.status <> 9 order by e.member.lastName")
