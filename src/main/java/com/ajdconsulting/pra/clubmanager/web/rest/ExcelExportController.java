@@ -55,7 +55,7 @@ public class ExcelExportController {
     }
 
     private ExcelSqlReport buildSignupReport() throws SQLException {
-        String query = ("select name, title, point_value, cash_value, reserved, meal_ticket from signup_report_race");
+        String query = ("select name, title, point_value, cash_value, reserved, meal_ticket from signup_report");
         String[] headerColumns = {"Name", "Job", "Point Value", "Cash Value", "Meal Ticket", "Signature" };
         int[] columnWidths = {16, 29, 6, 6, 6, 37};
         String[] formattingColumns = {"reserved"};
