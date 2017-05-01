@@ -7,6 +7,9 @@ angular.module('clubmanagerApp')
         $scope.signedUp = [];
         $scope.predicate = 'lastName';
         $scope.reverse = false;
+
+        $scope.signupInfo = $location.path();
+
         $scope.page = 0;
         $scope.loadAll = function() {
             Member.query({page: $scope.page, size: 250, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'lastName']}, function(result, headers) {
@@ -84,8 +87,9 @@ angular.module('clubmanagerApp')
 
         $scope.signUpFromLink = function(member) {
             //alert(JSON.stringify(member));
+            var searchUrl = $location.search();
             var urlSplit = $location.path().split("/");
-            var eventId = urlSplit[urlSplit.length-1];
+            var eventId = urlSplit[3];
             var memberId = member.id;
 
 

@@ -34,7 +34,7 @@
                         <a ui-sref="eventType.detail({id:scheduleDate.eventType.id})">{{scheduleDate.eventType.type}}</a>
                     </td>
                     <td>
-                        <a ui-sref="member.signin({id:scheduleDate.id})">Enter signups</a>
+                        <a ui-sref="member.signin({date:scheduleDate.date, type:scheduleDate.eventType.type, id:scheduleDate.id})">Enter signups</a>
                     </td>
                     <td>
                         <a href="/exportSignups">download signups</a>

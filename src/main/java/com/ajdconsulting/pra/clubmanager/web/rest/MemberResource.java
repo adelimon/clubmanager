@@ -109,7 +109,8 @@ public class MemberResource {
     }
 
     private void createUser(@Valid @RequestBody Member member) {
-        User newUser = userService.createUserInformation(member.getEmail(), "pra0190",
+        String initial = integrationRepository.findOne(2L).getApikey();
+        User newUser = userService.createUserInformation(member.getEmail(), initial,
             member.getFirstName(), member.getLastName(), member.getEmail(), "en");
         newUser.setActivated(true);
         userRepository.save(newUser);

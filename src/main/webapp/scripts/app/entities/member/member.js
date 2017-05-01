@@ -21,7 +21,7 @@ angular.module('clubmanagerApp')
             })
             .state('member.signin', {
                 parent: 'entity',
-                url: '/members/signin/{id}',
+                url: '/members/signin/{id}/{date}/{type}',
                 data: {
                     authorities: ['ROLE_USER'],
                     pageTitle: 'Members'
