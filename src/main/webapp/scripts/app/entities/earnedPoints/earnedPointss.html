@@ -1,5 +1,5 @@
 <div>
-    <h2>Earned Points</h2>
+    <h2>Worker Points</h2>
     <jh-alert></jh-alert>
 
         <label>Search for a points entry:
@@ -88,6 +88,11 @@
                     <td>{{pointsTotal}}</td>
                 </tr>
             </tbody>
+        </table>
+        <table>
+            <tr ng-if="viewMyPoints">
+                <td><a ui-sref="earnedPoints.new()">Add new points</a></td>
+            </tr>
         </table>
     </div>
 </div>
