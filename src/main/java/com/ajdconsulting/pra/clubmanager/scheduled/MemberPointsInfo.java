@@ -2,6 +2,7 @@ package com.ajdconsulting.pra.clubmanager.scheduled;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.util.LineEndStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,19 +62,4 @@ public class MemberPointsInfo {
         return LocalDate.now().getYear() + " points detail for " + member.getFirstName() + " " + member.getLastName();
     }
 
-    private class LineEndStringBuilder {
-        private StringBuilder builder = new StringBuilder();
-
-        public void append(String line) {
-            builder.append(line + "\n");
-        }
-
-        public void appendEmptyLine() {
-            builder.append("\n");
-        }
-
-        public String toString() {
-            return builder.toString();
-        }
-    }
 }
