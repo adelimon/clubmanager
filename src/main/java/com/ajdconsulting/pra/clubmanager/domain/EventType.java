@@ -20,7 +20,7 @@ public class EventType implements Serializable {
     @NotNull
     @Column(name = "type", nullable = false)
     private String type;
-    
+
     public Long getId() {
         return id;
     }
@@ -32,7 +32,7 @@ public class EventType implements Serializable {
     public String getType() {
         return type;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
@@ -63,5 +63,50 @@ public class EventType implements Serializable {
             "id=" + id +
             ", type='" + type + "'" +
             '}';
+    }
+
+    public int getStartHour() {
+        int startTime = 0;
+        switch (type) {
+            case "Meeting":
+                startTime = 19;
+                break;
+            case "Work Day":
+                startTime = 9;
+                break;
+            default:
+                startTime = 8;
+                break;
+        }
+        return startTime;
+    }
+
+    public int getEndHour() {
+        int startTime = 0;
+        switch (type) {
+            case "Meeting":
+                startTime = 20;
+                break;
+            case "Work Day":
+                startTime = 13;
+                break;
+            default:
+                startTime = 18;
+                break;
+        }
+        return startTime;
+    }
+
+    public int getStartMinute() {
+        int startMinute = 0;
+        switch (type) {
+            case "Meeting":
+                startMinute = 30;
+                break;
+            default:
+                startMinute = 0;
+                break;
+        }
+        return startMinute;
     }
 }
