@@ -31,7 +31,7 @@ public class CalendarExportController {
     @Inject
     private ScheduleDateRepository scheduleDateRepository;
 
-    @RequestMapping("/pracalendar.ics")
+    @RequestMapping("/calendar/pracalendar")
     public void exportIcal(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
