@@ -58,6 +58,7 @@ public class CalendarExportController {
         }
 
         PrintWriter writer = response.getWriter();
+        response.setContentType("text/calendar");
         writer.println(calendar.toString());
         writer.flush();
     }
