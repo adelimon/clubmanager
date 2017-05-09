@@ -15,8 +15,8 @@ public class CalendarEvent {
     private static final String SUMMARY = "SUMMARY:";
     private static final String UID = "UID:";
     private static final String STATUS = "STATUS:CONFIRMED";
-    private static final String DTSTART = "DTSTART:";
-    private static final String DTEND = "DTEND:";
+    private static final String DTSTART = "DTSTART;TZID=America/New_York:";
+    private static final String DTEND = "DTEND;TZID=America/New_York:";
 
     private static final String EVENT_END = "END:VEVENT";
 
@@ -35,7 +35,10 @@ public class CalendarEvent {
     }
 
     private String formatDate(LocalDateTime date) {
-        return date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        formattedDate = formattedDate.replace("-", "");
+        formattedDate = formattedDate.replace(":", "");
+        return formattedDate;
     }
 
     public String toString() {

@@ -37,7 +37,6 @@ public class CalendarExportController {
     public void exportIcal(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         List<ScheduleDate> currentYearEvents = scheduleDateRepository.findAllOrdered();
-        LineEndStringBuilder eventOutput = new LineEndStringBuilder();
         ICalendar calendar = new ICalendar("/src/main/resources/ical/template.ical");
 
         for (ScheduleDate event : currentYearEvents) {
@@ -58,7 +57,7 @@ public class CalendarExportController {
         }
 
         PrintWriter writer = response.getWriter();
-        response.setContentType("text/calendar");
+        //response.setContentType("text/calendar");
         writer.println(calendar.toString());
         writer.flush();
     }

@@ -54,7 +54,7 @@ public class ScheduleDate implements Serializable {
 
     public boolean hasWorkDayBefore() {
         String eventType = getEventType().getType().toLowerCase();
-        boolean isRace = eventType.equals("race");
+        boolean isRace = eventType.contains("race");
         boolean isHarescramble = eventType.equals("harescramble");
         return (isRace || isHarescramble);
     }
