@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -27,6 +29,12 @@ public class ScheduleDate implements Serializable {
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
+
+    @Column(name = "event_name")
+    private String eventName;
+
+    @Column(name = "event_description")
+    private String eventDescription;
 
     public Long getId() {
         return id;
@@ -52,11 +60,47 @@ public class ScheduleDate implements Serializable {
         this.eventType = eventType;
     }
 
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
     public boolean hasWorkDayBefore() {
         String eventType = getEventType().getType().toLowerCase();
         boolean isRace = eventType.contains("race");
         boolean isHarescramble = eventType.equals("harescramble");
         return (isRace || isHarescramble);
+    }
+
+    public String generateUniqueId() {
+        return getEventType().getType().replaceAll(" ", "")+ getId();
+    }
+
+    public String generateTitle() {
+        String title = getEventType().getType();
+        if (eventName != null) {
+            title += ". " + getEventName();
+        }
+        return title;
+    }
+
+    public String generateDescription() {
+        String description = generateTitle();
+        if (eventDescription != null) {
+            description += " - " + eventDescription;
+        }
+        return description;
     }
 
     @Override

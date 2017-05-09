@@ -29,12 +29,21 @@
                 </p>
             </div>
         </div>
-
         <div class="form-group">
             <label for="field_eventType">eventType</label>
             <select class="form-control" id="field_eventType" name="eventType" ng-model="scheduleDate.eventType" ng-options="eventType as eventType.type for eventType in eventtypes track by eventType.id">
                 <option value=""></option>
             </select>
+        </div>
+        <div class="form-group">
+            <label for="eventName">Event Name (ie: King Of The Hill)</label>
+            <input type="text" class="form-control" id="eventName" name="eventName"
+                   ng-model="scheduleDate.eventName"/>
+        </div>
+        <div class="form-group">
+            <label for="eventDescription">Event description</label>
+            <input type="text" class="form-control" id="eventDescription" name="eventDescription"
+                   ng-model="scheduleDate.eventDescription"/>
         </div>
     </div>
     <div class="modal-footer">
