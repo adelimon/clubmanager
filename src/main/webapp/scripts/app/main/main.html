@@ -15,16 +15,17 @@
                     to find what you need.
                     <p></p>
                     <div ng-if='account.authorities.indexOf("ROLE_ADMIN") > -1'>
-                        {{account.firstName}}, it looks like you are a club administrator.  This means you can:<p/>
+                        {{account.firstName}}, as a club administrator.  You can:<p/>
                         <ul>
-                            <li><a href="#/signupReports" class="alert-link">View the signup list for the next race</a></li>
-                            <li><a href="#/signups" class="alert-link">Sign up yourself or someone else for a job</a></li>
-                            <li><a href="#/scheduleDates" class="alert-link">Create/modify an event</a></li>
-                            <li><a href="/exportRaceDay" class="alert-link">Download the signup sheet for race weekend</a></li>
+                            <li><a href="#/signups" class="alert-link">Sign up someone for a job</a></li>
+                            <li><a href="#/scheduleDates" class="alert-link">Enter meeting or workday attendance</a></li>
+                            <li><a href="#/scheduleDates" class="alert-link">Modify the schedule</a></li>
+                            <li><a href="/exportRaceDay" class="alert-link">Download the signup sheet for race
+                                weekend</a></li>
                             <li><a href="/exportWorkdaySignin" class="alert-link">Download the workday signin</a></li>
                             <li><a href="/exportMeetingSignin" class="alert-link">Download meeting signin</a></li>
-                            <li><a target="_blank" href="/api/members/sendDues/300" class="alert-link">Send renewals/new member rules acknowledgements</a></li>
-                        </ul>
+                            <li><a target="_blank" href="/api/members/sendDues/300" class="alert-link">Send renewals/new
+                                member rules acknowledgements</a></li>
                         <p/>
                     </div>
                     <div ng-if='account.authorities.indexOf("ROLE_USER") > -1'>

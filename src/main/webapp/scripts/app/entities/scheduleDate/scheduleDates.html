@@ -1,5 +1,5 @@
 <div>
-    <h2>ScheduleDates</h2>
+    <h2>Calendar and Event Schedule</h2>
     <jh-alert></jh-alert>
     <div class="container-fluid">
         <div class="row">
@@ -7,10 +7,15 @@
                 <button class="btn btn-primary" ui-sref="scheduleDate.new" >
                     <span class="glyphicon glyphicon-plus"></span>
                     <span
-                       >Create new ScheduleDate
+                       >Create new meeting or event
                     </span>
                 </button>
             </div>
+        </div>
+        <div class="row">
+            <p>
+            <a target="new" href="/calendar/pracalendar">Download calendar in Outlook/Google/Apple Calendar format</a>
+            </p>
         </div>
     </div>
     <br/>
@@ -22,7 +27,6 @@
                     <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th><span>Record signups</span></th>
-                    <th><span>View Signups</span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -35,9 +39,6 @@
                     </td>
                     <td>
                         <a ui-sref="member.signin({date:scheduleDate.date, type:scheduleDate.eventType.type, id:scheduleDate.id})">Enter signups</a>
-                    </td>
-                    <td>
-                        <a href="/exportSignups">download signups</a>
                     </td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
