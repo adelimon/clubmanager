@@ -366,6 +366,7 @@ public class MemberResource {
         dues.setMemberId(member.getId());
         dues.setPoints(totalPoints);
         dues.setAmountDue(totalDues);
+        dues.setPrefersMail(member.getPrefersMail());
         if (totalDues == 0.0) {
             member.setCurrentYearPaid(true);
             memberRepository.save(member);
@@ -437,15 +438,21 @@ public class MemberResource {
         memberEmail = memberEmail.replace("{DUES}", amountNoFee);
         memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
         memberEmail = memberEmail.replace("EMAIL", dues.getEmail());
-        boolean isInStoneAge = StringUtils.isEmpty(dues.getEmail());
+        boolean hasEmail = StringUtils.isNotEmpty(dues.getEmail());
+        boolean prefersMail = dues.getPrefersMail();
         String logMessage = "";
-        if (!isInStoneAge) {
+        if (hasEmail) {
             String subject = "Your " + CurrentFiscalYear.getNextFiscalYear() + " PRA membership";
             mailService.sendEmail(dues.getEmail(), subject, memberEmail, true, true);
             logMessage = "Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee;
         } else {
             memberEmail = "NO EMAIL ON RECORD" + memberEmail;
             logMessage = "Dues processed for " + memberFullName + " does not have email.  Please process manually.";
+        }
+
+        if (prefersMail) {
+            String subject = "Manual action required - Membership for " + memberFullName + " - send mail form";
+            mailService.sendEmail("hogbacksecretary@gmail.com", subject, memberEmail, true, true);
         }
 
         Member member = memberRepository.findOne(dues.getMemberId());

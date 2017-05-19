@@ -19,6 +19,7 @@ public class MemberDues {
     private long memberId;
     private String paid;
     private String renewed;
+    private boolean prefersMail;
 
     public MemberDues(Member member) {
         this.setFirstName(member.getFirstName());
@@ -108,5 +109,13 @@ public class MemberDues {
 
     public void setRenewed(String renewed) {
         this.renewed = renewed;
+    }
+
+    public void setPrefersMail(boolean prefersMail) {
+        this.prefersMail = prefersMail;
+    }
+
+    public boolean getPrefersMail() {
+        return prefersMail;
     }
 }
