@@ -53,6 +53,10 @@ public class EarnedPoints implements Serializable {
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
 
+    @ManyToOne
+    @JoinColumn(name = "signup_id")
+    private Signup signup;
+
     @Column(name = "last_modified_by")
     private String lastModifiedBy;
 
@@ -110,6 +114,14 @@ public class EarnedPoints implements Serializable {
 
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
+    }
+
+    public Signup getSignup() {
+        return signup;
+    }
+
+    public void setSignup(Signup signup) {
+        this.signup = signup;
     }
 
     @Override

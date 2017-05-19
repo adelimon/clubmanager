@@ -42,7 +42,6 @@
                     <th jh-sort-by="pointValue"><span>PointValue</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="date"><span>Event</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="jobDay"><span>JobDay</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="leader"><span>Leader</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -66,7 +65,15 @@
                     <td>{{signupReport.pointValue}}</td>
                     <td>{{signupReport.date | date:'mediumDate'}}</td>
                     <td>{{signupReport.jobDay}}</td>
-                    <td>{{signupReport.leader}}</td>
+                    <td>
+                        <button type="submit"
+                                ng-click="deleteSignup(signupReport)"
+                                ng-disabled="signupReport.signupId === null"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-remove-circle"></span>
+                            <span class="hidden-xs hidden-sm"></span>
+                        </button>
+                    </td>
                     <!--
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">

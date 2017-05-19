@@ -64,6 +64,16 @@ angular.module('clubmanagerApp')
             );
         };
 
+        $scope.deleteSignup = function(signupInfo) {
+            $http.delete('/api/signups/' + signupInfo.signupId).then(
+                function() {
+                    $scope.refresh();
+                },
+                function() {
+                    alert("couldn't delete the signup ");
+                }
+            )
+        }
         $scope.clearFilter = function() {
             $scope.searchText = "";
         };

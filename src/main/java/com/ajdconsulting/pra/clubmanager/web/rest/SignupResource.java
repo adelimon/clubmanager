@@ -119,6 +119,7 @@ public class SignupResource {
         signupEarnedPoints.setVerified(verified);
         signupEarnedPoints.setPointValue(pointValue);
         signupEarnedPoints.setCashValue(result.getJob().getCashValue());
+        signupEarnedPoints.setSignup(result);
         earnedPointsRepository.save(signupEarnedPoints);
         return signupEarnedPoints;
     }
@@ -131,7 +132,10 @@ public class SignupResource {
         // get the job from the repo.  the /me endpoint only passes in an ID, but for this we need to know
         // everything about the job becuase we record it as EarnedPoints which requires a description
         Job job = jobRepository.findOne(jobid);
-        boolean isReserved = job.getReserved();
+        boolean isReserved = false;
+        if (job.getReserved() != null) {
+            isReserved = job.getReserved();
+        }
         // if a job is reserved, the book the person for the whole year.
         if (isReserved) {
             List<ScheduleDate> dates = scheduleDateRepository.findAllOrdered();
@@ -226,6 +230,11 @@ public class SignupResource {
     @Timed
     public ResponseEntity<Void> deleteSignup(@PathVariable Long id) {
         log.debug("REST request to delete Signup : {}", id);
+        Signup signup = signupRepository.findOne(id);
+        List<EarnedPoints> earnedPointsBySignupId = earnedPointsRepository.findBySignupId(id);
+        for (EarnedPoints earnedPoints : earnedPointsBySignupId) {
+            earnedPointsRepository.delete(earnedPoints);
+        }
         signupRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("signup", id.toString())).build();
     }

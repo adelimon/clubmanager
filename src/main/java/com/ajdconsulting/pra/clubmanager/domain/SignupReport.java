@@ -48,6 +48,9 @@ public class SignupReport implements Serializable {
     @Column(name = "date")
     private LocalDate date;
 
+    @Column(name = "signup_id")
+    private Long signupId;
+
     public Long getId() {
         return id;
     }
@@ -169,5 +172,13 @@ public class SignupReport implements Serializable {
 
     public void setScheduleDateId(Long scheduleDateId) {
         this.scheduleDateId = scheduleDateId;
+    }
+
+    public Long getSignupId() {
+        return signupId;
+    }
+
+    public void setSignupId(Long signupId) {
+        this.signupId = signupId;
     }
 }
