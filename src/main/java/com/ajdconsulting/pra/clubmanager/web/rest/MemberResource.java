@@ -109,7 +109,7 @@ public class MemberResource {
     }
 
     private void createUser(@Valid @RequestBody Member member) {
-        String initial = integrationRepository.findOne(2L).getApikey();
+        String initial = integrationRepository.findClubManagerDefault().getApikey();
         User newUser = userService.createUserInformation(member.getEmail(), initial,
             member.getFirstName(), member.getLastName(), member.getEmail(), "en");
         newUser.setActivated(true);

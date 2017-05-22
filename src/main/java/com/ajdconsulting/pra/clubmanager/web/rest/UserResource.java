@@ -1,5 +1,10 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
+import com.ajdconsulting.pra.clubmanager.domain.Integration;
+import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.repository.IntegrationRepository;
+import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import com.ajdconsulting.pra.clubmanager.util.Md5Converter;
 import com.codahale.metrics.annotation.Timed;
 import com.ajdconsulting.pra.clubmanager.domain.Authority;
 import com.ajdconsulting.pra.clubmanager.domain.User;
@@ -21,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,6 +76,15 @@ public class UserResource {
 
     @Inject
     private AuthorityRepository authorityRepository;
+
+    @Inject
+    private IntegrationRepository integrationRepository;
+
+    @Inject
+    private MemberRepository memberRepository;
+
+    @Inject
+    private PasswordEncoder passwordEncoder;
 
     @Inject
     private UserService userService;
@@ -198,5 +213,28 @@ public class UserResource {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUserInformation(login);
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
+    }
+
+    @RequestMapping(value = "/users/reset/{memberId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Void> resetToDefault(@PathVariable Long memberId) {
+        Member member = memberRepository.findOne(memberId);
+        String login = member.getEmail();
+
+        log.info("Defaulting password to system default for user " + login);
+        User user = userRepository.findOneByEmail(login).get();
+
+        Integration clubManagerDefault = integrationRepository.findClubManagerDefault();
+        String encodedPassword = passwordEncoder.encode(clubManagerDefault.getApikey());
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+
+        return ResponseEntity.ok().headers(
+            HeaderUtil.createAlert( "Password set to system default for " + login, login)
+        ).build();
     }
 }
