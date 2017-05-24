@@ -15,6 +15,8 @@ public class MemberDues {
     private float points;
 
     private float amountDue;
+    private float amountWithFee;
+
     private String email;
     private long memberId;
     private String paid;
@@ -55,6 +57,10 @@ public class MemberDues {
         this.lastName = lastName;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public String getMemberType() {
         return memberType;
     }
@@ -77,6 +83,14 @@ public class MemberDues {
 
     public void setAmountDue(float amountDue) {
         this.amountDue = amountDue;
+        this.amountWithFee = (float)((amountDue * 1.03) + 0.25);
+        if (amountDue == 0.0) {
+            amountWithFee = 0.0f;
+        }
+    }
+
+    public float getAmountWithFee() {
+        return amountWithFee;
     }
 
     public String getEmail() {

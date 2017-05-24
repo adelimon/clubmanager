@@ -6,6 +6,7 @@ import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelWorkbook;
 import com.ajdconsulting.pra.clubmanager.dates.CurrentFiscalYear;
 import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
+import com.ajdconsulting.pra.clubmanager.renewals.EmailContent;
 import com.ajdconsulting.pra.clubmanager.repository.*;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
@@ -17,6 +18,7 @@ import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
+import org.hibernate.validator.constraints.Email;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -354,7 +356,7 @@ public class MemberResource {
         throws URISyntaxException, IOException, JSONException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> objectList = duesCalculationService.getAllMemberDues(false);
-        String baseEmailContent = getEmailContent("memberRenewal");
+        EmailContent baseEmailContent = new EmailContent("memberRenewal");
         if (batchSize > objectList.size()) {
             batchSize = (long) objectList.size();
         }
@@ -363,7 +365,7 @@ public class MemberResource {
         for (int index = 0; index < batchSize; index++) {
             MemberDues dues = objectList.get(index);
             if (dues.getMemberType().equals("New Member")) {
-                baseEmailContent = getEmailContent("newMember");
+                baseEmailContent = new EmailContent("newMember");
             }
             jsonResponse.put(buildSendDues(baseEmailContent, dues));
         }
@@ -371,66 +373,53 @@ public class MemberResource {
         return new ResponseEntity<JSONArray>(jsonResponse, HttpStatus.OK);
     }
 
-    private JSONObject buildSendDues(String baseEmailContent, MemberDues dues)
+    private JSONObject buildSendDues(EmailContent emailContent, MemberDues dues)
         throws IOException, JSONException {
 
-        double payPalAmount = (dues.getAmountDue() * 1.03) + 0.25;
-        if (dues.getAmountDue() == 0.0) {
-            payPalAmount = 0.0;
-        }
-        String amountWithFee = payPalAmount + "";
-        String amountNoFee = dues.getAmountDue() + "";
-        String memberEmail = baseEmailContent;
-        String memberFullName = dues.getFirstName() + " " + dues.getLastName();
-        memberEmail = memberEmail.replace("{MEMBER_NAME}", memberFullName);
-        memberEmail = memberEmail.replace("{STATUS}", dues.getMemberType());
-        memberEmail = memberEmail.replace("{DUES}", amountNoFee);
-        memberEmail = memberEmail.replace("DUESPLUSFEE", amountWithFee);
-        memberEmail = memberEmail.replace("EMAIL", dues.getEmail());
+        emailContent.setVariables(dues);
+
         boolean hasEmail = StringUtils.isNotEmpty(dues.getEmail());
-        boolean prefersMail = dues.getPrefersMail();
+
         String logMessage = "";
         if (hasEmail) {
             String subject = "Your " + CurrentFiscalYear.getNextFiscalYear() + " PRA membership";
-            mailService.sendEmail(dues.getEmail(), subject, memberEmail, true, true);
-            logMessage = "Dues sent for " + memberFullName + " to " + dues.getEmail() + ".  Amount is " + amountNoFee;
+            mailService.sendEmail(dues.getEmail(), subject, emailContent.toString(), true, true);
+            logMessage = "Dues sent for " + dues.getFullName() + " to " + dues.getEmail() + ".  Amount is " + dues.getAmountDue();
         } else {
-            memberEmail = "NO EMAIL ON RECORD" + memberEmail;
-            logMessage = "Dues processed for " + memberFullName + " does not have email.  Please process manually.";
+            emailContent.setContents("NO EMAIL ON RECORD" + dues.getEmail());
+            logMessage = "Dues processed for " + dues.getFullName() + " does not have email.  Please process manually.";
         }
 
-        if (prefersMail) {
-            String subject = "Manual action required - Membership for " + memberFullName + " - send mail form";
-            mailService.sendEmail("hogbacksecretary@gmail.com", subject, memberEmail, true, true);
+        if (dues.getPrefersMail()) {
+            String subject = "Manual action required - Membership for " + dues.getFullName() + " - send mail form";
+            mailService.sendEmail("hogbacksecretary@gmail.com", subject, dues.getEmail(), true, true);
         }
 
-        Member member = memberRepository.findOne(dues.getMemberId());
-        member.setRenewalSent(true);
-        memberRepository.save(member);
+        setMemberSent(dues);
 
-        logMemberEmailHtml(dues, memberEmail);
+        logMemberEmailHtml(dues, emailContent);
         log.debug(logMessage);
 
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(member.getName(), logMessage);
+        jsonResponse.put(dues.getFullName(), logMessage);
         return jsonResponse;
     }
 
-    private void logMemberEmailHtml(MemberDues dues, String memberEmail) throws IOException {
+    private void setMemberSent(MemberDues dues) {
+        Member member = memberRepository.findOne(dues.getMemberId());
+        member.setRenewalSent(true);
+        memberRepository.save(member);
+    }
+
+    private void logMemberEmailHtml(MemberDues dues, EmailContent memberEmail) throws IOException {
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
         BufferedWriter duesLogger =
             Files.newBufferedWriter(Paths.get(s + "/renewalsoutput/" + dues.getLastName() + dues.getFirstName() + ".html"));
-        duesLogger.write(memberEmail);
+        duesLogger.write(memberEmail.toString());
         duesLogger.flush();
     }
 
-    private String getEmailContent(String emailName) throws IOException {
-        Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        String contents = new String(Files.readAllBytes(Paths.get(s + "/src/main/resources/mails/" + emailName + "Email.html")));
-        return contents;
-    }
 
     @RequestMapping(value = "/members/sendDues/members/{id}",
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -443,7 +432,9 @@ public class MemberResource {
         if (member.getStatus().getId() == 13) {
             emailName = "newMember";
         }
-        JSONObject jsonResponse = buildSendDues(getEmailContent(emailName), memberDues);
+        JSONObject jsonResponse = buildSendDues(
+            new EmailContent(emailName), memberDues
+        );
         return new ResponseEntity<JSONObject>(jsonResponse, HttpStatus.OK);
     }
 
