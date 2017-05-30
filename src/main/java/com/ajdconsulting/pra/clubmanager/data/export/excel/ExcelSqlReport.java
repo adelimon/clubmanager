@@ -78,7 +78,10 @@ public class ExcelSqlReport {
             boolean hasFormattingColumn = false;
             for (String columnName : formattingColumns) {
                 if (row.containsKey(columnName)) {
-                    hasFormattingColumn = (Boolean) row.get(columnName);
+                    Object formattingColumnCell = row.get(columnName);
+                    if (formattingColumnCell != null) {
+                        hasFormattingColumn = (Boolean) row.get(columnName);
+                    }
                     columnCount--;
                 }
             }
