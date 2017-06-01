@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clubmanagerApp')
-    .controller('JobController', function ($scope, $state, Job, ParseLinks) {
+    .controller('JobController', function ($scope, $state, $http, Job, ParseLinks) {
 
         $scope.jobs = [];
         $scope.predicate = 'id';
@@ -49,5 +49,16 @@ angular.module('clubmanagerApp')
 
         $scope.setFilter = function(filterString) {
             $scope.searchText = filterString;
+        }
+
+        $scope.cloneJob = function(job) {
+            $http.get('/api/jobs/clone/' + job.id + "/1").then(
+                function() {
+                    $scope.refresh();
+                },
+                function() {
+                    alert("Job clone failed");
+                }
+            );
         }
     });

@@ -43,6 +43,9 @@ public class Job implements Serializable {
     @Column(name = "mealTicket")
     private Boolean mealTicket;
 
+    @Column(name= "sort_order")
+    private Integer sortOrder;
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
@@ -129,6 +132,14 @@ public class Job implements Serializable {
 
     public void setMealTicket(Boolean mealTicket) {
         this.mealTicket = mealTicket;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     @Override

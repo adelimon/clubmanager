@@ -92,7 +92,7 @@ public class JobResource {
         // that's all they can sign up for.
         Page<Job> page = null;
         if (isAdmin) {
-            page = jobRepository.findAll(pageable);
+            page = jobRepository.findAllJobs(pageable);
         } else {
             page = jobRepository.findAvailableJobs(pageable);
         }
@@ -160,7 +160,7 @@ public class JobResource {
     }
 
     /**
-     * DELETE  /jobs/:id -> delete the "id" job.
+     * clone a job
      */
     @RequestMapping(value = "/jobs/clone/{id}/{count}",
         method = RequestMethod.GET,
