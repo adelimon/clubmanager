@@ -1,0 +1,29 @@
+<div>
+    <h2>Meeting and work day attendance entry</h2>
+    <jh-alert></jh-alert>
+
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+            <tr jh-sort="predicate" ascending="reverse" callback="reset()">
+                <th jh-sort-by="date"><span>Date</span> <span class="glyphicon glyphicon-sort"></span></th>
+                <th jh-sort-by="eventType.type"><span>eventType</span> <span class="glyphicon glyphicon-sort"></span>
+                </th>
+                <th><span>Record signups</span></th>
+            </tr>
+            </thead>
+            <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
+            <tr ng-repeat="scheduleDate in scheduleDates | filter:attendanceSearchFilter track by scheduleDate.id">
+                <td>{{scheduleDate.date | date:'mediumDate'}}</td>
+                <td>
+                    <a ui-sref="eventType.detail({id:scheduleDate.eventType.id})">{{scheduleDate.eventType.type}}</a>
+                </td>
+                <td>
+                    <a ui-sref="member.signin({date:scheduleDate.date, type:scheduleDate.eventType.type, id:scheduleDate.id})">Enter
+                        signups</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

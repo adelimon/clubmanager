@@ -38,4 +38,10 @@ angular.module('clubmanagerApp')
                 id: null
             };
         };
+        $scope.attendanceSearchFilter = function(item) {
+            var eventType = item.eventType.type;
+            if ((eventType === "Meeting") || (eventType === "Work Day")) {
+                return item;
+            }
+        }
     });

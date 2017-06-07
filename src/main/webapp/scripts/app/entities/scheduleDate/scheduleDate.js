@@ -19,6 +19,22 @@ angular.module('clubmanagerApp')
                 resolve: {
                 }
             })
+            .state('scheduleDate.attendance', {
+                parent: 'entity',
+                url: '/scheduleDates/attendance',
+                data: {
+                    authorities: ['ROLE_USER'],
+                    pageTitle: 'ScheduleDates'
+                },
+                views: {
+                    'content@': {
+                        templateUrl: 'scripts/app/entities/scheduleDate/scheduleDates-attendance.html',
+                        controller: 'ScheduleDateController'
+                    }
+                },
+                resolve: {
+                }
+            })
             .state('scheduleDate.detail', {
                 parent: 'entity',
                 url: '/scheduleDate/{id}',
