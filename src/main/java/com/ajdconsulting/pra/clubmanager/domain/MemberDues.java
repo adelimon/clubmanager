@@ -29,6 +29,9 @@ public class MemberDues {
         this.setMemberType(member.getStatus().getType());
         this.setEmail(member.getEmail());
         this.setMemberId(member.getId());
+        this.setPrefersMail(member.getPrefersMail());
+        this.setRenewed(member.getCurrentYearRenewed()+"");
+        this.setPaid(member.getCurrentYearPaid()+"");
         if (member.getCurrentYearPaid()) {
             paid = "Yes";
         } else {

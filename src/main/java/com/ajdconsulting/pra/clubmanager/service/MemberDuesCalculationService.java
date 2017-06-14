@@ -6,6 +6,8 @@ import com.ajdconsulting.pra.clubmanager.repository.BoardMemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberYearlyDuesRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +34,25 @@ public class MemberDuesCalculationService {
     @Inject
     private EarnedPointsRepository earnedPointsRepository;
 
+    private Logger log = LoggerFactory.getLogger(MemberDuesCalculationService.class);
+
     public List<MemberDues> getAllMemberDues(boolean includeSent) {
-        List<MemberDues> memberDues = new ArrayList<MemberDues>();
+        List<MemberYearlyDues> allDuesForYear = memberYearlyDuesRepository.findForYear(CurrentFiscalYear.getDuesFiscalYear());
+        List<MemberDues> memberDues = new ArrayList<MemberDues>(allDuesForYear.size());
+        for (MemberYearlyDues memberYearly : allDuesForYear) {
+            MemberDues dues = new MemberDues(memberYearly.getMember());
+            dues.setAmountDue(memberYearly.getAmountDue());
+            dues.setPoints(memberYearly.getPoints());
+
+            if (memberYearly.getMember().isRenewalSent() && !includeSent) continue;
+            if (memberYearly.getMember().isPaidLabor()) continue;
+
+            memberDues.add(dues);
+        }
+        return memberDues;
+    }
+
+    public void runAndStoreDuesCalculations() {
 
         List<Member> allMembers = memberRepository.findAll();
         // sort the list by last name
@@ -42,24 +61,22 @@ public class MemberDuesCalculationService {
         memberYearlyDuesRepository.deleteAll();
 
         for (Member member : allMembers) {
-            // skip anyone who has already been sent
-            if (!includeSent && member.isRenewalSent()) continue;
 
             // skip all paid labor, since we don't want to count them in this total
             if (member.isPaidLabor()) continue;
 
             MemberDues dues = getMemberDues(member);
-            memberDues.add(dues);
+
             MemberYearlyDues yearlyDues = new MemberYearlyDues();
-            yearlyDues.setId(member.getId() + CurrentFiscalYear.getFiscalYear());
+            yearlyDues.setId(member.getId() + CurrentFiscalYear.getDuesFiscalYear());
             yearlyDues.setAmountDue(dues.getAmountDue());
             yearlyDues.setPoints(dues.getPoints());
-            yearlyDues.setYear(CurrentFiscalYear.getFiscalYear());
+            yearlyDues.setYear(CurrentFiscalYear.getDuesFiscalYear());
             yearlyDues.setMember(member);
             memberYearlyDuesRepository.save(yearlyDues);
+            log.info("ran dues calculation for " + member.getName());
         }
 
-        return memberDues;
     }
 
     public MemberDues getMemberDues(Member member) {
@@ -70,7 +87,7 @@ public class MemberDuesCalculationService {
         for (int index = 0; index < boardMemberIds.length; index++) {
             BoardMember boardMember = boardMembers.get(index);
             boolean nextYearBoard =
-                (boardMember.getYear() == CurrentFiscalYear.getNextFiscalYear());
+                (boardMember.getYear() == CurrentFiscalYear.getDuesFiscalYear());
             if (nextYearBoard) {
                 boardMemberIds[index] = boardMember.getMember().getId();
             }

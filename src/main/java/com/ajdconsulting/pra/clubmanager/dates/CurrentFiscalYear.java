@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 public final class CurrentFiscalYear {
 
     private int fiscalYear;
+    private int duesFiscalYear;
 
     private CurrentFiscalYear() {
         ZonedDateTime now = ZonedDateTime.now();
@@ -20,8 +21,10 @@ public final class CurrentFiscalYear {
         boolean afterMarch = (now.getMonth().compareTo(Month.MARCH) >= 0);
         if (afterMarch) {
             fiscalYear = now.getYear();
+            duesFiscalYear = now.getYear()+1;
         } else {
             fiscalYear = now.getYear()-1;
+            duesFiscalYear = now.getYear();
         }
     }
 
@@ -32,5 +35,9 @@ public final class CurrentFiscalYear {
 
     public static int getNextFiscalYear() {
         return getFiscalYear()+1;
+    }
+
+    public static int getDuesFiscalYear() {
+        return new CurrentFiscalYear().duesFiscalYear;
     }
 }
