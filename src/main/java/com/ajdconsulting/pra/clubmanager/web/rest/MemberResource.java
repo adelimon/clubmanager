@@ -104,6 +104,13 @@ public class MemberResource {
         // many things.  They won't ever login anyway
         if (isMember) {
             createUser(member);
+            MemberYearlyDues newMemberDues = new MemberYearlyDues();
+            newMemberDues.setAmountDue(MemberDues.STANDARD_AMOUNT);
+            newMemberDues.setId(member.getId()+CurrentFiscalYear.getFiscalYear());
+            newMemberDues.setMember(member);
+            newMemberDues.setPoints(0.0f);
+            newMemberDues.setYear(CurrentFiscalYear.getFiscalYear());
+            memberYearlyDuesRepository.save(newMemberDues);
         }
 
         return ResponseEntity.created(new URI("/api/members/" + result.getId()))

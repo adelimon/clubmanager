@@ -37,7 +37,7 @@ public class MemberDuesCalculationService {
     private Logger log = LoggerFactory.getLogger(MemberDuesCalculationService.class);
 
     public List<MemberDues> getAllMemberDues(boolean includeSent) {
-        List<MemberYearlyDues> allDuesForYear = memberYearlyDuesRepository.findForYear(CurrentFiscalYear.getDuesFiscalYear());
+        List<MemberYearlyDues> allDuesForYear = memberYearlyDuesRepository.findForYear(CurrentFiscalYear.getFiscalYear());
         List<MemberDues> memberDues = new ArrayList<MemberDues>(allDuesForYear.size());
         for (MemberYearlyDues memberYearly : allDuesForYear) {
             MemberDues dues = new MemberDues(memberYearly.getMember());
