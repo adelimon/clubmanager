@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface EarnedPointsRepository extends JpaRepository<EarnedPoints,Long> {
 
-    @Query("select e from EarnedPoints e where e.member.email = :userId and year(e.date) = :year order by e.date")
+    @Query("select e from EarnedPoints e where e.verified = true and e.member.email = :userId and year(e.date) = :year order by e.date")
     public Page<EarnedPoints> findForUser(Pageable pageable, @Param("userId") String userId, @Param("year") Integer year);
 
     @Query("select e from EarnedPoints e where e.member.id = :memberId and year(e.date) = :year order by e.date")
