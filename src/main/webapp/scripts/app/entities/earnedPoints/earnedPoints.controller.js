@@ -15,6 +15,7 @@ angular.module('clubmanagerApp')
         $scope.loadAll = function() {
             var queryProps = {page: $scope.page, size: 200, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']};
             var path = $location.path();
+
             var isMemberPoints = (path.indexOf('member/') > -1);
             if (isMemberPoints) {
                 var pathSplit = path.split('/');
