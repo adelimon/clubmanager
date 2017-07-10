@@ -13,7 +13,7 @@ angular.module('clubmanagerApp')
         // did it on purpose.
         $scope.viewMyPoints = ($state.$current.data.loggedInUserOnly === true);
         $scope.loadAll = function() {
-            var queryProps = {page: $scope.page, size: 20, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']};
+            var queryProps = {page: $scope.page, size: 200, sort: [$scope.predicate + ',' + ($scope.reverse ? 'asc' : 'desc'), 'id']};
             var path = $location.path();
             var isMemberPoints = (path.indexOf('member/') > -1);
             if (isMemberPoints) {
