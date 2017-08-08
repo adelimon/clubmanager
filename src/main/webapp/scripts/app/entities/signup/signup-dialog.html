@@ -20,9 +20,7 @@
 
         <div class="form-group">
             <label for="field_worker">worker</label>
-            <select class="form-control" id="field_worker" name="worker" ng-model="signup.worker" ng-options="member as member.name for member in members track by member.id">
-                <option value=""></option>
-            </select>
+            <input type="text" id="field_worker" ng-model="signup.worker" uib-typeahead="member as member.name for member in members | filter:$viewValue" class="form-control"/>
         </div>
         <div class="form-group">
             <label for="field_scheduleDate">scheduleDate</label>
