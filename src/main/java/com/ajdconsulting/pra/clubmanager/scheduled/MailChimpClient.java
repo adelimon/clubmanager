@@ -35,7 +35,7 @@ import java.security.NoSuchAlgorithmException;
 public class MailChimpClient {
 
 
-    public static void main(String[] args) throws IOException, NoSuchAlgorithmException, JSONException {
+    public static void testMethod(String[] args) throws IOException, NoSuchAlgorithmException, JSONException {
         String apiKey = "";//
 
         Member member = new Member();
