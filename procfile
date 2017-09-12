@@ -1,0 +1,1 @@
+web: java -jar target/clubmanager-2.1-jan2017.war
