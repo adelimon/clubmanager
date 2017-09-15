@@ -60,10 +60,17 @@ public class ExcelSqlReport {
         this(query, name, columns, columnWidths, formattingColumns, DEFAULT_FORMATTING_COLUMN_HEIGHT);
     }
 
+    public ExcelSqlReport(List<Map<String, Object>> result, String name, String[] columns, int[] columnWidths, String[] formattingColumns)
+        throws IOException, SQLException {
+        this.result = new QueryResult(result);
+        initialize(null, name, columns, columnWidths);
+    }
 
     private void initialize(String query, String name, String[] columns, int[] columnWidths) throws SQLException, IOException {
         this.columns = columns;
-        result = new QueryResult(query);
+        if (result == null) {
+            result = new QueryResult(query);
+        }
         workbook = new StripedSingleSheetWorkbook(name);
         workbook.addHeader(columns);
         // check to see if we want to autosize the columns, or use our own
@@ -86,7 +93,7 @@ public class ExcelSqlReport {
                 }
             }
             Row excelRow = workbook.createRow(autosize, defaultHeight);
-            for (String key : row.keySet()) {
+            for (String key : columns) {
                 String value = "";
                 if (!hasFormattingColumn) {
                     hasFormattingColumn = isFormattingColumn(key);

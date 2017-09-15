@@ -24,6 +24,10 @@ public class QueryResult {
     private String query;
     private List<Map<String, Object>> umeshDengale;
 
+    public QueryResult(List<Map<String, Object>> result) {
+        umeshDengale = result;
+    }
+
     public QueryResult(String query) throws SQLException, IOException {
         // 1. Fetch your data
         // 2. Create your excel

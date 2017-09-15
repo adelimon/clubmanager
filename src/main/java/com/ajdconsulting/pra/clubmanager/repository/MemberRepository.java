@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 /**
  * Spring Data JPA repository for the Member entity.
  */
@@ -19,4 +21,7 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     public Page<Member> findByEmail(String email, Pageable pageable);
 
     public Member findByEmail(String email);
+
+    @Query("select m from Member m order by lastName")
+    public List<Member> findAllMembersOrderByLastName();
 }
