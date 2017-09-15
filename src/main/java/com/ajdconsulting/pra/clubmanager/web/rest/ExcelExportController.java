@@ -54,7 +54,7 @@ public class ExcelExportController {
         signupReport.write(ExcelHttpOutputStream.getOutputStream(response, "raceSignups.xlsx"));
     }
 
-    private ExcelSqlReport buildSignupReport() throws SQLException {
+    private ExcelSqlReport buildSignupReport() throws SQLException, IOException {
         String query = ("select name, title, job_day, point_value, cash_value, reserved, meal_ticket from signup_report");
         String[] headerColumns = {"Name", "Job", "Day", "Point Value", "Cash Value", "Meal Ticket", "Signature" };
         int[] columnWidths = {16, 29, 10, 6, 6, 6, 27};

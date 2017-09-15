@@ -35,7 +35,7 @@ public class ExcelSqlReport {
      * @param columnWidths optional column widths.  if this is not passed in then columns will be auto sized.
      * @throws SQLException
      */
-    public ExcelSqlReport(String query, String name, String[] columns, int[] columnWidths) throws SQLException {
+    public ExcelSqlReport(String query, String name, String[] columns, int[] columnWidths) throws SQLException, IOException {
         initialize(query, name, columns, columnWidths);
     }
 
@@ -49,19 +49,19 @@ public class ExcelSqlReport {
      * @throws SQLException
      */
     public ExcelSqlReport(String query, String name, String[] columns,
-        int[] columnWidths, String[] formattingColumns, float rowHeight) throws SQLException {
+        int[] columnWidths, String[] formattingColumns, float rowHeight) throws SQLException, IOException {
         this.formattingColumns = formattingColumns;
         this.defaultHeight = rowHeight;
         initialize(query, name, columns, columnWidths);
     }
 
     public ExcelSqlReport(String query, String name, String[] columns,
-                          int[] columnWidths, String[] formattingColumns) throws SQLException {
+                          int[] columnWidths, String[] formattingColumns) throws SQLException, IOException {
         this(query, name, columns, columnWidths, formattingColumns, DEFAULT_FORMATTING_COLUMN_HEIGHT);
     }
 
 
-    private void initialize(String query, String name, String[] columns, int[] columnWidths) throws SQLException {
+    private void initialize(String query, String name, String[] columns, int[] columnWidths) throws SQLException, IOException {
         this.columns = columns;
         result = new QueryResult(query);
         workbook = new StripedSingleSheetWorkbook(name);
