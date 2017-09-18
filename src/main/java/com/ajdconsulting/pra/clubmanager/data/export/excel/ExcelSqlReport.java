@@ -64,6 +64,7 @@ public class ExcelSqlReport {
         throws IOException, SQLException {
         this.result = new QueryResult(result);
         this.formattingColumns = formattingColumns;
+        this.defaultHeight = 31.0f;
         initialize(null, name, columns, columnWidths);
     }
 

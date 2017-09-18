@@ -16,7 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller with endpoints to export a calendar from the events stored in the app.
@@ -52,15 +55,22 @@ public class CalendarExportController {
     @RequestMapping("/calendar/pracalendar.xlsx")
     public void exportExcel(HttpServletRequest request, HttpServletResponse response)
         throws SQLException, IOException {
-        String sql = "select " +
-            "concat(dayname(sd.date), ', ', monthname(sd.date), ' ', dayofmonth(sd.date), ' ',  year(sd.date)) date, " +
-            "et.type, sd.event_name, sd.event_description from " +
-            "schedule_date sd, event_type et " +
-            "where et.id = sd.event_type_id and " +
-            "year(sd.date) = 2017 order by sd.date";
+
         String[] headerColumns = {"Date", "Event Type", "Event Name", "Event Description" };
         int[] columnWidths = {20, 10, 30, 40};
-        ExcelSqlReport scheduleReport = new ExcelSqlReport(sql, "PRA Schedule", headerColumns, columnWidths, new String[0], 31);
+
+        List<ScheduleDate> currentYearEvents = scheduleDateRepository.findAllOrdered();
+        List<Map<String, Object>> dataMap = new ArrayList<Map<String, Object>>();
+        for (ScheduleDate event : currentYearEvents) {
+            Map<String, Object> fields = new HashMap<String, Object>();
+            fields.put("Date", event.getDate().toString());
+            fields.put("Event Type", event.getEventType().getType());
+            fields.put("Event Name", event.getEventName());
+            fields.put("Event Description", event.getEventDescription());
+            dataMap.add(fields);
+        }
+        ExcelSqlReport scheduleReport = new ExcelSqlReport(dataMap, "PRA Schedule", headerColumns, columnWidths, new String[0]);
         scheduleReport.write(ExcelHttpOutputStream.getOutputStream(response, "PRASchedule.xlsx"));
+
     }
 }
