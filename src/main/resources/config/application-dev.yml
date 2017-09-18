@@ -59,7 +59,7 @@ server:
 jhipster:
     datasource: # JHipster-specific configuration, in addition to the standard spring.datasource properties
         cachePrepStmts: true
-        prepStmtCacheSize: 250
+        prepStmtCacheSize: 96
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
     mail: # specific JHipster mail property, for standard properties see MailProperties

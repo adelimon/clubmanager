@@ -2,8 +2,7 @@
     <h2>Race Signup Report</h2>
     <jh-alert></jh-alert>
     <div>
-        <a href="/exportSignups" class="alert-link">Export race day and week work signup list (for the pre-race meeting)</a><br>
-        <a href="/exportRaceDay" class="alert-link">Export signup sheet for just race weekend (Saturday/Sunday jobs)</a>
+        <a href="/api/signupReports/race/excel" class="alert-link">Export signup sheet for race weekend (Saturday/Sunday jobs)</a>
         <p>
         <label>Search for a job by typing, or select some common choices with the buttons below:
         <input type="text" class="form-control" ng-model="searchText"></label>
@@ -74,30 +73,7 @@
                             <span class="hidden-xs hidden-sm"></span>
                         </button>
                     </td>
-                    <!--
-                    <td class="text-right">
-                        <div class="btn-group flex-btn-group-container">
-                            <button type="submit"
-                                    ui-sref="signupReport.detail({id:signupReport.id})"
-                                    class="btn btn-info btn-sm">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="signupReport.edit({id:signupReport.id})"
-                                    class="btn btn-primary btn-sm">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="signupReport.delete({id:signupReport.id})"
-                                    class="btn btn-danger btn-sm">
-                                <span class="glyphicon glyphicon-remove-circle"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                        </div>
-                    </td>
-                    -->
+
                 </tr>
             </tbody>
         </table>
