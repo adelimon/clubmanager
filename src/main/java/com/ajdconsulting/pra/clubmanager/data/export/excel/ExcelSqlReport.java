@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class ExcelSqlReport {
 
-    public static final float DEFAULT_FORMATTING_COLUMN_HEIGHT = 28.0f;
+    public static final float DEFAULT_FORMATTING_COLUMN_HEIGHT = 40.0f;
     private QueryResult result;
 
     private String name;
@@ -63,6 +63,7 @@ public class ExcelSqlReport {
     public ExcelSqlReport(List<Map<String, Object>> result, String name, String[] columns, int[] columnWidths, String[] formattingColumns)
         throws IOException, SQLException {
         this.result = new QueryResult(result);
+        this.formattingColumns = formattingColumns;
         initialize(null, name, columns, columnWidths);
     }
 
@@ -115,7 +116,7 @@ public class ExcelSqlReport {
                 }
             }
             if (columnCount < row.size()) {
-                workbook.createCell(excelRow, "", hasFormattingColumn);
+                //workbook.createCell(excelRow, "", hasFormattingColumn);
             }
         }
     }

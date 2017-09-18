@@ -39,6 +39,9 @@ public class SignupReport implements Serializable {
     @Column(name = "reserved")
     private Boolean reserved;
 
+    @Column(name = "meal_ticket")
+    private Boolean mealTicket;
+
     @Column(name = "job_day")
     private String jobDay;
 
@@ -97,6 +100,14 @@ public class SignupReport implements Serializable {
 
     public void setReserved(Boolean reserved) {
         this.reserved = reserved;
+    }
+
+    public Boolean getMealTicket() {
+        return mealTicket;
+    }
+
+    public void setMealTicket(Boolean mealTicket) {
+        this.mealTicket = mealTicket;
     }
 
     public String getJobDay() {

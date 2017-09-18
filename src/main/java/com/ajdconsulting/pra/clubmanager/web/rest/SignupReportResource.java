@@ -168,7 +168,7 @@ public class SignupReportResource {
         report.write(ExcelHttpOutputStream.getOutputStream(response, "meetingSignIn.xlsx"));
     }
 
-    @RequestMapping("/exportSignups")
+    @RequestMapping("/signupReports/race/excel")
     public void exportSignups(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         // 1. Fetch your data
         // 2. Create your excel
@@ -177,15 +177,7 @@ public class SignupReportResource {
         signupReport.write(ExcelHttpOutputStream.getOutputStream(response, "signups.xlsx"));
     }
 
-    @RequestMapping("/exportRaceDay")
-    public void exportRaceDay(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-        ExcelSqlReport signupReport = buildSignupReport();
-        signupReport.write(ExcelHttpOutputStream.getOutputStream(response, "raceSignups.xlsx"));
-    }
-
     private ExcelSqlReport buildSignupReport() throws SQLException, IOException {
-        String query = ("select name, title, job_day, point_value, cash_value, reserved, meal_ticket from signup_report");
-
         String[] headerColumns = {"Name", "Job", "Day", "Point Value", "Cash Value", "Meal Ticket", "Signature" };
         int[] columnWidths = {16, 29, 10, 6, 6, 6, 27};
         String[] formattingColumns = {"reserved"};
@@ -198,7 +190,7 @@ public class SignupReportResource {
             fields.put("Day", signup.getJobDay());
             fields.put("Point Value", signup.getPointValue());
             fields.put("Cash Value", signup.getCashValue());
-            fields.put("Meal Ticket", signup.getReserved());
+            fields.put("Meal Ticket", signup.getMealTicket());
             fields.put("Signature", "");
             fields.put("reserved", signup.getReserved());
             dataMap.add(fields);

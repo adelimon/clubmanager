@@ -82,7 +82,7 @@ public abstract class ExcelWorkbook {
      * @param headerColumns names for the headers.
      */
     public void addHeader(String[] headerColumns) {
-        Row row = this.createRow(false, 28.5f);
+        Row row = this.createRow(false, 40.0f);
         for (int index = 0; index < headerColumns.length; index++) {
             // TODO: this probably needs to be more flexible and allow you to pass in the cell style too.
             // I just don't feel like doing it at 10:30 on a Saturday night,
