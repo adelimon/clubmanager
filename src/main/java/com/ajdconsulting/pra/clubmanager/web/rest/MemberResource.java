@@ -404,7 +404,7 @@ public class MemberResource {
 
         setMemberSent(dues);
 
-        logMemberEmailHtml(dues, emailContent);
+        //logMemberEmailHtml(dues, emailContent);
         log.debug(logMessage);
 
         JSONObject jsonResponse = new JSONObject();
