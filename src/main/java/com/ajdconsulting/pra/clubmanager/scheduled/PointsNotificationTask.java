@@ -38,6 +38,17 @@ public class PointsNotificationTask {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
+
+    public PointsNotificationTask() {
+
+    }
+
+    public PointsNotificationTask(EarnedPointsRepository earnedPointsRepository, MemberRepository memberRepository, MailService mailService) {
+        this.earnedPointsRepository = earnedPointsRepository;
+        this.memberRepository = memberRepository;
+        this.mailService = mailService;
+    }
+
     @Scheduled(cron = "0 15 10 ? * WED")
     public void sendPointsUpdateEmail() {
         log.info("PointsNotificationTask :: Starting points email job....");

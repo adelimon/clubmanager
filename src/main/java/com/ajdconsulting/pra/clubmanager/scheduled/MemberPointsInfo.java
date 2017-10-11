@@ -1,6 +1,7 @@
 package com.ajdconsulting.pra.clubmanager.scheduled;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
+import com.ajdconsulting.pra.clubmanager.domain.EventType;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.util.LineEndStringBuilder;
 import org.slf4j.Logger;
@@ -48,7 +49,12 @@ public class MemberPointsInfo {
         for (EarnedPoints pointsRecord : pointsDetail) {
             runningTotal += pointsRecord.getPointValue();
             log.info("member id " + pointsRecord.getMember().getId());
-            String detail = pointsRecord.getDate().toString() + " - " + pointsRecord.getEventType().getType() + " - " +
+            EventType eventType = pointsRecord.getEventType();
+            String eventTypeStr = "";
+            if (eventType != null) {
+                eventTypeStr = eventType.getType();
+            }
+            String detail = pointsRecord.getDate().toString() + " - " + eventTypeStr + " - " +
                 pointsRecord.getDescription() + " - " + pointsRecord.getPointValue() + " (" + runningTotal + " points total)";
             builder.append(detail);
         }

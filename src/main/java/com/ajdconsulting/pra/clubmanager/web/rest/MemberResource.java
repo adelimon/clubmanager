@@ -8,6 +8,7 @@ import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
 import com.ajdconsulting.pra.clubmanager.renewals.EmailContent;
 import com.ajdconsulting.pra.clubmanager.repository.*;
+import com.ajdconsulting.pra.clubmanager.scheduled.PointsNotificationTask;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
@@ -445,4 +446,12 @@ public class MemberResource {
         return new ResponseEntity<JSONObject>(jsonResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/members/sendPoints",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<JSONObject> sendPoints() {
+        PointsNotificationTask pointsNotificationTask = new PointsNotificationTask(earnedPointsRepository, memberRepository, mailService);
+        pointsNotificationTask.sendPointsUpdateEmail();
+        return new ResponseEntity<JSONObject>(new JSONObject(), HttpStatus.OK);
+    }
 }

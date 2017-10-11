@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -145,7 +146,8 @@ public class SignupResource {
                 boolean sameEventType = eventDate.getEventType().equals(
                     signup.getScheduleDate().getEventType()
                 );
-                if (sameEventType) {
+                boolean isFuture = eventDate.getDate().isAfter(LocalDate.now());
+                if (sameEventType && isFuture) {
                     Signup eventSignup = new Signup();
                     eventSignup.setJob(signup.getJob());
                     eventSignup.setWorker(signup.getWorker());
