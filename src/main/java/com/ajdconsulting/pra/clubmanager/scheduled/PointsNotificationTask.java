@@ -49,7 +49,7 @@ public class PointsNotificationTask {
         this.mailService = mailService;
     }
 
-    @Scheduled(cron = "0 15 10 ? * WED")
+    @Scheduled(cron = "0 35 02 ? * FRI")
     public void sendPointsUpdateEmail() {
         log.info("PointsNotificationTask :: Starting points email job....");
         Pageable page = new PageRequest(1, 400);
