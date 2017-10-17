@@ -47,20 +47,24 @@ public class MemberPointsInfo {
         builder.appendEmptyLine();
         float runningTotal = 0.0f;
         for (EarnedPoints pointsRecord : pointsDetail) {
-            runningTotal += pointsRecord.getPointValue();
-            log.info("member id " + pointsRecord.getMember().getId());
-            EventType eventType = pointsRecord.getEventType();
-            String eventTypeStr = "";
-            if (eventType != null) {
-                eventTypeStr = eventType.getType();
+            boolean countsTowardsTotal = !pointsRecord.isPaid();
+            if (countsTowardsTotal) {
+                runningTotal += pointsRecord.getPointValue();
+                log.info("member id " + pointsRecord.getMember().getId());
+                EventType eventType = pointsRecord.getEventType();
+                String eventTypeStr = "";
+                if (eventType != null) {
+                    eventTypeStr = eventType.getType();
+                }
+                String detail = pointsRecord.getDate().toString() + " - " + eventTypeStr + " - " +
+                    pointsRecord.getDescription() + " - " + pointsRecord.getPointValue() + " (" + runningTotal + " points total)";
+                builder.append(detail);
             }
-            String detail = pointsRecord.getDate().toString() + " - " + eventTypeStr + " - " +
-                pointsRecord.getDescription() + " - " + pointsRecord.getPointValue() + " (" + runningTotal + " points total)";
-            builder.append(detail);
         }
         builder.append("Please note that this email reflects points that are recorded.  If something appears to be");
         builder.append("missing, then it may not have been recorded yet.  You can check your points totals live at ");
         builder.append("any time by logging into http://apps.palmyramx.com and clicking on View your points in detail.");
+        builder.append("Please also note that any jobs you were paid for (instead of taking points) are not reflected in this total.");
         return builder.toString();
     }
 
