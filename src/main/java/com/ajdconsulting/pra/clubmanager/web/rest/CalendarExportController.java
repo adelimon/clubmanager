@@ -11,15 +11,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Controller with endpoints to export a calendar from the events stored in the app.
@@ -72,5 +76,27 @@ public class CalendarExportController {
         ExcelSqlReport scheduleReport = new ExcelSqlReport(dataMap, "PRA Schedule", headerColumns, columnWidths, new String[0]);
         scheduleReport.write(ExcelHttpOutputStream.getOutputStream(response, "PRASchedule.xlsx"));
 
+    }
+
+    @RequestMapping("/calendar/pracalendar.html")
+    public void exportHtml(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<ul>");
+        List<ScheduleDate> currentYearEvents = scheduleDateRepository.findAllOrdered();
+        for (ScheduleDate event : currentYearEvents) {
+            if (event.getDate().isAfter(LocalDate.now())) {
+                String calendarLine = "<li>%s - %s - %s (%s)</li>";
+                calendarLine = String.format(calendarLine,
+                    event.getDate().toString(), event.getEventType().getType(),
+                    ofNullable(event.getEventName()).orElse(""),
+                    ofNullable(event.getEventDescription()).orElse("")
+                );
+                htmlBuilder.append(calendarLine);
+            }
+        }
+        htmlBuilder.append("</ul>");
+        response.setContentType("text/html");
+        ServletOutputStream outputStream = response.getOutputStream();
+        outputStream.write(htmlBuilder.toString().getBytes());
     }
 }
