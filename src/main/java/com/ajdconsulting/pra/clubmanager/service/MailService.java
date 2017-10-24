@@ -1,11 +1,9 @@
 package com.ajdconsulting.pra.clubmanager.service;
 
 import com.ajdconsulting.pra.clubmanager.config.JHipsterProperties;
-import com.ajdconsulting.pra.clubmanager.domain.Member;
-import com.ajdconsulting.pra.clubmanager.domain.MemberDues;
-import com.ajdconsulting.pra.clubmanager.domain.Signup;
-import com.ajdconsulting.pra.clubmanager.domain.User;
+import com.ajdconsulting.pra.clubmanager.domain.*;
 
+import com.ajdconsulting.pra.clubmanager.repository.IntegrationRepository;
 import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +46,9 @@ public class MailService {
     @Inject
     private SpringTemplateEngine templateEngine;
 
+    @Inject
+    private IntegrationRepository integrationRepository;
+
     /**
      * System default email address that sends the e-mails.
      */
@@ -66,6 +67,8 @@ public class MailService {
             message.setFrom(jHipsterProperties.getMail().getFrom());
             message.setSubject(subject);
             message.setText(content, isHtml);
+            Integration mailgunIntegration = integrationRepository.findPlatformById("mailgun");
+            javaMailSender.setPassword(mailgunIntegration.getApikey());
             javaMailSender.send(mimeMessage);
             log.debug("Sent e-mail to User '{}'", to);
         } catch (Exception e) {
