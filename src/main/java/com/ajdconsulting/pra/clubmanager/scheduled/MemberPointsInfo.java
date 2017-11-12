@@ -31,7 +31,9 @@ public class MemberPointsInfo {
         this.member = member;
         this.pointsDetail = pointsDetail;
         for (EarnedPoints points : pointsDetail) {
-            this.pointsTotal += points.getPointValue();
+            if (points.isPoints()) {
+                this.pointsTotal += points.getPointValue();
+            }
         }
     }
 
@@ -47,8 +49,7 @@ public class MemberPointsInfo {
         builder.appendEmptyLine();
         float runningTotal = 0.0f;
         for (EarnedPoints pointsRecord : pointsDetail) {
-            boolean countsTowardsTotal = !pointsRecord.isPaid();
-            if (countsTowardsTotal) {
+            if (pointsRecord.isPoints()) {
                 runningTotal += pointsRecord.getPointValue();
                 log.info("member id " + pointsRecord.getMember().getId());
                 EventType eventType = pointsRecord.getEventType();

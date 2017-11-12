@@ -171,6 +171,9 @@ public class EarnedPoints implements Serializable {
         this.paid = paid;
     }
 
+    public boolean isPoints() {
+        return !isPaid();
+    }
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
