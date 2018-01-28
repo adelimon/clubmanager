@@ -337,7 +337,7 @@ public class MemberResource {
     public void exportDuesReport(HttpServletRequest request, HttpServletResponse response)
         throws IOException, URISyntaxException, NoSuchFieldException {
         Pageable page = new PageRequest(1, 400);
-
+        duesCalculationService.runAndStoreDuesCalculations();
         List<MemberDues> objectList = duesCalculationService.getAllMemberDues(true);
 
         ExcelWorkbook workbook = new BasicSingleSheetWorkbook("dues");
@@ -364,7 +364,7 @@ public class MemberResource {
         throws URISyntaxException, IOException, JSONException {
         Pageable page = new PageRequest(1, 400);
         List<MemberDues> objectList = duesCalculationService.getAllMemberDues(false);
-        EmailContent baseEmailContent = new EmailContent("memberRenewal");
+
         if (batchSize > objectList.size()) {
             batchSize = (long) objectList.size();
         }
@@ -372,6 +372,7 @@ public class MemberResource {
         JSONArray jsonResponse = new JSONArray();
         for (int index = 0; index < batchSize; index++) {
             MemberDues dues = objectList.get(index);
+            EmailContent baseEmailContent = new EmailContent("memberRenewal");
             if (dues.getMemberType().equals("New Member")) {
                 baseEmailContent = new EmailContent("newMember");
             }

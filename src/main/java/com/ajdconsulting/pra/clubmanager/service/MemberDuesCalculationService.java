@@ -68,10 +68,10 @@ public class MemberDuesCalculationService {
             MemberDues dues = getMemberDues(member);
 
             MemberYearlyDues yearlyDues = new MemberYearlyDues();
-            yearlyDues.setId(member.getId() + CurrentFiscalYear.getDuesFiscalYear());
+            yearlyDues.setId(member.getId() + CurrentFiscalYear.getFiscalYear());
             yearlyDues.setAmountDue(dues.getAmountDue());
             yearlyDues.setPoints(dues.getPoints());
-            yearlyDues.setYear(CurrentFiscalYear.getDuesFiscalYear());
+            yearlyDues.setYear(CurrentFiscalYear.getFiscalYear());
             yearlyDues.setMember(member);
             memberYearlyDuesRepository.save(yearlyDues);
             log.info("ran dues calculation for " + member.getName());
