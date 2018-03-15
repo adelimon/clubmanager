@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,6 +74,9 @@ public class Member implements Serializable {
 
     @Column(name = "date_joined")
     private LocalDate dateJoined;
+
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     @ManyToOne
     @JoinColumn(name = "status")
@@ -207,6 +211,12 @@ public class Member implements Serializable {
 
     public void setStatus(MemberTypes status) {
         this.status = status;
+    }
+
+    public LocalDateTime getEndDate() { return endDate; }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
     public boolean isPaidLabor() {
