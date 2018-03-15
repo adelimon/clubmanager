@@ -18,7 +18,7 @@ public final class CurrentFiscalYear {
     private CurrentFiscalYear() {
         ZonedDateTime now = ZonedDateTime.now();
         // this syntax sucks.  we need operator overloading in Java!
-        boolean afterMarch = (now.getMonth().compareTo(Month.MARCH) >= 0);
+        boolean afterMarch = (now.getMonth().compareTo(Month.APRIL) >= 0);
         if (afterMarch) {
             fiscalYear = now.getYear();
             duesFiscalYear = now.getYear()+1;

@@ -46,6 +46,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -271,6 +273,8 @@ public class MemberResource {
 
     /**
      * DELETE  /members/:id -> delete the "id" member.
+     * This doesn't really delete a member.  Instead, it end dates them. This is much cleaner as we keep records
+     * permanantely that way.  We just need to exclude these in all queries is all.
      */
     @RequestMapping(value = "/members/{id}",
         method = RequestMethod.DELETE,
@@ -279,17 +283,7 @@ public class MemberResource {
     public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         log.debug("REST request to delete Member : {}", id);
         Member member = memberRepository.findOne(id);
-        // delete all earned points for this member first
-        List<EarnedPoints> allMemberPoints = earnedPointsRepository.findByMemberId(id,
-            CurrentFiscalYear.getFiscalYear()
-        );
-        for (EarnedPoints points : allMemberPoints) {
-            earnedPointsRepository.delete(points);
-        }
-        List<Signup> workerSignups = signupRepository.findByWorkerId(id);
-        for (Signup signup : workerSignups) {
-            signupRepository.delete(signup);
-        }
+
         // now clean up the external mailing list
         try {
             MailingList.deleteMember(member, getMailingListApiKey());
@@ -300,8 +294,9 @@ public class MemberResource {
             log.error("unable to delete email for " + member.getName() +
                 " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         }
-        memberRepository.delete(id);
 
+        member.setEndDate(LocalDateTime.now());
+        memberRepository.saveAndFlush(member);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
 

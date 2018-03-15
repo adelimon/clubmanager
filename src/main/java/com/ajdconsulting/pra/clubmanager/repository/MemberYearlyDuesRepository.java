@@ -15,4 +15,7 @@ public interface MemberYearlyDuesRepository extends JpaRepository<MemberYearlyDu
     @Query("select myd from MemberYearlyDues myd where myd.year = :year")
     public List<MemberYearlyDues> findForYear(@Param("year") int year);
 
+    @Query("select myd from MemberYearlyDues myd where myd.member.id = :memberId")
+    public List<MemberYearlyDues> findForMember(@Param("memberId") long memberId);
+
 }
