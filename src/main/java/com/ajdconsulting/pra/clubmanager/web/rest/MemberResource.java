@@ -20,6 +20,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.hibernate.validator.constraints.Email;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -386,7 +387,7 @@ public class MemberResource {
 
         String logMessage = "";
         if (hasEmail) {
-            String subject = "Your " + CurrentFiscalYear.getNextFiscalYear() + " PRA membership";
+            String subject = "Your " + DateTime.now().year() + " PRA membership";
             mailService.sendEmail(dues.getEmail(), subject, emailContent.toString(), true, true);
             logMessage = "Dues sent for " + dues.getFullName() + " to " + dues.getEmail() + ".  Amount is " + dues.getAmountDue();
         } else {
