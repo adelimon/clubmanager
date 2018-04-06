@@ -387,7 +387,7 @@ public class MemberResource {
 
         String logMessage = "";
         if (hasEmail) {
-            String subject = "Your " + DateTime.now().year() + " PRA membership";
+            String subject = "Your 2018 PRA membership";
             mailService.sendEmail(dues.getEmail(), subject, emailContent.toString(), true, true);
             logMessage = "Dues sent for " + dues.getFullName() + " to " + dues.getEmail() + ".  Amount is " + dues.getAmountDue();
         } else {
