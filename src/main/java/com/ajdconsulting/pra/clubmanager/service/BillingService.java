@@ -1,0 +1,110 @@
+package com.ajdconsulting.pra.clubmanager.service;
+
+import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
+import com.ajdconsulting.pra.clubmanager.domain.Member;
+import com.ajdconsulting.pra.clubmanager.domain.MemberBill;
+import com.ajdconsulting.pra.clubmanager.renewals.EmailContent;
+import com.ajdconsulting.pra.clubmanager.repository.BoardMemberRepository;
+import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
+import com.ajdconsulting.pra.clubmanager.repository.MemberBillRepository;
+import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+
+@Service
+@Transactional
+public class BillingService {
+
+    public static final int DOLLARS_PER_POINT = 20;
+
+    @Inject
+    private MemberRepository memberRepository;
+
+    @Inject
+    private EarnedPointsRepository earnedPointsRepository;
+
+    @Inject
+    private BoardMemberRepository boardMemberRepository;
+
+    @Inject
+    private MemberBillRepository memberBillRepository;
+
+    @Inject
+    private MailService mailService;
+
+    public String generateBill(Long memberId, int year) throws IOException {
+        Member member = memberRepository.findOne(memberId);
+        MemberBill bill = new MemberBill(member);
+        bill.setYear(year);
+        double billCredit = 0.00;
+
+        boolean isBoardMember = !(boardMemberRepository.findByMemberId(memberId, year).isEmpty());
+        // member type dictates the base amount that they pay.
+        float baseDuesAmount = member.getStatus().getBaseDuesAmount();
+
+        if (isBoardMember) {
+            billCredit = baseDuesAmount;
+        } else {
+            // everyone else pays based on $500 - ($500*number of points) until amount is zero
+            float totalPoints = 0.0f;
+            // when generating a bill for the current year, look at the previous year's points, hence the -1 here
+            List<EarnedPoints> earnedPoints = earnedPointsRepository.findByMemberId(memberId, year-1);
+            for (EarnedPoints pointsEntry : earnedPoints) {
+                totalPoints += pointsEntry.getPointValue();
+            }
+            // calculate the amount of dues they have earned
+            billCredit = (DOLLARS_PER_POINT *totalPoints);
+            // but they can't go over the cap so if they are over the cap set the earned amount to the cap
+            if (billCredit > baseDuesAmount) {
+                billCredit = baseDuesAmount;
+            }
+            // also check to see what their sign up date is and give a credit appropriately
+            LocalDate joinedDate = member.getDateJoined();
+            // if they joined this year, then check the date
+            if (joinedDate.getYear() == year) {
+                // between 7/1 and 9/30, we charge $380, a credit of $120 or 26% off.
+                LocalDate creditStart = LocalDate.of(year, Month.JUNE, 30);
+                LocalDate creditEnd = LocalDate.of(year, Month.OCTOBER, 1);
+                if (joinedDate.isAfter(creditStart) && joinedDate.isBefore(creditEnd)) {
+                    billCredit = baseDuesAmount*0.26;
+                }
+            } else if (joinedDate.getYear() == year-1) {
+                // here they paid the prior year, and they paid on 10/1 or after, so give them a full credit
+                // for the following year.
+                if (joinedDate.isAfter(LocalDate.of(year-1, Month.SEPTEMBER, 30))) {
+                    billCredit = baseDuesAmount;
+                }
+            }
+
+        }
+        bill.setAmount(baseDuesAmount-billCredit);
+        EmailContent baseEmailContent = new EmailContent("memberRenewal");
+        if (member.getStatus().equals("New Member")) {
+            baseEmailContent = new EmailContent("newMember");
+        }
+        baseEmailContent.setVariables(bill);
+        bill.setEmailedBill(baseEmailContent.toString());
+        memberBillRepository.save(bill);
+        return bill.getEmailedBill();
+    }
+
+    public void sendUnsentBills(int year, boolean isDryRun) {
+        List<MemberBill> bills = memberBillRepository.getUnsentBillsByYear(year);
+        for (MemberBill bill : bills) {
+            Member member = bill.getMember();
+            if (!isDryRun) {
+                mailService.sendEmail(
+                    member.getEmail(), "Your " + year + "PRA membership", bill.getEmailedBill(),
+                    false, true
+                );
+            }
+            bill.setSent(true);
+        }
+    }
+}

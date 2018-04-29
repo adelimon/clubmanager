@@ -416,16 +416,6 @@ public class MemberResource {
         memberRepository.save(member);
     }
 
-    private void logMemberEmailHtml(MemberDues dues, EmailContent memberEmail) throws IOException {
-        Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        BufferedWriter duesLogger =
-            Files.newBufferedWriter(Paths.get(s + "/renewalsoutput/" + dues.getLastName() + dues.getFirstName() + ".html"));
-        duesLogger.write(memberEmail.toString());
-        duesLogger.flush();
-    }
-
-
     @RequestMapping(value = "/members/sendDues/members/{id}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
