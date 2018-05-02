@@ -105,6 +105,9 @@ public class BillingService {
                 );
             }
             bill.setSent(true);
+            member.setRenewalSent(true);
+            memberRepository.save(member);
         }
+
     }
 }

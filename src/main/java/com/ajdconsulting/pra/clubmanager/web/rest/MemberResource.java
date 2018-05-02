@@ -12,7 +12,6 @@ import com.ajdconsulting.pra.clubmanager.scheduled.PointsNotificationTask;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
-import com.ajdconsulting.pra.clubmanager.service.MemberDuesCalculationService;
 import com.ajdconsulting.pra.clubmanager.service.UserService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
@@ -86,8 +85,6 @@ public class MemberResource {
     @Inject
     private MemberYearlyDuesRepository memberYearlyDuesRepository;
 
-    @Inject
-    private MemberDuesCalculationService duesCalculationService;
 
     /**
      * POST  /members -> Create a new member.
@@ -299,138 +296,6 @@ public class MemberResource {
         member.setEndDate(LocalDateTime.now());
         memberRepository.saveAndFlush(member);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
-    }
-
-    /**
-     * GET  /members -> get all the members.
-     */
-    @RequestMapping(value = "/members/dues",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<List<MemberDues>> getAllMemberDues(Pageable pageable, boolean includeSent)
-        throws URISyntaxException {
-        log.debug("REST request to get a page of Members");
-        List<MemberDues> memberDues = duesCalculationService.getAllMemberDues(includeSent);
-        Page<MemberDues> page = new PageImpl<MemberDues>(memberDues);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/members/dues/{id}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<MemberDues> getMemberDues(@PathVariable long id) {
-        Member member = memberRepository.findOne(id);
-        MemberDues dues = duesCalculationService.getMemberDues(member);
-        return new ResponseEntity<MemberDues>(dues, HttpStatus.OK);
-    }
-
-
-
-    @RequestMapping("/members/exportDues")
-    public void exportDuesReport(HttpServletRequest request, HttpServletResponse response)
-        throws IOException, URISyntaxException, NoSuchFieldException {
-        Pageable page = new PageRequest(1, 400);
-        duesCalculationService.runAndStoreDuesCalculations();
-        List<MemberDues> objectList = duesCalculationService.getAllMemberDues(true);
-
-        ExcelWorkbook workbook = new BasicSingleSheetWorkbook("dues");
-        String[] headerFields = {"First Name", "Last Name", "Member Type", "Points", "Amount Due", "Renewed", "Paid"};
-        workbook.addHeader(headerFields);
-        for (MemberDues dues : objectList) {
-            Row row = workbook.createRow(true);
-            workbook.createCell(row, dues.getFirstName());
-            workbook.createCell(row, dues.getLastName());
-            workbook.createCell(row, dues.getMemberType());
-            workbook.createCell(row, dues.getPoints());
-            workbook.createCell(row, dues.getAmountDue());
-            workbook.createCell(row, dues.getRenewed());
-            workbook.createCell(row, dues.getPaid());
-        }
-
-        workbook.write(ExcelHttpOutputStream.getOutputStream(response, "dues.xlsx"));
-    }
-
-    @RequestMapping(value = "/members/sendDues/{batchSize}",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<JSONArray> sendDues(@PathVariable Long batchSize)
-        throws URISyntaxException, IOException, JSONException {
-        Pageable page = new PageRequest(1, 400);
-        List<MemberDues> objectList = duesCalculationService.getAllMemberDues(false);
-
-        if (batchSize > objectList.size()) {
-            batchSize = (long) objectList.size();
-        }
-
-        JSONArray jsonResponse = new JSONArray();
-        for (int index = 0; index < batchSize; index++) {
-            MemberDues dues = objectList.get(index);
-            EmailContent baseEmailContent = new EmailContent("memberRenewal");
-            if (dues.getMemberType().equals("New Member")) {
-                baseEmailContent = new EmailContent("newMember");
-            }
-            jsonResponse.put(buildSendDues(baseEmailContent, dues));
-        }
-
-        return new ResponseEntity<JSONArray>(jsonResponse, HttpStatus.OK);
-    }
-
-    private JSONObject buildSendDues(EmailContent emailContent, MemberDues dues)
-        throws IOException, JSONException {
-
-        emailContent.setVariables(dues);
-
-        boolean hasEmail = StringUtils.isNotEmpty(dues.getEmail());
-
-        String logMessage = "";
-        if (hasEmail) {
-            String subject = "Your 2018 PRA membership";
-            mailService.sendEmail(dues.getEmail(), subject, emailContent.toString(), true, true);
-            logMessage = "Dues sent for " + dues.getFullName() + " to " + dues.getEmail() + ".  Amount is " + dues.getAmountDue();
-        } else {
-            emailContent.setContents("NO EMAIL ON RECORD" + dues.getEmail());
-            logMessage = "Dues processed for " + dues.getFullName() + " does not have email.  Please process manually.";
-        }
-
-        if (dues.getPrefersMail()) {
-            String subject = "Manual action required - Membership for " + dues.getFullName() + " - send mail form";
-            mailService.sendEmail("hogbacksecretary@gmail.com", subject, dues.getEmail(), true, true);
-        }
-
-        setMemberSent(dues);
-
-        //logMemberEmailHtml(dues, emailContent);
-        log.debug(logMessage);
-
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(dues.getFullName(), logMessage);
-        return jsonResponse;
-    }
-
-    private void setMemberSent(MemberDues dues) {
-        Member member = memberRepository.findOne(dues.getMemberId());
-        member.setRenewalSent(true);
-        memberRepository.save(member);
-    }
-
-    @RequestMapping(value = "/members/sendDues/members/{id}",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<JSONObject> resendDues(@PathVariable Long id) throws IOException, JSONException {
-        Member member = memberRepository.findOne(id);
-        member.setRenewalSent(false);
-        MemberDues memberDues = duesCalculationService.getMemberDues(member);
-        String emailName = "memberRenewal";
-        if (member.getStatus().getId() == 13) {
-            emailName = "newMember";
-        }
-        JSONObject jsonResponse = buildSendDues(
-            new EmailContent(emailName), memberDues
-        );
-        return new ResponseEntity<JSONObject>(jsonResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/members/sendPoints",

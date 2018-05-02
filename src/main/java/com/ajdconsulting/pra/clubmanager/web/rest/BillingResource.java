@@ -44,12 +44,12 @@ public class BillingResource {
         return billingService.generateBill(memberId, year);
     }
 
-    @RequestMapping(value = "/billing/{year}",
+    @RequestMapping(value = "/billing/{year}/{dryRun}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void sendUnsentBills(@PathVariable Integer year) {
-        billingService.sendUnsentBills(year, true);
+    public void sendUnsentBills(@PathVariable Integer year, @PathVariable Boolean dryRun) {
+        billingService.sendUnsentBills(year, dryRun);
     }
 
 }
