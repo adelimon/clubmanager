@@ -11,6 +11,7 @@ import com.ajdconsulting.pra.clubmanager.repository.*;
 import com.ajdconsulting.pra.clubmanager.scheduled.PointsNotificationTask;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
+import com.ajdconsulting.pra.clubmanager.service.BillingService;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.service.UserService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
@@ -83,8 +84,7 @@ public class MemberResource {
     private UserRepository userRepository;
 
     @Inject
-    private MemberYearlyDuesRepository memberYearlyDuesRepository;
-
+    private BillingService billingService;
 
     /**
      * POST  /members -> Create a new member.
@@ -93,7 +93,7 @@ public class MemberResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Member> createMember(@Valid @RequestBody Member member) throws URISyntaxException {
+    public ResponseEntity<Member> createMember(@Valid @RequestBody Member member) throws URISyntaxException, IOException {
         log.debug("REST request to save Member : {}", member);
         if (member.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("member", "idexists", "A new member cannot already have an ID")).body(null);
@@ -105,13 +105,8 @@ public class MemberResource {
         // many things.  They won't ever login anyway
         if (isMember) {
             createUser(member);
-            MemberYearlyDues newMemberDues = new MemberYearlyDues();
-            newMemberDues.setAmountDue(MemberDues.STANDARD_AMOUNT);
-            newMemberDues.setId(member.getId()+CurrentFiscalYear.getFiscalYear());
-            newMemberDues.setMember(member);
-            newMemberDues.setPoints(0.0f);
-            newMemberDues.setYear(CurrentFiscalYear.getFiscalYear());
-            memberYearlyDuesRepository.save(newMemberDues);
+            // generate a bill for the new guy, so that we can send it to him.
+            billingService.generateBill(member.getId(), LocalDate.now().getYear());
         }
 
         return ResponseEntity.created(new URI("/api/members/" + result.getId()))
@@ -149,7 +144,7 @@ public class MemberResource {
         method = RequestMethod.PUT,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Member> updateMember(@Valid @RequestBody Member member) throws URISyntaxException {
+    public ResponseEntity<Member> updateMember(@Valid @RequestBody Member member) throws URISyntaxException, IOException {
         log.debug("REST request to update Member : {}", member);
         if (member.getId() == null) {
             return createMember(member);

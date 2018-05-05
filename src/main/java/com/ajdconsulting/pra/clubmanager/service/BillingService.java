@@ -38,7 +38,7 @@ public class BillingService {
     @Inject
     private MailService mailService;
 
-    public String generateBill(Long memberId, int year) throws IOException {
+    public Long generateBill(Long memberId, int year) throws IOException {
         Member member = memberRepository.findOne(memberId);
         MemberBill bill = new MemberBill(member);
         bill.setYear(year);
@@ -91,7 +91,8 @@ public class BillingService {
         baseEmailContent.setVariables(bill);
         bill.setEmailedBill(baseEmailContent.toString());
         memberBillRepository.save(bill);
-        return bill.getEmailedBill();
+        memberBillRepository.flush();
+        return bill.getId();
     }
 
     public void sendUnsentBills(int year, boolean isDryRun) {
