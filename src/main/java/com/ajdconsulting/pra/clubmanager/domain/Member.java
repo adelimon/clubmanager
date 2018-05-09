@@ -125,6 +125,10 @@ public class Member implements Serializable {
         return lastName + ", " + firstName;
     }
 
+    public String getFirstNameLastName() {
+        return firstName + " " + lastName;
+    }
+
     public String getAddress() {
         return address;
     }

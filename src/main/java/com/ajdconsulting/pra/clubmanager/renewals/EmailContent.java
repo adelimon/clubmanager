@@ -1,11 +1,14 @@
 package com.ajdconsulting.pra.clubmanager.renewals;
 
+import com.ajdconsulting.pra.clubmanager.domain.MemberBill;
 import com.ajdconsulting.pra.clubmanager.domain.MemberDues;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
+import java.util.Formatter;
 
 /**
  * Email content wrapper class.  yo yo
@@ -28,8 +31,23 @@ public class EmailContent {
         contents = contents.replace("EMAIL", dues.getEmail());
     }
 
+    public void setVariables(MemberBill bill) {
+        contents = contents.replace("{MEMBER_NAME}", (bill.getMember().getFirstNameLastName()));
+        contents = contents.replace("{STATUS}", bill.getMember().getStatus().getType());
+        contents = contents.replace("{DUES}", formatCurrency(bill.getAmount()));
+        contents = contents.replace("DUESPLUSFEE", bill.getAmountWithFee()+"");
+        contents = contents.replace("EMAIL", bill.getMember().getEmail());
+        contents = contents.replace( "{YEAR}", bill.getYear()+"");
+    }
+
+
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    private String formatCurrency(double amount) {
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        return format.format(amount);
     }
 
     public String toString() {

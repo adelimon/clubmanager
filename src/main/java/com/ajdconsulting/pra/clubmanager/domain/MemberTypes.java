@@ -20,7 +20,11 @@ public class MemberTypes implements Serializable {
     @NotNull
     @Column(name = "type", nullable = false)
     private String type;
-    
+
+    @Null
+    @Column(name = "base_dues_amount", nullable = true)
+    private Float baseDuesAmount;
+
     public Long getId() {
         return id;
     }
@@ -32,7 +36,7 @@ public class MemberTypes implements Serializable {
     public String getType() {
         return type;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
@@ -63,5 +67,13 @@ public class MemberTypes implements Serializable {
             "id=" + id +
             ", type='" + type + "'" +
             '}';
+    }
+
+    public Float getBaseDuesAmount() {
+        return baseDuesAmount;
+    }
+
+    public void setBaseDuesAmount(Float baseDuesAmount) {
+        this.baseDuesAmount = baseDuesAmount;
     }
 }

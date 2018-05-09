@@ -20,6 +20,17 @@ angular.module('clubmanagerApp')
             );
         };
 
+        $scope.rebill = function(id) {
+            var year = new Date().getFullYear();
+            $http.get('/api/billing/send/'+id+'/'+ year).then(
+                function() {
+                    alert("resent dues renewal");
+                },
+                function() {
+                    alert("Unable to resend, an error occurred.");
+                }
+            );
+        }
         var unsubscribe = $rootScope.$on('clubmanagerApp:memberUpdate', function(event, result) {
             $scope.member = result;
         });
