@@ -33,6 +33,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -177,11 +179,21 @@ public class EarnedPointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<EarnedPoints>> getUserEarnedPoints(Pageable pageable) throws URISyntaxException {
+        int year = getEarnedPointsYear();
         Page<EarnedPoints> page = earnedPointsRepository.findForUser(pageable,
-            SecurityUtils.getCurrentUserLogin(), CurrentFiscalYear.getFiscalYear());
+            SecurityUtils.getCurrentUserLogin(), year);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    private int getEarnedPointsYear() {
+        ZonedDateTime now = ZonedDateTime.now();
+        int year = now.getYear();
+        if (now.getMonth().compareTo(Month.MARCH) <= 0) {
+            year = year - 1;
+        }
+        return year;
     }
 
     /**
@@ -192,7 +204,7 @@ public class EarnedPointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<EarnedPoints>> getMemberEarnedPoints(Pageable pageable, @PathVariable Long memberId) throws URISyntaxException {
-        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId, CurrentFiscalYear.getFiscalYear());
+        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId, getEarnedPointsYear());
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
