@@ -292,13 +292,5 @@ public class MemberResource {
         memberRepository.saveAndFlush(member);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
-
-    @RequestMapping(value = "/members/sendPoints",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<JSONObject> sendPoints() {
-        PointsNotificationTask pointsNotificationTask = new PointsNotificationTask(earnedPointsRepository, memberRepository, mailService);
-        pointsNotificationTask.sendPointsUpdateEmail();
-        return new ResponseEntity<JSONObject>(new JSONObject(), HttpStatus.OK);
-    }
+    
 }
