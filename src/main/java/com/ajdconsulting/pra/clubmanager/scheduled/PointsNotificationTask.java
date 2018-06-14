@@ -1,8 +1,10 @@
 package com.ajdconsulting.pra.clubmanager.scheduled;
 
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
+import com.ajdconsulting.pra.clubmanager.domain.Integration;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
+import com.ajdconsulting.pra.clubmanager.repository.IntegrationRepository;
 import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
 import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.web.rest.EarnedPointsResource;
@@ -32,6 +34,9 @@ public class PointsNotificationTask {
     private MemberRepository memberRepository;
 
     @Inject
+    private IntegrationRepository integrationRepository;
+
+    @Inject
     private MailService mailService;
 
     private static final Logger log = LoggerFactory.getLogger(PointsNotificationTask.class);
@@ -43,35 +48,41 @@ public class PointsNotificationTask {
 
     }
 
-    public PointsNotificationTask(EarnedPointsRepository earnedPointsRepository, MemberRepository memberRepository, MailService mailService) {
+    public PointsNotificationTask(EarnedPointsRepository earnedPointsRepository, MemberRepository memberRepository, MailService mailService, IntegrationRepository integrationRepository) {
         this.earnedPointsRepository = earnedPointsRepository;
         this.memberRepository = memberRepository;
         this.mailService = mailService;
+        this.integrationRepository = integrationRepository;
     }
 
     @Scheduled(cron = "0 35 02 ? * FRI")
     public void sendPointsUpdateEmail() {
         log.info("PointsNotificationTask :: Starting points email job....");
-        Pageable page = new PageRequest(1, 400);
-        List<MemberPointsInfo> allPoints = new ArrayList<MemberPointsInfo>();
+        Integration sendEmail = integrationRepository.findPlatformById("sendPointsEmail");
+        Boolean send = Boolean.parseBoolean(sendEmail.getApikey());
+        if (send) {
+            Pageable page = new PageRequest(1, 400);
+            List<MemberPointsInfo> allPoints = new ArrayList<MemberPointsInfo>();
 
-        List<Member> allMembers = memberRepository.findAll();
+            List<Member> allMembers = memberRepository.findAll();
 
-        for (Member member : allMembers) {
-            List<EarnedPoints> points = earnedPointsRepository.findByMemberIdThisYear(member.getId());
-            // skip folks who have no points, are paid labor, or have an empty email
-            boolean skip = ((member.isPaidLabor()) ||
-                (points.size() == 0) || StringUtils.isEmpty(member.getEmail())
-            );
-            if (skip) continue;
-            // everyone else, process normally
-            MemberPointsInfo memberPointsInfo = new MemberPointsInfo(member, points);
-            allPoints.add(memberPointsInfo);
-            mailService.sendEmail(memberPointsInfo.getMemberEmail(), memberPointsInfo.getSubject(),
-                memberPointsInfo.getPointsDetail(), false, false);
-            log.info("PointsNotificationTask :: Sending points email for " + member.getName());
+            for (Member member : allMembers) {
+                List<EarnedPoints> points = earnedPointsRepository.findByMemberIdThisYear(member.getId());
+                // skip folks who have no points, are paid labor, or have an empty email
+                boolean skip = ((member.isPaidLabor()) ||
+                    (points.size() == 0) || StringUtils.isEmpty(member.getEmail())
+                );
+                if (skip) continue;
+                // everyone else, process normally
+                MemberPointsInfo memberPointsInfo = new MemberPointsInfo(member, points);
+                allPoints.add(memberPointsInfo);
+                mailService.sendEmail(memberPointsInfo.getMemberEmail(), memberPointsInfo.getSubject(),
+                    memberPointsInfo.getPointsDetail(), false, false);
+                log.info("PointsNotificationTask :: Sending points email for " + member.getName());
+            }
         }
         log.info("PointsNotificationTask :: Points email job finished!");
+
     }
 
 }
