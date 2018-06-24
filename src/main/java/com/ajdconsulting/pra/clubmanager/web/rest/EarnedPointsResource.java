@@ -92,7 +92,7 @@ public class EarnedPointsResource {
         earnedPoints.setVerified(true);
         earnedPoints.setDate(scheduleDate.getDate());
         if (eventType.getType().equals("Meeting")) {
-            earnedPoints.setPointValue(0.0f);
+            earnedPoints.setPointValue(1.0f);
         } else if (eventType.getType().equals("Work Day")) {
             earnedPoints.setPointValue(2.0f);
         }
