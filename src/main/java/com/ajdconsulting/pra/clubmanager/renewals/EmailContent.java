@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.renewals;
 
+import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.domain.MemberBill;
 import com.ajdconsulting.pra.clubmanager.domain.MemberDues;
 
@@ -31,13 +32,17 @@ public class EmailContent {
         contents = contents.replace("EMAIL", dues.getEmail());
     }
 
-    public void setVariables(MemberBill bill) {
+    public void setVariables(MemberBill bill, Member secretaryMember) {
         contents = contents.replace("{MEMBER_NAME}", (bill.getMember().getFirstNameLastName()));
         contents = contents.replace("{STATUS}", bill.getMember().getStatus().getType());
         contents = contents.replace("{DUES}", formatCurrency(bill.getAmount()));
         contents = contents.replace("DUESPLUSFEE", bill.getAmountWithFee()+"");
         contents = contents.replace("EMAIL", bill.getMember().getEmail());
         contents = contents.replace( "{YEAR}", bill.getYear()+"");
+        contents = contents.replace( "SECRETARY_NAME", secretaryMember.getFirstNameLastName());
+        contents = contents.replace( "SECRETARY_ADDRESS", secretaryMember.getAddress());
+        contents = contents.replace("SECRETARY_CITY_STATE_ZIP",
+            secretaryMember.getCity()+", "+ secretaryMember.getState() + " " +secretaryMember.getZip() );
     }
 
 
