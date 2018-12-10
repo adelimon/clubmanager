@@ -1,5 +1,6 @@
 package com.ajdconsulting.pra.clubmanager.service;
 
+import com.ajdconsulting.pra.clubmanager.domain.BoardMember;
 import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.domain.MemberBill;
@@ -21,7 +22,7 @@ import java.util.List;
 @Transactional
 public class BillingService {
 
-    public static final int DOLLARS_PER_POINT = 20;
+    public static final int DOLLARS_PER_POINT = 24;
 
     @Inject
     private MemberRepository memberRepository;
@@ -88,7 +89,10 @@ public class BillingService {
         if (member.getStatus().equals("New Member")) {
             baseEmailContent = new EmailContent("newMember");
         }
-        baseEmailContent.setVariables(bill);
+        BoardMember secretary = boardMemberRepository.findByTitle( (LocalDate.now()).getYear(),
+            "Secretary");
+        Member secretaryMember = secretary.getMember();
+        baseEmailContent.setVariables(bill, secretaryMember);
         bill.setEmailedBill(baseEmailContent.toString());
         memberBillRepository.save(bill);
         memberBillRepository.flush();
