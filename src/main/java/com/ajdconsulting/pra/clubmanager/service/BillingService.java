@@ -133,7 +133,7 @@ public class BillingService {
             Member member = bill.getMember();
             if (!isDryRun) {
                 mailService.sendEmail(
-                    member.getEmail(), "Your " + year + "PRA membership", bill.getEmailedBill(),
+                    member.getEmail(), "Your " + year + " PRA membership", bill.getEmailedBill(),
                     false, true
                 );
             }
