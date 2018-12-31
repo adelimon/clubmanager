@@ -10,6 +10,7 @@ import com.ajdconsulting.pra.clubmanager.service.BillingService;
 import com.codahale.metrics.annotation.Timed;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,16 @@ public class BillingResource {
     public ResponseEntity<JSONObject> sendUnsentBills(@PathVariable Integer year, @PathVariable Boolean dryRun) {
         billingService.sendUnsentBills(year, dryRun);
         return new ResponseEntity<JSONObject>(new JSONObject(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/billing/run",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Timed
+    public ResponseEntity<JSONObject> generateYearlyBills() throws IOException {
+        List<Long> page = billingService.generateAllBills();
+        return new ResponseEntity<JSONObject>(new JSONObject(page), HttpStatus.OK);
     }
 
 }

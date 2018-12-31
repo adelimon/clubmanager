@@ -268,6 +268,17 @@ public class Member implements Serializable {
     }
 
 
+    public String getToken() {
+        if (dateJoined == null) {
+            dateJoined = LocalDate.now();
+        }
+        if (zip == null) {
+            zip = "00000";
+        }
+        String token = id.toString() + "-" + zip + "-" + dateJoined.getYear();
+        return token;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -43,6 +43,7 @@ public class EmailContent {
         contents = contents.replace( "SECRETARY_ADDRESS", secretaryMember.getAddress());
         contents = contents.replace("SECRETARY_CITY_STATE_ZIP",
             secretaryMember.getCity()+", "+ secretaryMember.getState() + " " +secretaryMember.getZip() );
+        contents = contents.replace( "TOKEN", bill.getMember().getToken());
     }
 
 
