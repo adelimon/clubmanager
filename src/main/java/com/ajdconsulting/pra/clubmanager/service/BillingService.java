@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,6 +40,32 @@ public class BillingService {
 
     @Inject
     private MailService mailService;
+
+    public List<Long> generateAllBills() throws IOException {
+        List<Long> billIds = new ArrayList<Long>();
+        // update everyone who's not a paid labor to unpaid and un renewed for the current year
+        List<Member> realMembers = memberRepository.findAllRealMembers();
+        for (Member m : realMembers) {
+            m.setCurrentYearPaid(false);
+            m.setCurrentYearRenewed(false);
+            memberRepository.save(m);
+        }
+        memberRepository.flush();
+
+        // now that we have that done, get all of them, and generate a bill for each one.
+        // but first, figure out what year we are running billing for
+        LocalDate now = LocalDate.now();
+        // if it's December, then we want to run billing for the following year.  Otherwise, it's for this year.
+        int year = now.getYear();
+        if (now.getMonthValue() == 12) {
+            year = year + 1;
+        }
+        for (Member m : realMembers) {
+            Long billId = generateBill(m.getId(), year);
+            billIds.add(billId);
+        }
+        return billIds;
+    }
 
     public Long generateBill(Long memberId, int year) throws IOException {
         Member member = memberRepository.findOne(memberId);
