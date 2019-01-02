@@ -50,12 +50,15 @@ public class BillingResource {
         return new ResponseEntity<JSONObject>(new JSONObject(billId), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/billing/{year}/{dryRun}",
+    @RequestMapping(value = "/billing/{year}/{dryRun}/{count}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<JSONObject> sendUnsentBills(@PathVariable Integer year, @PathVariable Boolean dryRun) {
-        billingService.sendUnsentBills(year, dryRun);
+    public ResponseEntity<JSONObject> sendUnsentBills(@PathVariable Integer year, @PathVariable Boolean dryRun, @PathVariable Integer count) {
+        if (count == null) {
+            count = 10;
+        }
+        billingService.sendUnsentBills(year, dryRun, count);
         return new ResponseEntity<JSONObject>(new JSONObject(), HttpStatus.OK);
     }
 

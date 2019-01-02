@@ -44,7 +44,7 @@ public class BillingService {
     public List<Long> generateAllBills() throws IOException {
         List<Long> billIds = new ArrayList<Long>();
         // update everyone who's not a paid labor to unpaid and un renewed for the current year
-        List<Member> realMembers = memberRepository.findAllRealMembers();
+        List<Member> realMembers = memberRepository.findBillableMembers();
         for (Member m : realMembers) {
             m.setCurrentYearPaid(false);
             m.setCurrentYearRenewed(false);
@@ -61,8 +61,13 @@ public class BillingService {
             year = year + 1;
         }
         for (Member m : realMembers) {
-            Long billId = generateBill(m.getId(), year);
-            billIds.add(billId);
+            // this is a check to prevent re-runs becaue that's annoying and in this case we don't want re-runs
+            // just batches
+            List<MemberBill> yearlyBills = memberBillRepository.getMemberBillYear(year, m.getId());
+            if (yearlyBills.size() == 0) {
+                Long billId = generateBill(m.getId(), year);
+                billIds.add(billId);
+            }
         }
         return billIds;
     }
@@ -127,9 +132,14 @@ public class BillingService {
         return bill.getId();
     }
 
-    public void sendUnsentBills(int year, boolean isDryRun) {
+    public void sendUnsentBills(int year, boolean isDryRun, int count) {
         List<MemberBill> bills = memberBillRepository.getUnsentBillsByYear(year);
+        int sentCount = 0;
         for (MemberBill bill : bills) {
+            // if the count is reached, jump out of here
+            if (sentCount >= count) {
+                return;
+            }
             Member member = bill.getMember();
             if (!isDryRun) {
                 mailService.sendEmail(
@@ -140,6 +150,7 @@ public class BillingService {
             bill.setSent(true);
             member.setRenewalSent(true);
             memberRepository.save(member);
+            sentCount++;
         }
 
     }

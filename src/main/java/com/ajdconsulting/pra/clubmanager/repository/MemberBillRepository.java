@@ -13,4 +13,6 @@ public interface MemberBillRepository extends JpaRepository<MemberBill, Long> {
     @Query("select b from MemberBill b where b.isSent = false and b.year = :year order by b.member.id, b.generatedDate")
     public List<MemberBill> getUnsentBillsByYear(@Param("year") int year);
 
+    @Query("select b from MemberBill b where b.year = :year and b.member.id = :memberId")
+    public List<MemberBill> getMemberBillYear(@Param("year") int year, @Param("memberId") long memberId);
 }
