@@ -5,10 +5,12 @@ import com.ajdconsulting.pra.clubmanager.domain.EarnedPoints;
 import com.ajdconsulting.pra.clubmanager.domain.Member;
 import com.ajdconsulting.pra.clubmanager.domain.MemberBill;
 import com.ajdconsulting.pra.clubmanager.renewals.EmailContent;
-import com.ajdconsulting.pra.clubmanager.repository.BoardMemberRepository;
-import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
-import com.ajdconsulting.pra.clubmanager.repository.MemberBillRepository;
-import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
+import com.ajdconsulting.pra.clubmanager.repository.*;
+import com.lob.Lob;
+import com.lob.model.Address;
+import com.lob.model.Letter;
+import com.lob.net.LobResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,9 @@ public class BillingService {
 
     @Inject
     private MemberBillRepository memberBillRepository;
+
+    @Inject
+    private IntegrationRepository integrationRepository;
 
     @Inject
     private MailService mailService;
@@ -132,26 +137,76 @@ public class BillingService {
         return bill.getId();
     }
 
-    public void sendUnsentBills(int year, boolean isDryRun, int count) {
+    public List<MemberBill> sendUnsentBills(int year, boolean isDryRun, int count) {
         List<MemberBill> bills = memberBillRepository.getUnsentBillsByYear(year);
+        List<MemberBill> sentBills = new ArrayList<MemberBill>();
         int sentCount = 0;
         for (MemberBill bill : bills) {
             // if the count is reached, jump out of here
             if (sentCount >= count) {
-                return;
+                return sentBills;
             }
             Member member = bill.getMember();
             if (!isDryRun) {
-                mailService.sendEmail(
-                    member.getEmail(), "Your " + year + " PRA membership", bill.getEmailedBill(),
-                    false, true
-                );
+                if (!member.getPrefersMail()) {
+                    String billStatus = mailService.sendEmail(
+                        member.getEmail(), "Your " + year + " PRA membership", bill.getEmailedBill(),
+                        false, true
+                    );
+                    bill.setBillStatus(billStatus);
+                } else {
+                    // this is someone who prefers to get mail, so send it via the Lob service
+                    String lobKey = integrationRepository.findPlatformById("lob").getApikey();
+                    Lob.init(lobKey);
+                    try {
+                        BoardMember secretary = boardMemberRepository.findByTitle( (LocalDate.now()).getYear(),
+                            "Secretary");
+                        Member secretaryMember = secretary.getMember();
+                        LobResponse<Letter> response = new Letter.RequestBuilder()
+                            .setAddressPlacement("insert_blank_page")
+                            .setDescription("Your " + year + " PRA membership")
+                            .setFile(bill.getEmailedBill())
+                            .setColor(false)
+                            .setTo(
+                                new Address.RequestBuilder()
+                                    .setName(member.getFirstNameLastName())
+                                    .setLine1(member.getAddress())
+                                    .setCity(member.getCity())
+                                    .setState(member.getState())
+                                    .setZip(member.getZip())
+                            )
+                            .setFrom(
+                                new Address.RequestBuilder()
+                                    // This will set the org as the first line and c/o secretary as the
+                                    // second line. So even though it looks odd, it works.
+                                    .setName("Palmyra Racing Association")
+                                    .setCompany("c/o " + secretaryMember.getFirstNameLastName())
+                                    .setLine1(secretaryMember.getAddress())
+                                    .setCity(secretaryMember.getCity())
+                                    .setState(secretaryMember.getState())
+                                    .setZip(secretaryMember.getZip())
+                            )
+                            .create();
+                        Letter letter = response.getResponseBody();
+                        String mailedBillStatus = "";
+                        if (response.getResponseCode() == HttpStatus.OK.value()) {
+                            mailedBillStatus = "Mailed bill OK";
+                        } else {
+                            mailedBillStatus = "Mailed bill error " + response.getResponseCode();
+                        }
+                        bill.setBillStatus(mailedBillStatus);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             bill.setSent(true);
             member.setRenewalSent(true);
-            memberRepository.save(member);
+            memberRepository.saveAndFlush(member);
+            memberBillRepository.saveAndFlush(bill);
+            sentBills.add(bill);
             sentCount++;
         }
-
+        return sentBills;
     }
 }

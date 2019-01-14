@@ -55,10 +55,10 @@ public class MailService {
     private String from;
 
     @Async
-    public void sendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
+    public String sendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
         log.debug("Send e-mail[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
             isMultipart, isHtml, to, subject, content);
-
+        String status = "Email OK";
         // Prepare message using a Spring helper
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
@@ -72,8 +72,10 @@ public class MailService {
             javaMailSender.send(mimeMessage);
             log.debug("Sent e-mail to User '{}'", to);
         } catch (Exception e) {
+            status = "Email ERROR: " + e.getMessage();
             log.warn("E-mail could not be sent to user '{}', exception is: {}", to, e.getMessage());
         }
+        return status;
     }
 
     @Async
@@ -151,13 +153,4 @@ public class MailService {
         sendEmail("everyone@membermail.palmyramx.com", subject, content, false, true);
     }
 
-    @Async
-    public void sendDuesEmail(MemberDues dues) {
-        String to = dues.getEmail();
-        String from = "hogbacksecretary@gmail.com";
-
-        String content = "";
-
-        sendEmail(to, "2017 Palmyra Racing Association Renewal", content, false, false);
-    }
 }
