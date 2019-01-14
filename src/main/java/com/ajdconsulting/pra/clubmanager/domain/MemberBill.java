@@ -26,6 +26,8 @@ public class MemberBill {
     private String emailedBill;
     @Column(name="sent")
     private boolean isSent;
+    @Column(name="bill_status")
+    private String billStatus;
 
     public MemberBill() {
 
@@ -93,4 +95,8 @@ public class MemberBill {
     public void setSent(boolean sent) {
         this.isSent = sent;
     }
+
+    public String getBillStatus() { return billStatus; }
+
+    public void setBillStatus(String billStatus) { this.billStatus = billStatus; }
 }
