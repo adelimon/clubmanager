@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -122,11 +125,12 @@ public class BillingService {
             }
 
         }
-        bill.setAmount(baseDuesAmount-billCredit);
+        // round to 2 decimals because we need this..sometimes.
+        BigDecimal twoDecimalAmount = new BigDecimal(baseDuesAmount-billCredit);
+        twoDecimalAmount.setScale(2, RoundingMode.HALF_UP);
+        bill.setAmount(twoDecimalAmount.doubleValue());
+
         EmailContent baseEmailContent = new EmailContent("memberRenewal");
-        if (member.getStatus().equals("New Member")) {
-            baseEmailContent = new EmailContent("newMember");
-        }
         BoardMember secretary = boardMemberRepository.findByTitle( (LocalDate.now()).getYear(),
             "Secretary");
         Member secretaryMember = secretary.getMember();

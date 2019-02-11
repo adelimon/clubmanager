@@ -24,6 +24,7 @@ angular.module('clubmanagerApp')
             var year = new Date().getFullYear();
             $http.get('/api/billing/send/'+id+'/'+ year).then(
                 function() {
+                    $http.get('/api/billing/'+year+'/false/30');
                     alert("resent dues renewal");
                 },
                 function() {

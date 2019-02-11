@@ -1,6 +1,9 @@
 package com.ajdconsulting.pra.clubmanager.domain;
 
 import javax.persistence.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -66,6 +69,9 @@ public class MemberBill {
         if (amountWithFee > 0) {
             amountWithFee += 0.25;
         }
+        BigDecimal twoDecimalAmount = new BigDecimal(amountWithFee);        
+        twoDecimalAmount.setScale(2, RoundingMode.HALF_UP);
+        amountWithFee = twoDecimalAmount.doubleValue();
     }
 
     public double getAmountWithFee() {

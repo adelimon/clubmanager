@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Formatter;
 
@@ -36,7 +37,7 @@ public class EmailContent {
         contents = contents.replace("{MEMBER_NAME}", (bill.getMember().getFirstNameLastName()));
         contents = contents.replace("{STATUS}", bill.getMember().getStatus().getType());
         contents = contents.replace("{DUES}", formatCurrency(bill.getAmount()));
-        contents = contents.replace("DUESPLUSFEE", bill.getAmountWithFee()+"");
+        contents = contents.replace("DUESPLUSFEE", formatCurrency(bill.getAmountWithFee()));
         contents = contents.replace("EMAIL", bill.getMember().getEmail());
         contents = contents.replace( "{YEAR}", bill.getYear()+"");
         contents = contents.replace( "SECRETARY_NAME", secretaryMember.getFirstNameLastName());
@@ -52,7 +53,8 @@ public class EmailContent {
     }
 
     private String formatCurrency(double amount) {
-        NumberFormat format = NumberFormat.getCurrencyInstance();
+        DecimalFormat format = (DecimalFormat)NumberFormat.getInstance();
+        format.setMaximumFractionDigits(2);
         return format.format(amount);
     }
 
