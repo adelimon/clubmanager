@@ -26,6 +26,7 @@
                             <li><a href="/api/signupReports/meeting/excel" class="alert-link">Download meeting signin</a></li>
                             <li><a target="_blank" href="/api/billing/{{ today | date : 'yyyy' }}/false/30" class="alert-link">Send renewals/new
                                 member rules acknowledgements</a></li>
+                            <li><a href="/api/members/list" class="alert-link">Download a current, up to the minute member list in Excel</a></li>
                         <p/>
                     </div>
                     <div ng-if='account.authorities.indexOf("ROLE_USER") > -1'>
