@@ -16,6 +16,8 @@ import com.ajdconsulting.pra.clubmanager.service.MailService;
 import com.ajdconsulting.pra.clubmanager.service.UserService;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.HeaderUtil;
 import com.ajdconsulting.pra.clubmanager.web.rest.util.PaginationUtil;
+import com.ajdconsulting.pra.clubmanager.data.export.excel.ExcelSqlReport;
+
 import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
@@ -52,6 +54,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
+import java.sql.SQLException;;
 
 /**
  * REST controller for managing Member.
@@ -293,4 +298,13 @@ public class MemberResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
     
+
+    @RequestMapping("/members/list")
+    public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {        
+        String query = "select id, last_name, first_name, phone, email, date_joined, birthday, type, paperwork, paid from active_members";
+        String[] headerColumns = {"id", "last_name", "first_name", "phone", "email", "date_joined", "birthday", "type", "paperwork", "paid"};
+        int[] columnWidths = {5, 20, 20, 20, 20, 20, 20, 20, 20, 20};
+        ExcelSqlReport report = new ExcelSqlReport(query, "currentMembers", headerColumns, columnWidths, new String[0]);
+        report.write(ExcelHttpOutputStream.getOutputStream(response, "currentMemberList.xlsx"));
+    }
 }
