@@ -1,5 +1,6 @@
 <div>
-    <h2>Worker Points</h2>
+    <h2 ng-if="isMemberPoints">{{earnedPointss[0].date.substring(0, 4)}} Points for {{earnedPointss[0].member.firstNameLastName}}</h2>
+    <h2 ng-if="!isMemberPoints">Worker points</h2>
     <jh-alert></jh-alert>
 
         <label>Search for a points entry:

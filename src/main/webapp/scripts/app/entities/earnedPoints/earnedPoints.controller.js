@@ -8,6 +8,10 @@ angular.module('clubmanagerApp')
         $scope.reverse = true;
         $scope.page = 0;
         $scope.pointsTotal = 0;
+        $scope.isMemberPoints = ($location.path().includes('member') ||
+            $location.path().includes('/me')
+        );
+        
         // yes, use the equal to true here because this guy can be undefined otherwise and Javascript is
         // stupid in that case.  I hate this and it looks like discount programming, but at least I
         // did it on purpose.
