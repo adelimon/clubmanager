@@ -204,7 +204,16 @@ public class EarnedPointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<EarnedPoints>> getMemberEarnedPoints(Pageable pageable, @PathVariable Long memberId) throws URISyntaxException {
-        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId, getEarnedPointsYear());
+        return getMemberEarnedPoints(pageable, memberId, getEarnedPointsYear());
+    }
+
+    @RequestMapping(value = "/earnedPointss/{year}/member{memberId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<EarnedPoints>> getMemberEarnedPoints(Pageable pageable, @PathVariable Long memberId, @PathVariable Integer year) 
+        throws URISyntaxException {
+        Page<EarnedPoints> page = earnedPointsRepository.findForMemberId(pageable, memberId, year);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/earnedPointss");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
