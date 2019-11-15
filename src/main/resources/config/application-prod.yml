@@ -1,5 +1,5 @@
 # ===================================================================
-# Spring Boot configuration for the "prod" profile.
+# Spring Boot configuration for the "dev" profile.
 #
 # This configuration overrides the application.yml file.
 # ===================================================================
@@ -12,53 +12,58 @@
 
 spring:
     profiles:
-        active: prod
+        active: dev
     devtools:
         restart:
-            enabled: false
+            enabled: true
         livereload:
-            enabled: false
+            enabled: false # we use Grunt + BrowserSync for livereload
     datasource:
         driver-class-name: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
-        url: jdbc:mysql://localhost:3306/clubmanager?useUnicode=true&characterEncoding=utf8
+        url: jdbc:mysql://praclubmanager.cbw5eyxqobwk.us-east-1.rds.amazonaws.com:3306/devdb?useUnicode=true&characterEncoding=utf8
         name:
-        username: root
-        password:
+        username: pradev
+        password: hogback1962
     jpa:
         database-platform: org.hibernate.dialect.MySQLInnoDBDialect
         database: MYSQL
-        show_sql: false
+        show_sql: true
         properties:
             hibernate.cache.use_second_level_cache: false
             hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: false
+            hibernate.generate_statistics: true
     mail:
-        host: localhost
-        port: 25
-        username:
+        host: smtp.mailgun.org
+        port: 587
+        username: postmaster@membermail.palmyramx.com
         password:
+        protocol: smtp
+        tls: true
+        properties.mail.smtp:
+            auth: true
+    messages:
+        cache-seconds: 1
     thymeleaf:
-        cache: true
+        cache: false
 
 liquibase:
-    contexts: prod
+    contexts: dev
 
 server:
     port: 8080
-    compression:
-        enabled: true
-        mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
 
 # ===================================================================
 # JHipster specific properties
 # ===================================================================
 
 jhipster:
-    http:
-        cache: # Used by the CachingHttpHeadersFilter
-            timeToLiveInDays: 31
+    datasource: # JHipster-specific configuration, in addition to the standard spring.datasource properties
+        cachePrepStmts: true
+        prepStmtCacheSize: 96
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: signup@palmyramx.com
+        from: hogbacksecretary@gmail.com
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
         spark:

@@ -13,10 +13,10 @@ import java.util.List;
  */
 public interface ScheduleDateRepository extends JpaRepository<ScheduleDate,Long> {
 
-    @Query("select s from ScheduleDate s where year(s.date) = year(current_date()) order by date")
+    @Query("select s from ScheduleDate s where year(s.date) in ( year(current_date()), year(current_date())+1 ) order by date")
     public Page<ScheduleDate> findAllOrdered(Pageable pageable);
 
-    @Query("select s from ScheduleDate s where year(s.date) = year(current_date()) order by date")
+    @Query("select s from ScheduleDate s where year(s.date) in ( year(current_date()), year(current_date())+1 ) order by date")
     public List<ScheduleDate> findAllOrdered();
 
     @Query("select s from ScheduleDate s where ((s.date >= current_date())) and (s.eventType.type in ('Race', 'XO Race', 'Harescramble', 'Ride Day')) order by date")
