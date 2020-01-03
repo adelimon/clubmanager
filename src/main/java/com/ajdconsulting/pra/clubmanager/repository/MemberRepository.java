@@ -25,6 +25,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("select m from Member m order by lastName")
     public List<Member> findAllMembersOrderByLastName();
 
-    @Query("select m from Member m where endDate is null and m.status.type != 'Paid Labor' order by lastName, firstName")
+    @Query("select m from Member m where endDate is null and m.status.type != 'Paid Labor' and m.status.type != 'Application Pending' order by lastName, firstName")
     public List<Member> findBillableMembers();
 }
