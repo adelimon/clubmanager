@@ -301,9 +301,9 @@ public class MemberResource {
 
     @RequestMapping("/members/list")
     public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {        
-        String query = "select id, last_name, first_name, phone, email, date_joined, birthday, type, paperwork, paid from active_members";
-        String[] headerColumns = {"id", "last_name", "first_name", "phone", "email", "date_joined", "birthday", "type", "paperwork", "paid"};
-        int[] columnWidths = {5, 20, 20, 20, 20, 20, 20, 20, 20, 20};
+        String query = "select id, last_name, first_name, phone, email, date_joined, birthday, type, paperwork, paid, amount_due from active_members";
+        String[] headerColumns = {"id", "last_name", "first_name", "phone", "email", "date_joined", "birthday", "type", "paperwork", "paid", "amount_due"};
+        int[] columnWidths = {5, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
         ExcelSqlReport report = new ExcelSqlReport(query, "currentMembers", headerColumns, columnWidths, new String[0]);
         report.write(ExcelHttpOutputStream.getOutputStream(response, "currentMemberList.xlsx"));
     }
