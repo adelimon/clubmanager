@@ -307,4 +307,13 @@ public class MemberResource {
         ExcelSqlReport report = new ExcelSqlReport(query, "currentMembers", headerColumns, columnWidths, new String[0]);
         report.write(ExcelHttpOutputStream.getOutputStream(response, "currentMemberList.xlsx"));
     }
+
+    @RequestMapping("/members/points")
+    public void exportMemberPoints(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {        
+        String query = "select last_name, first_name, points from current_year_points order by last_name";
+        String[] headerColumns = {"last_name", "first_name", "points"};
+        int[] columnWidths = {20, 20, 20};
+        ExcelSqlReport report = new ExcelSqlReport(query, "thisYearsPoints", headerColumns, columnWidths, new String[0]);
+        report.write(ExcelHttpOutputStream.getOutputStream(response, "currentYearPoints.xlsx"));
+    }
 }

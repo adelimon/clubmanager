@@ -20,9 +20,9 @@ spring:
             enabled: false # we use Grunt + BrowserSync for livereload
     datasource:
         driver-class-name: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
-        url: jdbc:mysql://praclubmanager.cbw5eyxqobwk.us-east-1.rds.amazonaws.com:3306/devdb?useUnicode=true&characterEncoding=utf8
+        url: jdbc:mysql://praclubmanager.cbw5eyxqobwk.us-east-1.rds.amazonaws.com:3306/heroku_6b43e57c4986e1f?useUnicode=true&characterEncoding=utf8
         name:
-        username: pradev
+        username: root
         password: hogback1962
     jpa:
         database-platform: org.hibernate.dialect.MySQLInnoDBDialect
