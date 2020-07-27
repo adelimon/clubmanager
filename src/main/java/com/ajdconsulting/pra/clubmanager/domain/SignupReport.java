@@ -127,7 +127,27 @@ public class SignupReport implements Serializable {
     }
 
     public LocalDate getDate() {
-        return date;
+        int daysBefore = 0;
+        switch (jobDay.toLowerCase()) {
+            case "wednesday":
+                daysBefore = 4;
+                break;
+            case "thursday":
+                daysBefore = 3;
+                break;
+            case "friday":
+                daysBefore = 2;
+                break;
+            case "saturday":
+                daysBefore = 1;
+                break;
+            case "sunday":
+                daysBefore = 0;
+                break;
+            default:
+                break;
+        }
+        return date.minusDays(daysBefore);
     }
 
     public void setDate(LocalDate date) {
