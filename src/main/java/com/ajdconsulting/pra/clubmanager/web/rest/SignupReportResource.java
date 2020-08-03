@@ -133,7 +133,7 @@ public class SignupReportResource {
     public void exportWorkdaySignin(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         String[] headerColumns = {"Name", "Start Time", "End Time", "Task(s)", "Signature"};
         int[] columnWidths = {20, 10, 10, 30, 30};
-        List<Member> members = memberRepository.findAllMembersOrderByLastName();
+        List<Member> members = memberRepository.findBillableMembers();
         List<Map<String, Object>> dataMap = new ArrayList<Map<String, Object>>();
         for (Member member : members) {
             if (!member.isPaidLabor()) {
@@ -154,7 +154,7 @@ public class SignupReportResource {
     public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         String[] headerColumns = {"Name", "Signature"};
         int[] columnWidths = {20, 70};
-        List<Member> members = memberRepository.findAllMembersOrderByLastName();
+        List<Member> members = memberRepository.findBillableMembers();
         List<Map<String, Object>> dataMap = new ArrayList<Map<String, Object>>();
         for (Member member : members) {
             if (!member.isPaidLabor()) {
