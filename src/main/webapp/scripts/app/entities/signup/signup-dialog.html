@@ -19,13 +19,13 @@
         </div>
 
         <div class="form-group">
-            <label for="field_worker">worker</label>
+            <label for="field_worker">Club Member or Paid Worker</label>
             <select class="form-control" id="field_worker" name="worker" ng-model="signup.worker" ng-options="member as member.name for member in members track by member.id">
                 <option value=""></option>
             </select>
         </div>
         <div class="form-group">
-            <label for="field_scheduleDate">scheduleDate</label>
+            <label for="field_scheduleDate">Day of event (for a race, the calendar date to choose is race date)</label>
             <select class="form-control" id="field_scheduleDate" name="scheduleDate" ng-model="signup.scheduleDate"
                     ng-options="scheduleDate as (scheduleDate.date + ' - ' + scheduleDate.eventType.type) for scheduleDate in scheduledates track by scheduleDate.id"
                     ng-change="dateHandler(signup.scheduleDate)">
@@ -33,7 +33,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="field_job">job</label>
+            <label for="field_job">Job signing member up for</label>
             <select class="form-control" id="field_job" name="job" ng-model="signup.job"
                     ng-options="job as (job.title + ' (' + job.jobDay + ') (' + job.pointValue + ' points)') for job in jobs track by job.id">
                 <option value=""></option>

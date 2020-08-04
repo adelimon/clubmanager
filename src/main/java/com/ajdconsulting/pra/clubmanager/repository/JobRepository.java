@@ -24,13 +24,13 @@ public interface JobRepository extends JpaRepository<Job,Long> {
     public Page<Job> findPaidJobs(Pageable pageable);
 
     @Query("select j from Job j where j.online=true and j.eventType.id = :eventTypeId and j.id not in "+
-        "(select s.job.id from Signup s where s.scheduleDate.id = :scheduleDateId) order by j.title")
+        "(select s.job.id from Signup s where s.scheduleDate.id = :scheduleDateId) order by j.jobDayNumber, j.sortOrder")
     public Page<Job> findOpenJobsForDate(Pageable pageable,
         @Param("eventTypeId") Long eventTypeId,
         @Param("scheduleDateId") Long scheduleDateId);
 
     @Query("select j from Job j where j.online=true and j.eventType.id = :eventTypeId  and j.reserved = false and j.id not in "+
-        "(select s.job.id from Signup s where s.scheduleDate.id = :scheduleDateId) order by j.title")
+        "(select s.job.id from Signup s where s.scheduleDate.id = :scheduleDateId) order by j.jobDayNumber, j.sortOrder")
     public Page<Job> findOpenJobsForDateNoReserved(Pageable pageable,
                                          @Param("eventTypeId") Long eventTypeId,
                                          @Param("scheduleDateId") Long scheduleDateId);
