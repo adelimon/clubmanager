@@ -46,6 +46,9 @@ public class Job implements Serializable {
     @Column(name= "sort_order")
     private Integer sortOrder;
 
+    @Column(name = "job_day_number")
+    private Integer jobDayNumber;
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
@@ -140,6 +143,14 @@ public class Job implements Serializable {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public Integer getJobDayNumber() {
+        return this.jobDayNumber;
+    }
+
+    public void setJobDayNumber(Integer jobDayNumber) {
+        this.jobDayNumber = jobDayNumber;
     }
 
     @Override

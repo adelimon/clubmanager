@@ -20,7 +20,8 @@
                 <tr jh-sort="predicate" ascending="reverse" callback="reset()">
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="worker.name"><span>worker</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="scheduleDate.date"><span>scheduleDate</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="scheduleDate.date"><span>event</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="job.day"><span>Job Day</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="job.title"><span>job</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
                 </tr>
@@ -33,6 +34,9 @@
                     </td>
                     <td>
                         <a ui-sref="scheduleDate.detail({id:signup.scheduleDate.id})">{{signup.scheduleDate.date}}</a>
+                    </td>
+                    <td>
+                        {{signup.job.jobDay}}
                     </td>
                     <td>
                         <a ui-sref="job.detail({id:signup.job.id})">{{signup.job.title}}</a>

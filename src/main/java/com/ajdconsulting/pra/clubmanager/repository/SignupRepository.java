@@ -13,7 +13,7 @@ import java.util.List;
  * Spring Data JPA repository for the Signup entity.
  */
 public interface SignupRepository extends JpaRepository<Signup,Long> {
-    @Query("select sr from Signup sr where sr.scheduleDate.date >= current_date() order by sr.scheduleDate.date, sr.job.sortOrder")
+    @Query("select sr from Signup sr where sr.scheduleDate.date >= current_date() order by sr.scheduleDate.date, sr.job.jobDayNumber, sr.job.sortOrder")
     public Page<Signup> findFutureSignups(Pageable pageable);
 
     @Query("select sr from Signup sr where sr.worker.id = :id")
