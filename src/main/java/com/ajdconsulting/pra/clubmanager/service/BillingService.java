@@ -29,7 +29,7 @@ import java.util.List;
 @Transactional
 public class BillingService {
 
-    public static final int DOLLARS_PER_POINT = 24;
+    public static final double DOLLARS_PER_POINT = 29.50;
 
     @Inject
     private MemberRepository memberRepository;
