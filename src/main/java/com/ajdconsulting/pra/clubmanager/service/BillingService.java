@@ -131,8 +131,7 @@ public class BillingService {
         bill.setAmount(twoDecimalAmount.doubleValue());
 
         EmailContent baseEmailContent = new EmailContent("memberRenewal");
-        BoardMember secretary = boardMemberRepository.findByTitle( (LocalDate.now()).getYear(),
-            "Secretary");
+        BoardMember secretary = boardMemberRepository.findByTitle( year,"Secretary");
         Member secretaryMember = secretary.getMember();
         baseEmailContent.setVariables(bill, secretaryMember);
         bill.setEmailedBill(baseEmailContent.toString());

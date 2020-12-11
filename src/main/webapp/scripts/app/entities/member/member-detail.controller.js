@@ -21,7 +21,12 @@ angular.module('clubmanagerApp')
         };
 
         $scope.rebill = function(id) {
-            var year = new Date().getFullYear();
+            let rightNow = new Date();
+            let year = rightNow.getFullYear();
+            // if we are doing this in November or December then send the bill for the next season.
+            if (rightNow.getMonth() > 10) {
+                year += 1;
+            }
             $http.get('/api/billing/send/'+id+'/'+ year).then(
                 function() {
                     $http.get('/api/billing/'+year+'/false/30');
