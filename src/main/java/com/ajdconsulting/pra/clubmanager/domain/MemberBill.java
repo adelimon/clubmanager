@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 @Entity
@@ -69,9 +70,9 @@ public class MemberBill {
         if (amountWithFee > 0) {
             amountWithFee += 0.25;
         }
-        BigDecimal twoDecimalAmount = new BigDecimal(amountWithFee);        
-        twoDecimalAmount.setScale(2, RoundingMode.HALF_UP);
-        amountWithFee = twoDecimalAmount.doubleValue();
+        DecimalFormat df = new DecimalFormat("0.00");
+        amountWithFee = Double.valueOf(df.format(amountWithFee));
+        amount = Double.valueOf(df.format(amount));
     }
 
     public double getAmountWithFee() {
