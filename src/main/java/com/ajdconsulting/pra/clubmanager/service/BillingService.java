@@ -162,7 +162,7 @@ public class BillingService {
                     String lobKey = integrationRepository.findPlatformById("lob").getApikey();
                     Lob.init(lobKey);
                     try {
-                        BoardMember secretary = boardMemberRepository.findByTitle( (LocalDate.now()).getYear(),
+                        BoardMember secretary = boardMemberRepository.findByTitle( year,
                             "Secretary");
                         Member secretaryMember = secretary.getMember();
                         LobResponse<Letter> response = new Letter.RequestBuilder()
