@@ -125,7 +125,7 @@ public class MemberResource {
             member.getFirstName(), member.getLastName(), member.getEmail(), "en");
         newUser.setActivated(true);
         userRepository.save(newUser);
-
+        /*
         try {
             MailingList.addMember(member, getMailingListApiKey());
         } catch (IOException e) {
@@ -135,6 +135,7 @@ public class MemberResource {
             log.error("unable to update email for " + member.getName() +
                 " on mailchimp.  please add " + member.getEmail() + " manually.", e);
         }
+        */
     }
 
     private String getMailingListApiKey() {
@@ -164,6 +165,11 @@ public class MemberResource {
             user.setLogin(result.getEmail());
             user.setEmail(result.getEmail());
             userRepository.save(user);
+        }
+
+        // we are updating a member from application pending to New Member, so create a user.
+        if (oldMemberRecord.getStatus().getType().equals("Application Pending")) {
+            this.createUser(member);
         }
 
         return ResponseEntity.ok()
@@ -297,10 +303,10 @@ public class MemberResource {
         memberRepository.saveAndFlush(member);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("member", id.toString())).build();
     }
-    
+
 
     @RequestMapping("/members/list")
-    public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {        
+    public void exportMeetingSignIn(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         String query = "select id, last_name, first_name, phone, email, date_joined, birthday, type, occupation, paperwork, paid, amount_due from active_members";
         String[] headerColumns = {"id", "last_name", "first_name", "phone", "email", "date_joined", "birthday", "type", "occupation", "paperwork", "paid", "amount_due"};
         int[] columnWidths = {5, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
@@ -309,7 +315,7 @@ public class MemberResource {
     }
 
     @RequestMapping("/members/points")
-    public void exportMemberPoints(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {        
+    public void exportMemberPoints(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         String query = "select last_name, first_name, points from current_year_points order by last_name";
         String[] headerColumns = {"last_name", "first_name", "points"};
         int[] columnWidths = {20, 20, 20};
