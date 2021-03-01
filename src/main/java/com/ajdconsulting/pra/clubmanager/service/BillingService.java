@@ -116,14 +116,17 @@ public class BillingService {
                 if (joinedDate.isAfter(creditStart) && joinedDate.isBefore(creditEnd)) {
                     billCredit = baseDuesAmount*0.26;
                 }
-            } else if (joinedDate.getYear() == year-1) {
+            }
+            /*
+            this is old logic.  Normally, I would remove it but this is going to stay in case we decide to re-do it at some point.
+            else if (joinedDate.getYear() == year-1) {
                 // here they paid the prior year, and they paid on 10/1 or after, so give them a full credit
                 // for the following year.
                 if (joinedDate.isAfter(LocalDate.of(year-1, Month.SEPTEMBER, 30))) {
                     billCredit = baseDuesAmount;
                 }
             }
-
+            */
         }
         // round to 2 decimals because we need this..sometimes.
         BigDecimal twoDecimalAmount = new BigDecimal(baseDuesAmount-billCredit);

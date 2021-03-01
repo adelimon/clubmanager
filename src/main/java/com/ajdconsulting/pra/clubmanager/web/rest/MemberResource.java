@@ -155,10 +155,14 @@ public class MemberResource {
         if (member.getId() == null) {
             return createMember(member);
         }
-
         Member oldMemberRecord = memberRepository.findOne(member.getId());
+        boolean flippingToMember = oldMemberRecord.getStatus().getType().equals("Application Pending");
+        if (flippingToMember) {
+            member.setDateJoined(LocalDate.now());
+        }
         String oldEmail = oldMemberRecord.getEmail();
         Member result = memberRepository.save(member);
+
         // if the email has changed, then save the new one to the user record
         if (!oldEmail.equals(result.getEmail())) {
             User user = userRepository.findOneByEmail(oldEmail).get();
@@ -168,8 +172,10 @@ public class MemberResource {
         }
 
         // we are updating a member from application pending to New Member, so create a user.
-        if (oldMemberRecord.getStatus().getType().equals("Application Pending")) {
+        if (flippingToMember) {
             this.createUser(member);
+            // also set their join date to now, so that they are correctly marked in our records.
+
         }
 
         return ResponseEntity.ok()
