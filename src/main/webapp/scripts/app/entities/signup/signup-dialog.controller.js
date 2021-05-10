@@ -5,7 +5,9 @@ angular.module('clubmanagerApp').controller('SignupDialogController',
         function($scope, $stateParams, $uibModalInstance, entity, Signup, Member, ScheduleDate, Job, PaidSignup) {
 
         $scope.signup = entity;
-        $scope.members = Member.query({id: 'visible'});
+        // this is a hack to add 'andworkers' to the REST call.  It's funky but it works, and i"m commenting it here so
+        // remember WTF I did 3 years from now when looking at this...
+        $scope.members = Member.query({id: 'andworkers'});
         $scope.scheduledates = ScheduleDate.query({id: 'future'});
         $scope.jobs = new Array();
         $scope.load = function(id) {

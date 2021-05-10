@@ -196,7 +196,7 @@ public class MemberResource {
         Page<Member> page = null;
         boolean isAdmin = SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
         if (isAdmin) {
-            page = memberRepository.findAllMembersOrderByLastName(pageable);
+            page = memberRepository.findMembersAndWorkers(pageable);
         } else {
             page = memberRepository.findMembersOnline(pageable);
             // clear the securable fields for users, since we don't want them to see
@@ -209,6 +209,21 @@ public class MemberResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/members/andworkers",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Member>> getAllMembersAndPaidWorkers(Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of Members");
+        Page<Member> page = memberRepository.findMembersAndWorkers(pageable);
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/members");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+
 
     /**
      * Clear the personal info fields for a member.
