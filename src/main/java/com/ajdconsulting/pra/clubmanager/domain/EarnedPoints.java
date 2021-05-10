@@ -1,10 +1,12 @@
 package com.ajdconsulting.pra.clubmanager.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -59,6 +61,9 @@ public class EarnedPoints implements Serializable {
 
     @Column(name = "last_modified_by")
     private String lastModifiedBy;
+
+    @Column(name = "last_modified_date")
+    private LocalDate lastModifiedDate;
 
     public Long getId() {
         return id;
@@ -180,5 +185,13 @@ public class EarnedPoints implements Serializable {
 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public LocalDate getLastModifiedDate() {
+        return this.lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

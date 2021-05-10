@@ -16,7 +16,6 @@ import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,6 +32,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -68,6 +68,7 @@ public class EarnedPointsResource {
         if (earnedPoints.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("earnedPoints", "idexists", "A new earnedPoints cannot already have an ID")).body(null);
         }
+        addAudits(earnedPoints);
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
 
         return ResponseEntity.created(new URI("/api/earnedPointss/" + result.getId()))
@@ -96,6 +97,7 @@ public class EarnedPointsResource {
         } else if (eventType.getType().equals("Work Day")) {
             earnedPoints.setPointValue(2.0f);
         }
+        addAudits(earnedPoints);
 
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
         return ResponseEntity.created(new URI("/api/earnedPointss/" + result.getId()))
@@ -103,6 +105,17 @@ public class EarnedPointsResource {
             .body(result);
     }
 
+
+    /**
+     * Add audit information (current logged in user and time) to the earned points record so we know
+     * who did what, and when.
+     * 
+     * @param points An earned points record for a member.
+     */
+    private void addAudits(EarnedPoints points) {
+        points.setLastModifiedBy(SecurityUtils.getCurrentUserLogin());
+        points.setLastModifiedDate(LocalDate.now());
+    }
 
     /**
      * PUT  /earnedPointss -> Updates an existing earnedPoints.
@@ -116,7 +129,7 @@ public class EarnedPointsResource {
         if (earnedPoints.getId() == null) {
             return createEarnedPoints(earnedPoints);
         }
-        earnedPoints.setLastModifiedBy(SecurityUtils.getCurrentUserLogin());
+        addAudits(earnedPoints);
 
         EarnedPoints result = earnedPointsRepository.save(earnedPoints);
 
