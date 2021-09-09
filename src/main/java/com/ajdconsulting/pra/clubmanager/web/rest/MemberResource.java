@@ -8,7 +8,6 @@ import com.ajdconsulting.pra.clubmanager.domain.*;
 import com.ajdconsulting.pra.clubmanager.integrations.mailchimp.MailingList;
 import com.ajdconsulting.pra.clubmanager.renewals.EmailContent;
 import com.ajdconsulting.pra.clubmanager.repository.*;
-import com.ajdconsulting.pra.clubmanager.scheduled.PointsNotificationTask;
 import com.ajdconsulting.pra.clubmanager.security.AuthoritiesConstants;
 import com.ajdconsulting.pra.clubmanager.security.SecurityUtils;
 import com.ajdconsulting.pra.clubmanager.service.BillingService;
