@@ -31,7 +31,7 @@
                     <td>{{boardMember.title}}</td>
                     <td>{{boardMember.year}}</td>
                     <td>
-                        <a ui-sref="member.detail({id:boardMember.member.id})">{{boardMember.member.lastName}}</a>
+                        <a ui-sref="member.detail({id:boardMember.member.id})">{{boardMember.member.lastName + ', ' +boardMember.member.firstName}}</a>
                     </td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
