@@ -52,7 +52,7 @@
 
         <div class="form-group">
             <label for="field_member">member</label>
-            <select class="form-control" id="field_member" name="member" ng-model="boardMember.member" ng-options="member as member.name for member in members | orderBy:'id' track by member.id">
+            <select class="form-control" id="field_member" name="member" ng-model="boardMember.member" ng-options="member as member.name for member in members | orderBy:'lastName' track by member.id">
                 <option value=""></option>
             </select>
         </div>
