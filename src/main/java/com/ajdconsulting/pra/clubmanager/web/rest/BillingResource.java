@@ -1,16 +1,11 @@
 package com.ajdconsulting.pra.clubmanager.web.rest;
 
-import com.ajdconsulting.pra.clubmanager.domain.*;
-import com.ajdconsulting.pra.clubmanager.renewals.EmailContent;
-import com.ajdconsulting.pra.clubmanager.repository.BoardMemberRepository;
-import com.ajdconsulting.pra.clubmanager.repository.EarnedPointsRepository;
-import com.ajdconsulting.pra.clubmanager.repository.MemberBillRepository;
-import com.ajdconsulting.pra.clubmanager.repository.MemberRepository;
-import com.ajdconsulting.pra.clubmanager.service.BillingService;
+import com.ajdconsulting.pra.clubmanager.domain.Integration;
+import com.ajdconsulting.pra.clubmanager.repository.IntegrationRepository;
 import com.codahale.metrics.annotation.Timed;
-import org.joda.time.DateTime;
 import org.json.JSONObject;
-import org.springframework.data.domain.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.List;
-import java.util.Optional;
+
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 /**
  * Billing for PRA members.
@@ -37,39 +31,31 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class BillingResource {
 
+    private final Logger log = LoggerFactory.getLogger(BoardMemberResource.class);
 
     @Inject
-    public BillingService billingService;
+    public IntegrationRepository integrationRepository;
 
     @RequestMapping(value = "/billing/send/{memberId}/{year}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<JSONObject> generateBill(@PathVariable Long memberId, @PathVariable Integer year) throws IOException {
-        Long billId = billingService.generateBill(memberId, year);
-        return new ResponseEntity<JSONObject>(new JSONObject(billId), HttpStatus.OK);
-    }
+        
+        Integration billingPublishLocation = integrationRepository.findPlatformById("awsBillingTopic");
+        
+        SnsClient snsClient = SnsClient.builder()
+            .region(Region.US_EAST_1)
+            .build();
 
-    @RequestMapping(value = "/billing/{year}/{dryRun}/{count}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<List<MemberBill>> sendUnsentBills(@PathVariable Integer year, @PathVariable Boolean dryRun, @PathVariable Integer count) {
-        if (count == null) {
-            count = 10;
-        }
-        List<MemberBill> sendBills = billingService.sendUnsentBills(year, dryRun, count);
-        return new ResponseEntity<List<MemberBill>>(sendBills, HttpStatus.OK);
-    }
+        PublishRequest request = PublishRequest.builder()
+            .message(memberId.toString())
+            .topicArn(billingPublishLocation.getApikey())
+            .build();
 
-    @RequestMapping(value = "/billing/run",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @Timed
-    public ResponseEntity<JSONObject> generateYearlyBills() throws IOException {
-        List<Long> page = billingService.generateAllBills();
-        return new ResponseEntity<JSONObject>(new JSONObject(page), HttpStatus.OK);
+        PublishResponse result = snsClient.publish(request);
+        log.info(result.messageId() + " Message sent. Status is " + result.sdkHttpResponse().statusCode());
+        return new ResponseEntity<JSONObject>(new JSONObject(memberId), HttpStatus.OK);
     }
 
 }
