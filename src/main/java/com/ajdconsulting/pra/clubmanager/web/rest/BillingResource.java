@@ -3,6 +3,11 @@ package com.ajdconsulting.pra.clubmanager.web.rest;
 import com.ajdconsulting.pra.clubmanager.domain.Integration;
 import com.ajdconsulting.pra.clubmanager.repository.IntegrationRepository;
 import com.codahale.metrics.annotation.Timed;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.io.IOException;
-
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sns.SnsClient;
-import software.amazon.awssdk.services.sns.model.PublishRequest;
-import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 /**
  * Billing for PRA members.
@@ -42,20 +42,13 @@ public class BillingResource {
     @Timed
     public ResponseEntity<JSONObject> generateBill(@PathVariable Long memberId, @PathVariable Integer year) throws IOException {
         
-        Integration billingPublishLocation = integrationRepository.findPlatformById("awsBillingTopic");
-        
-        SnsClient snsClient = SnsClient.builder()
-            .region(Region.US_EAST_1)
-            .build();
+        Integration resendEndpoint = integrationRepository.findPlatformById("resendEndpoint");
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet get = new HttpGet(resendEndpoint.getApikey() + memberId);
+        HttpResponse httpResponse = client.execute(get);
+        int code = httpResponse.getStatusLine().getStatusCode();
 
-        PublishRequest request = PublishRequest.builder()
-            .message(memberId.toString())
-            .topicArn(billingPublishLocation.getApikey())
-            .build();
-
-        PublishResponse result = snsClient.publish(request);
-        log.info(result.messageId() + " Message sent. Status is " + result.sdkHttpResponse().statusCode());
-        return new ResponseEntity<JSONObject>(new JSONObject(memberId), HttpStatus.OK);
+        return new ResponseEntity<JSONObject>(new JSONObject(code), HttpStatus.OK);
     }
 
 }
