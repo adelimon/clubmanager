@@ -25,6 +25,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("select m from Member m where endDate is null and m.status.type != 'Paid Labor' and m.status.type != 'Application Pending' and m.status.type != 'Former' order by lastName, firstName")
     public List<Member> findBillableMembers();
 
-    @Query("select m from Member m where endDate is null and m.status.type != 'Application Pending' and m.status.type != 'Former' order by lastName")
+    @Query("select m from Member m where endDate is null and m.status.type != 'Former' order by lastName")
     public Page<Member> findMembersAndWorkers(Pageable pageable);
 }
